@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     // Initialize and fetch Pokemon trainers from the database.
                     db.getPokemonTrainers()
-
                     // Create and display the main view with associated ViewModels.
                     MainView(mainViewModel, pokemonViewModel)
                 }

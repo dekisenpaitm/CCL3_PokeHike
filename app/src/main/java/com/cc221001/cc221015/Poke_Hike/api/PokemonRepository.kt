@@ -1,6 +1,5 @@
 package com.cc221001.cc221015.Poke_Hike.api
 
-
 import com.cc221001.cc221015.Poke_Hike.data.PokemonApiResult
 import com.cc221001.cc221015.Poke_Hike.data.PokemonsApiResult
 import retrofit2.Retrofit
