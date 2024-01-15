@@ -29,11 +29,14 @@ import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.ExposedDropdownMenuDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,6 +44,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -82,6 +86,7 @@ sealed class Screen(val route: String) {
     object Second : Screen("second") // Represents the second screen with route "second"
     object Third : Screen("third")   // Represents the third screen with route "third"
     object Fourth : Screen("fourth") // Represents the fourth screen with route "fourth"
+    object Fifth : Screen("fifth") // Represents the fourth screen with route "fourth"
 }
 
 // Usage: This sealed class is particularly useful in a Jetpack Compose navigation setup,
@@ -184,6 +189,14 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "") } // Set the icon for this item.
         )
 
+        // NavigationBarItem for the 'Weather' screen.
+        NavigationBarItem(
+            // Similar configuration as above for the 'Third' screen.
+            selected = (selectedScreen == Screen.Fifth),
+            onClick = { navController.navigate(Screen.Fifth.route) },
+            icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "") }
+        )
+
         // NavigationBarItem for the 'Second' screen.
         NavigationBarItem(
             // Similar configuration as the first item but for the 'Second' screen.
@@ -199,6 +212,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             onClick = { navController.navigate(Screen.Third.route) },
             icon = { Icon(imageVector = Icons.Default.List, contentDescription = "") }
         )
+
 
         // NavigationBarItem for the 'Fourth' screen.
         NavigationBarItem(
@@ -452,7 +466,9 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().weight(1f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
             // Displaying the trainer's image.
             item {
@@ -487,7 +503,9 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().weight(0.3f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.3f)
         ) {
             item {
                 // Button to update the trainer.
@@ -504,7 +522,9 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().weight(0.3f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.3f)
         ) {
             item {
                 // Button to delete the trainer.
@@ -591,7 +611,9 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
     // Using a Column to layout elements vertically.
     Column {
         // A Row for displaying the title, with dynamic text based on the 'favorite' flag.
-        Row(modifier = Modifier.height(50.dp).fillMaxWidth(),
+        Row(modifier = Modifier
+            .height(50.dp)
+            .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
 
@@ -634,7 +656,9 @@ fun PokemonList(pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel,
 @Composable
 fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite: Boolean) {
     // Spacer to add some space before the item starts.
-    Spacer(modifier = Modifier.height(5.dp).fillMaxWidth())
+    Spacer(modifier = Modifier
+        .height(5.dp)
+        .fillMaxWidth())
 
     // FlowRow is used to arrange items in a horizontal flow that wraps.
     FlowRow(
@@ -657,13 +681,17 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
                     model = pokemon.imageUrl,
                     contentDescription = "Pokemon Image",
                     contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.size(100.dp).clip(MaterialTheme.shapes.medium)
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(MaterialTheme.shapes.medium)
                 )
             }
         }
 
         // Box for displaying the Pokemon's name.
-        Box(modifier = itemModifier.fillMaxHeight().weight(1f), contentAlignment = Alignment.Center) {
+        Box(modifier = itemModifier
+            .fillMaxHeight()
+            .weight(1f), contentAlignment = Alignment.Center) {
             if (pokemon != null) {
                 Text(
                     text = pokemon.name.replaceFirstChar { it.titlecase() },
@@ -674,7 +702,9 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         }
 
         // Box for displaying the Pokemon's types.
-        Box(modifier = itemModifier.fillMaxHeight().weight(1f), contentAlignment = Alignment.Center) {
+        Box(modifier = itemModifier
+            .fillMaxHeight()
+            .weight(1f), contentAlignment = Alignment.Center) {
             // List of specific Pokemon types.
             val specificTypes = listOf("fire", "water", "electric", "grass", "bug", "normal", "poison", "ground", "ghost", "psychic", "fairy", "fighting", "rock", "dragon", "ice")
             if (pokemon != null) {
@@ -694,7 +724,9 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         }
 
         // Box for the like/unlike button.
-        Box(modifier = itemModifier.fillMaxHeight().weight(1f), contentAlignment = Alignment.Center) {
+        Box(modifier = itemModifier
+            .fillMaxHeight()
+            .weight(1f), contentAlignment = Alignment.Center) {
             if (pokemon != null) {
                 IconButton(onClick = {
                     if (pokemon.liked == "true") {
