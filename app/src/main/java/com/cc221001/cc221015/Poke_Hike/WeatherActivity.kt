@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,10 +30,8 @@ import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-class WeatherActivity {
-
     @AndroidEntryPoint
-    class MainActivity : ComponentActivity() {
+    class WeatherActivity : ComponentActivity() {
         // This line declares and initializes a MainViewModel using the viewModels() delegate.
         // The 'by viewModels()' part indicates that the ViewModel instance will be scoped to the lifecycle of the corresponding Activity or Fragment.
         // Scoping to the lifecycle means that MainViewModel instance is created in association with the lifecycle of the activity.
@@ -109,6 +107,3 @@ class WeatherActivity {
             else -> R.drawable.background_sunny
         }
     }
-
-
-}
