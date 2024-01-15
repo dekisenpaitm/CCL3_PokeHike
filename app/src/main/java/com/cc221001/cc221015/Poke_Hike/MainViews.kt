@@ -1,6 +1,7 @@
 package com.cc221001.cc221015.Poke_Hike
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.ui.unit.dp
@@ -178,6 +179,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel) {
 // Define a Composable function for creating a Bottom Navigation Bar.
 @Composable
 fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen) {
+    val context = LocalContext.current
     // BottomNavigation is a Material Design component that provides bottom navigation.
     BottomNavigation(
         backgroundColor = MaterialTheme.colorScheme.primary // Set the background color of the navigation bar.
@@ -193,7 +195,8 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
         NavigationBarItem(
             // Similar configuration as above for the 'Third' screen.
             selected = (selectedScreen == Screen.Fifth),
-            onClick = { navController.navigate(Screen.Fifth.route) },
+            onClick = {
+                context.startActivity(Intent(context, WeatherActivity::class.java)) },
             icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "") }
         )
 
