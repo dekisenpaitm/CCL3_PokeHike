@@ -6,6 +6,7 @@ import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.stateModel.PokemonViewState
 import com.cc221001.cc221015.Poke_Hike.Screen
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 
 	// Fetch and load all Pokemon from the database.
 	fun getPokemon() {
+		println("I_Fatched_Pokemon")
 		_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
 	}
 
@@ -61,7 +63,7 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	}
 
 	// Load Pokemon data from an API and insert it into the database.
-	private fun loadPokemons() {
+	 fun loadPokemons() {
 		GlobalScope.launch(Dispatchers.IO) {
 			val pokemonsApiResult = PokemonRepository.listPokemons()
 			if (pokemonsApiResult != null) {
