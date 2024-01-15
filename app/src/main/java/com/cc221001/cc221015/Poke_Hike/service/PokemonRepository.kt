@@ -1,4 +1,4 @@
-package com.cc221001.cc221015.Poke_Hike.api
+package com.cc221001.cc221015.Poke_Hike.service
 
 import com.cc221001.cc221015.Poke_Hike.data.PokemonApiResult
 import com.cc221001.cc221015.Poke_Hike.data.PokemonsApiResult

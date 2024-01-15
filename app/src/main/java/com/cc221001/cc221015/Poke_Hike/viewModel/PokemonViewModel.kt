@@ -1,12 +1,11 @@
 package com.cc221001.cc221015.Poke_Hike.viewModel
 
 import androidx.lifecycle.ViewModel
-import com.cc221001.cc221015.Poke_Hike.api.PokemonRepository
+import com.cc221001.cc221015.Poke_Hike.service.PokemonRepository
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.stateModel.PokemonViewState
 import com.cc221001.cc221015.Poke_Hike.Screen
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
