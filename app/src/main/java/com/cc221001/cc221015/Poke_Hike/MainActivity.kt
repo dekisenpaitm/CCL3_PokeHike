@@ -1,8 +1,11 @@
 package com.cc221001.cc221015.Poke_Hike
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,8 +15,13 @@ import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
     // Database handler for Pokemon trainers.
     private val db = TrainerBaseHandler(this)
 
@@ -26,9 +34,23 @@ class MainActivity : ComponentActivity() {
     // ViewModel for the Pokemon-related view.
     private val pokemonViewModel = PokemonViewModel(pdb)
 
+
+
+
+    private val weatherViewModel: WeatherViewModel by viewModels()
+    // Creating a property to hold the ActivityResultLauncher for requesting a permission.
+    private val requestPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            // This code block is executed when the permission request is completed.
+            // If the permission is granted, call the checkLocation() function. it = isPermissionGranted
+            if (it) weatherViewModel.onPermissionGranted()
+        }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             MyApplicationTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -43,4 +65,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
 }

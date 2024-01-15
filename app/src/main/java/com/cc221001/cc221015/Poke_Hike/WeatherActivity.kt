@@ -36,16 +36,16 @@ import dagger.hilt.android.AndroidEntryPoint
         // The 'by viewModels()' part indicates that the ViewModel instance will be scoped to the lifecycle of the corresponding Activity or Fragment.
         // Scoping to the lifecycle means that MainViewModel instance is created in association with the lifecycle of the activity.
         //  Useful because it means ViewModel will be automatically cleared when activity is destroyed => no memory leaks, cuz n VM beyond lifecycle
-        private val weatherViewModel: WeatherViewModel by viewModels()
+     private val weatherViewModel: WeatherViewModel by viewModels()
 
-        // Creating a property to hold the ActivityResultLauncher for requesting a permission.
-        private val requestPermission =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                // This code block is executed when the permission request is completed.
-                // If the permission is granted, call the checkLocation() function. it = isPermissionGranted
-                if (it) weatherViewModel.onPermissionGranted()
-            }
-
+        /*          // Creating a property to hold the ActivityResultLauncher for requesting a permission.
+               private val requestPermission =
+                   registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                       // This code block is executed when the permission request is completed.
+                       // If the permission is granted, call the checkLocation() function. it = isPermissionGranted
+                       if (it) weatherViewModel.onPermissionGranted()
+                   }
+       */
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             println("Activity Created")
@@ -63,7 +63,7 @@ import dagger.hilt.android.AndroidEntryPoint
                                 .fillMaxSize()
                         )
                         // Initiating the request to launch the permission dialog for accessing fine location.
-                        requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                        //requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                     }
                 }
             }
