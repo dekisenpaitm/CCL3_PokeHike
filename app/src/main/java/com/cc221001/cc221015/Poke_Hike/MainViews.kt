@@ -2,6 +2,8 @@ package com.cc221001.cc221015.Poke_Hike
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import androidx.activity.viewModels
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.ui.unit.dp
@@ -70,10 +72,12 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.cc221001.cc221015.Poke_Hike.data.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
+import com.cc221001.cc221015.Poke_Hike.service.dto.WeatherResponse
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
-
 
 // https://kotlinlang.org/docs/sealed-classes.html
 // Define a sealed class named 'Screen' to represent different screens in the app.
@@ -88,6 +92,7 @@ sealed class Screen(val route: String) {
     object Third : Screen("third")   // Represents the third screen with route "third"
     object Fourth : Screen("fourth") // Represents the fourth screen with route "fourth"
     object Fifth : Screen("fifth") // Represents the fourth screen with route "fourth"
+
 }
 
 // Usage: This sealed class is particularly useful in a Jetpack Compose navigation setup,
@@ -98,9 +103,12 @@ sealed class Screen(val route: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 // MainView is a Composable function that creates the main view of your app.
 @Composable
-fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel) {
+fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel) {
+
+
     // Collect the current state of the main view from the MainViewModel.
     val state = mainViewModel.mainViewState.collectAsState()
+
     // Create or remember a NavController for navigation between screens.
     val navController = rememberNavController()
 
@@ -172,9 +180,38 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel) {
                     ErrorScreen()
                 }
             }
+
+            // Define the composable function for the 'Fifth' route.
+            composable(Screen.Fifth.route) {
+                mainViewModel.getPokemonTrainer()
+                SetBackgroundMain()
+                // Similar logic as above for the fourth screen.
+                if (state.value.pokemonTrainers.isNotEmpty()) {
+                    mainViewModel.selectScreen(Screen.Fifth)
+                    displayWeather(weatherViewModel)
+                } else {
+                    mainViewModel.selectScreen(Screen.Fifth)
+                    ErrorScreen()
+                }
+            }
         }
     }
 }
+
+@Composable
+fun displayWeather(weatherViewModel:WeatherViewModel) {
+    val weather by weatherViewModel.weather.collectAsState(null)
+    println("${weather}")
+    Column(Modifier.fillMaxSize()) {
+        weather?.let {
+            WeatherSummary(weather = it)
+        }
+        Box(
+            modifier = Modifier
+                .background(Color(0xFF010528))
+                .fillMaxSize()
+        )
+}}
 
 // Define a Composable function for creating a Bottom Navigation Bar.
 @Composable
@@ -196,7 +233,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             // Similar configuration as above for the 'Third' screen.
             selected = (selectedScreen == Screen.Fifth),
             onClick = {
-                context.startActivity(Intent(context, WeatherActivity::class.java)) },
+                navController.navigate(Screen.Fifth.route) },
             icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "") }
         )
 
@@ -749,7 +786,47 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
 // This function creates a UI for each Pokemon item. It includes an image, name, types, and a like button.
 // The layout is done using FlowRow for a responsive design. The like button interacts with the PokemonViewModel for state changes.
 
+@Composable
+fun WeatherSummary(weather: WeatherResponse) {
+    println("where is image")
+    Box {
+        Image(
+            painter = painterResource(id = weather.background()),
+            contentDescription = "Background",
+            modifier = Modifier.fillMaxWidth(),
+            contentScale = ContentScale.FillWidth
+        )
+        Column(
+            Modifier
+                .padding(top = 48.dp)
+                .align(Alignment.TopCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = weather?.main?.temp.toString(), fontSize = 48.sp, color = Color.White)
+            Text(
+                text = weather?.weather?.first()?.main.toString(),
+                fontSize = 28.sp,
+                color = Color.White
+            )
+            Text(text = weather?.name.toString(), fontSize = 18.sp, color = Color.White)
+        }
+    }
+    Box(
+        modifier = Modifier
+            .background(Color(0xFF010528))
+            .fillMaxSize()
+    )
+}
 
+@DrawableRes
+private fun WeatherResponse.background(): Int {
+    val conditions = weather.first().main
+    return when {
+        conditions.contains("cloud", ignoreCase = true) -> R.drawable.background_cloudy
+        conditions.contains("rain", ignoreCase = true) -> R.drawable.background_rainy
+        else -> R.drawable.background_sunny
+    }
+}
 
 
 

@@ -6,10 +6,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
@@ -60,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     // Initialize and fetch Pokemon trainers from the database.
                     db.getPokemonTrainers()
                     // Create and display the main view with associated ViewModels.
-                    MainView(mainViewModel, pokemonViewModel)
+                    MainView(mainViewModel, pokemonViewModel, weatherViewModel)
                 }
             }
         }
