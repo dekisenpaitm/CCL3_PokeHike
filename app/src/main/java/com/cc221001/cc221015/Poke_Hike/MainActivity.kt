@@ -6,22 +6,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
+import com.cc221001.cc221015.Poke_Hike.views.MainView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,9 +34,6 @@ class MainActivity : ComponentActivity() {
 
     // ViewModel for the Pokemon-related view.
     private val pokemonViewModel = PokemonViewModel(pdb)
-
-
-
 
     private val weatherViewModel: WeatherViewModel by viewModels()
     // Creating a property to hold the ActivityResultLauncher for requesting a permission.
