@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.cc221001.cc221015.Poke_Hike.data.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
 import com.cc221001.cc221015.Poke_Hike.stateModel.MainViewState
-import com.cc221001.cc221015.Poke_Hike.Screen
+import com.cc221001.cc221015.Poke_Hike.views.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
