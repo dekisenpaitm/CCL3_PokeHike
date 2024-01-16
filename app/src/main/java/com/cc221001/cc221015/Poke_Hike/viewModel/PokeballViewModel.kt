@@ -3,6 +3,7 @@ package com.cc221001.cc221015.Poke_Hike.viewModel
 import androidx.lifecycle.ViewModel
 import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
+import com.cc221001.cc221015.Poke_Hike.service.dto.WeatherResponse
 import com.cc221001.cc221015.Poke_Hike.stateModel.PokeballViewState
 import com.cc221001.cc221015.Poke_Hike.views.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,8 +30,8 @@ class PokeballViewModel(private val db: PokeballBaseHandler) : ViewModel() {
         _pokeballViewState.update { it.copy(selectedScreen = screen) }
     }
 
-    fun createPokeball(id: Int, name: String, type: String, price: Int, imageUrl: String) {
-        val pokeball = Pokeball(id, name, type, price, imageUrl)
+    fun createPokeball(name: String, type: String, price: Int, imageUrl: String) {
+        val pokeball = Pokeball(name= name, type0= type, price= price, imageUrl=imageUrl)
         db.insertPokemonBall(pokeball)
     }
 }

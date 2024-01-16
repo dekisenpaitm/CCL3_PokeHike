@@ -21,7 +21,7 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
         // Create the Pokeball table when the database is first created.
         db?.execSQL(
             "CREATE TABLE IF NOT EXISTS $tableName (" +
-                    "$id INTEGER PRIMARY KEY, " +
+                    "$id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "$name VARCHAR(30), " +
                     "$type0 VARCHAR(256), " +
                     "$price VARCHAR(256), " +
@@ -35,18 +35,39 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
         onCreate(db)
     }
 
-    // Insert a Pokeball into the database.
+    // Insert a Pokeball into the database. Checks if the Pokeball already exists
     fun insertPokemonBall(pokeball: Pokeball) {
         val db = this.writableDatabase
-        val values = ContentValues()
-        values.put(id, pokeball.number)
-        values.put(name, pokeball.name)
-        values.put(type0, pokeball.type0)
-        values.put(price, pokeball.price)
-        values.put(imageUrl, pokeball.imageUrl)
 
-        db.insert(tableName, null, values)
+        if (!pokeballExists(db, pokeball.name)) {
+            val values = ContentValues()
+            values.put(name, pokeball.name)
+            values.put(type0, pokeball.type0)
+            values.put(price, pokeball.price)
+            values.put(imageUrl, pokeball.imageUrl)
+
+            // Ensure db is not null before calling insert
+            db?.insert(tableName, null, values)
+        } else {
+            println("Pokeball is already created!")
+        }
     }
+
+    fun pokeballExists(db: SQLiteDatabase?, pokeballName: String): Boolean {
+        // Ensure db is not null before querying
+        db?.let {
+            val query = "SELECT $id FROM $tableName WHERE $name = '$pokeballName'"
+            val cursor = it.rawQuery(query, null)
+
+            if (cursor != null) {
+                val exists = cursor.moveToFirst()
+                cursor.close()
+                return exists
+            }
+        }
+        return false
+    }
+
 
     // Retrieve all Pokeballs from the database.
     fun getAllPokeballs(): List<Pokeball> {
@@ -71,7 +92,6 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
                     )
                 )
         }
-
         return allPokeballs.toList()
     }
 
@@ -80,7 +100,7 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
         var specialPokeball = mutableListOf<Pokeball>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $type0=$weather", null)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $type0= '$weather'", null)
         while (cursor.moveToNext()) {
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)

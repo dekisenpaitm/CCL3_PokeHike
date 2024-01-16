@@ -10,10 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.cc221001.cc221015.Poke_Hike.composables.CreatePokeballEntries
+import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 import com.cc221001.cc221015.Poke_Hike.views.MainView
@@ -21,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
 
     // Database handler for Pokemon trainers.
     private val db = TrainerBaseHandler(this)
@@ -34,6 +36,12 @@ class MainActivity : ComponentActivity() {
 
     // ViewModel for the Pokemon-related view.
     private val pokemonViewModel = PokemonViewModel(pdb)
+
+    // Database handler for Pokemon entities.
+    private val pbdb = PokeballBaseHandler(this)
+
+    // ViewModel for the Pokemon-related view.
+    private val pokeballViewModel = PokeballViewModel(pbdb)
 
     private val weatherViewModel: WeatherViewModel by viewModels()
     // Creating a property to hold the ActivityResultLauncher for requesting a permission.
@@ -56,13 +64,15 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Initialize and fetch Pokemon trainers from the database.
+                    CreatePokeballEntries(pokeballViewModel)
                     db.getPokemonTrainers()
                     // Create and display the main view with associated ViewModels.
-                    MainView(mainViewModel, pokemonViewModel, weatherViewModel)
+                    MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel)
                 }
             }
         }
     }
 
-
 }
+
+

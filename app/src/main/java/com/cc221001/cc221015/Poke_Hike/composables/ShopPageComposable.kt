@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,13 +31,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
+import com.cc221001.cc221015.Poke_Hike.service.dto.WeatherResponse
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
+import okio.AsyncTimeout.Companion.condition
 
 @Composable
-fun DisplayPokeballList(pokeballViewModel: PokeballViewModel, weather: WeatherViewModel) {
+fun GetWeatherResponse(weatherViewModel: WeatherViewModel): WeatherResponse? {
+    val weather by weatherViewModel.weather.collectAsState(null)
+
+    return weather
+}
+
+@Composable
+fun DisplayPokeballList(pokeballViewModel: PokeballViewModel, weatherViewModel: WeatherViewModel) {
     // Collecting the list of Pokemons from the ViewModel.
+    val weather = GetWeatherResponse(weatherViewModel = weatherViewModel)
+    val condition = weather?.weather?.first()?.main
+
+    println(condition)
+
+    pokeballViewModel.getSpecialPokeball(condition.toString())
+
     val pokeballList = pokeballViewModel.pokemonViewState.collectAsState().value.pokeballs
+
+
 
     // Using a Column to layout elements vertically.
     Column {
@@ -54,13 +73,13 @@ fun DisplayPokeballList(pokeballViewModel: PokeballViewModel, weather: WeatherVi
         // A Row to display the list of Pokemon.
         Row {
             // Calling PokemonList Composable to display the actual list.
-            PokeballList(pokeballs = pokeballList, pokeballViewModel = pokeballViewModel, weather = weather)
+            PokeballList(pokeballs = pokeballList, pokeballViewModel = pokeballViewModel)
         }
     }
 }
 
 @Composable
-fun PokeballList(pokeballs: List<Pokeball?>, pokeballViewModel: PokeballViewModel, weather: WeatherViewModel) {
+fun PokeballList(pokeballs: List<Pokeball?>, pokeballViewModel: PokeballViewModel) {
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
     LazyColumn {
