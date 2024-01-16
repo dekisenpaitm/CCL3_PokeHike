@@ -1,13 +1,14 @@
 package com.cc221001.cc221015.Poke_Hike.service
 
 import android.Manifest
+import android.app.Application
 import android.content.Context
 import android.location.Location
 import android.os.Looper
 import androidx.annotation.RequiresPermission
 import com.cc221001.cc221015.Poke_Hike.BuildConfig
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
-import com.cc221001.cc221015.Poke_Hike.service.dto.FullWeather
+import com.cc221001.cc221015.Poke_Hike.service.dto.ForecastWeather
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -22,10 +23,9 @@ import javax.inject.Inject
  * Repository class responsible for fetching weather data based on the current device location.
  */
 class WeatherRepository @Inject constructor(
+    private val application: Application
 ) {
-    // OpenWeatherMap API service instance for making network requests
     private val service = OpenWeatherService()
-
 
     /**
      * Creates a Flow that emits the device's current location.
@@ -34,9 +34,9 @@ class WeatherRepository @Inject constructor(
      * @return A channelFlow emitting the device's current location updates.
      */
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    private fun locationFlow (context: Context) = channelFlow<Location>{
+    private fun locationFlow () = channelFlow<Location>{
         // Fused Location Provider client for obtaining location updates
-        val client = LocationServices.getFusedLocationProviderClient(context)
+        val client = LocationServices.getFusedLocationProviderClient(application)
 
         // Callback to handle received location updates
         val callback = object : LocationCallback() {
@@ -70,8 +70,8 @@ class WeatherRepository @Inject constructor(
      * @return A Flow emitting the current WeatherResponse or null if the location is not available.
      */
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    fun getCurrentWeather(context: Context): Flow<CurrentWeather?> {
-        val flow = locationFlow(context).map{
+    fun getCurrentWeather(): Flow<CurrentWeather?> {
+        val flow = locationFlow().map{
             // Fetch current weather data using the obtained location
             service.getCurrentWeather(it.latitude, it.longitude, BuildConfig.API_KEY)
                 .body()
@@ -80,12 +80,11 @@ class WeatherRepository @Inject constructor(
     }
 
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    fun getFiveDayForecast(context: Context): Flow<List<FullWeather.Daily>?> {
-        val flow = locationFlow(context).map{
-            // Fetch current weather data using the obtained location
-            service.getFullWeather(it.latitude, it.longitude, BuildConfig.API_KEY)
+    fun weatherForecast(): Flow<ForecastWeather?> {
+        val flow = locationFlow().map{
+            service.getForecastWeather(it.latitude, it.longitude, BuildConfig.API_KEY)
                 .body()
-        }.map {it?.daily?.drop(1)?.take(5)}
+        }
         return flow
     }
 

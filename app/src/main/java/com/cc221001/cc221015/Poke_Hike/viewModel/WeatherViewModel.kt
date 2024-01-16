@@ -4,31 +4,25 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.cc221001.cc221015.Poke_Hike.service.WeatherRepository
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
-import com.cc221001.cc221015.Poke_Hike.service.dto.FullWeather
+import com.cc221001.cc221015.Poke_Hike.service.dto.ForecastWeather
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 
 @SuppressLint("MissingPermission")
 @HiltViewModel
 class WeatherViewModel @Inject constructor (
-    application: Application,
     private val repository: WeatherRepository
-) : AndroidViewModel(application) {
-    // Repository instance for fetching weather data
+) : ViewModel() {
 
-    // Flow representing the current weather data based on the device's location
-    val weather: Flow<CurrentWeather?> = repository.getCurrentWeather(getApplication() as Context)
-    val forecast: Flow<List<FullWeather.Daily>?> = repository.getFiveDayForecast(getApplication() as Context)
+    val weather: Flow<CurrentWeather?> = repository.getCurrentWeather()
+    val forecast: Flow<ForecastWeather?> = repository.weatherForecast()
 
-
-    fun onPermissionGranted(): Flow<Pair<CurrentWeather?, List<FullWeather.Daily>?>> {
-        return weather.combine(forecast) { currentWeather, fiveDayForecast ->
-            Pair(currentWeather, fiveDayForecast)
-        }
+    fun onPermissionGranted(): Pair<Flow<CurrentWeather?>, Flow<ForecastWeather?>> {
+        return Pair(weather, forecast)
     }
 }
