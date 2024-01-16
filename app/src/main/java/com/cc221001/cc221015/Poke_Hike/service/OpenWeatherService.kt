@@ -1,6 +1,7 @@
 package com.cc221001.cc221015.Poke_Hike.service
 
-import com.cc221001.cc221015.Poke_Hike.service.dto.WeatherResponse
+import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
+import com.cc221001.cc221015.Poke_Hike.service.dto.FullWeather
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,14 +19,21 @@ interface OpenWeatherService {
      * @param lat Latitude of the location.
      * @param lon Longitude of the location.
      * @param appid API key for authentication.
-     * @return A [Response] containing the weather information in [WeatherResponse] format.
+     * @return A [Response] containing the weather information in [CurrentWeather] format.
      */
     @GET("weather?units=metric")
     suspend fun getCurrentWeather(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("appid") appid: String,
-    ) : Response<WeatherResponse>
+    ) : Response<CurrentWeather>
+
+    @GET("onecall?units=metric&exclude=current,minutely,hourly,alerts")
+    suspend fun getFullWeather(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("appid") appid: String,
+    ) : Response<FullWeather>
 }
 
 /**

@@ -20,12 +20,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cc221001.cc221015.Poke_Hike.R
-import com.cc221001.cc221015.Poke_Hike.service.dto.WeatherResponse
+import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 
 @Composable
 fun DisplayWeather(weatherViewModel: WeatherViewModel) {
     val weather by weatherViewModel.weather.collectAsState(null)
+    val forecast by weatherViewModel.forecast.collectAsState(emptyList())
     println("${weather}")
     Column(Modifier.fillMaxSize()) {
         weather?.let {
@@ -40,7 +41,7 @@ fun DisplayWeather(weatherViewModel: WeatherViewModel) {
 }
 
 @Composable
-fun WeatherSummary(weather: WeatherResponse) {
+fun WeatherSummary(weather: CurrentWeather) {
     println("where is image")
     Box {
         Image(
@@ -72,7 +73,7 @@ fun WeatherSummary(weather: WeatherResponse) {
 }
 
 @DrawableRes
-private fun WeatherResponse.background(): Int {
+private fun CurrentWeather.background(): Int {
     val conditions = weather.first().main
     return when {
         conditions.contains("cloud", ignoreCase = true) -> R.drawable.background_cloudy

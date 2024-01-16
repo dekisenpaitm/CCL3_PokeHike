@@ -6,8 +6,8 @@ import android.location.Location
 import android.os.Looper
 import androidx.annotation.RequiresPermission
 import com.cc221001.cc221015.Poke_Hike.BuildConfig
-import com.cc221001.cc221015.Poke_Hike.service.dto.WeatherResponse
-import com.cc221001.cc221015.Poke_Hike.service.OpenWeatherService
+import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
+import com.cc221001.cc221015.Poke_Hike.service.dto.FullWeather
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -70,12 +70,22 @@ class WeatherRepository @Inject constructor(
      * @return A Flow emitting the current WeatherResponse or null if the location is not available.
      */
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    fun currentLocationWeather(context: Context): Flow<WeatherResponse?> {
+    fun getCurrentWeather(context: Context): Flow<CurrentWeather?> {
         val flow = locationFlow(context).map{
             // Fetch current weather data using the obtained location
             service.getCurrentWeather(it.latitude, it.longitude, BuildConfig.API_KEY)
                 .body()
         }
+        return flow
+    }
+
+    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+    fun getFiveDayForecast(context: Context): Flow<List<FullWeather.Daily>?> {
+        val flow = locationFlow(context).map{
+            // Fetch current weather data using the obtained location
+            service.getFullWeather(it.latitude, it.longitude, BuildConfig.API_KEY)
+                .body()
+        }.map {it?.daily?.drop(1)?.take(5)}
         return flow
     }
 
