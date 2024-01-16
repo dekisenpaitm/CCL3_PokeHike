@@ -100,6 +100,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                 )
         }
 
+        println("those are all your pokemon: $allPokemons")
         return allPokemons.toList()
     }
 
@@ -141,10 +142,11 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
     }
 
     fun getPokemonsOfType(type:String):List<Pokemon?> {
+        println("pokemonOfTypeCalled")
         var allPokemons = mutableListOf<Pokemon>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND $type0 = $type", null)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND $type0 LIKE '%$type%';", null)
         while (cursor.moveToNext()) {
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)
@@ -164,22 +166,27 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                     )
                 )
         }
-
         return allPokemons.toList()
     }
-    fun getRandomNewPokemon(type1:String,type2:String,type3:String):Pokemon?{
-
-        val pokemonsOfTypeOne = getPokemonsOfType(type1)
-        val pokemonsOfTypeTwo = getPokemonsOfType(type2)
-        val pokemonsOfTypeThree = getPokemonsOfType(type3)
+    fun getRandomNewPokemon(type1: String = "", type2: String = "", type3: String = ""): Pokemon? {
+        val pokemonsOfTypeOne = if (type1.isNotEmpty()) getPokemonsOfType(type1) else emptyList()
+        val pokemonsOfTypeTwo = if (type2.isNotEmpty()) getPokemonsOfType(type2) else emptyList()
+        val pokemonsOfTypeThree = if (type3.isNotEmpty()) getPokemonsOfType(type3) else emptyList()
 
         val combinedPokemonList = pokemonsOfTypeOne + pokemonsOfTypeTwo + pokemonsOfTypeThree
 
-        val randomPokemon = combinedPokemonList.random()
-        if (randomPokemon != null) {
-            tagPokemonAsOwned(randomPokemon)
+        if (combinedPokemonList.isEmpty()) {
+            // If no valid types were provided, return null or handle it accordingly
+            println("No valid types provided. Unable to get a random Pokemon.")
+            return null
         }
-        // IF NO POKEMON IS AVAILABLE RETURN COINS TO USER!
+
+        val randomPokemon = combinedPokemonList.random()
+        if(randomPokemon != null) {
+            //ACTIVATE TO TAG POKEMONS AS OWNED!
+            //tagPokemonAsOwned(randomPokemon)
+        }
+        println("This is your random Pokemon: $randomPokemon")
         return randomPokemon
     }
 
