@@ -15,6 +15,31 @@ data class ForecastWeather(
     @SerializedName("message")
     val message: Int
 ) {
+    data class City(
+        @SerializedName("coord")
+        val coord: Coord,
+        @SerializedName("country")
+        val country: String,
+        @SerializedName("id")
+        val id: Int,
+        @SerializedName("name")
+        val name: String,
+        @SerializedName("population")
+        val population: Int,
+        @SerializedName("sunrise")
+        val sunrise: Int,
+        @SerializedName("sunset")
+        val sunset: Int,
+        @SerializedName("timezone")
+        val timezone: Int
+    ) {
+        data class Coord(
+            @SerializedName("lon")
+            val lon: Double,
+            @SerializedName("lat")
+            val lat: Double
+        )
+    }
     data class Forecast (
         @SerializedName("clouds")
         val clouds: Clouds,
@@ -37,6 +62,16 @@ data class ForecastWeather(
         @SerializedName("wind")
         val wind: Wind
     ) {
+
+        data class SysForecast(
+            @SerializedName("pod")
+            val pod: String
+        )
+
+        data class Rain(
+            @SerializedName("3h")
+            val h: Double
+        )
         data class MainForecast(
             @SerializedName("feels_like")
             val feelsLike: Double,
