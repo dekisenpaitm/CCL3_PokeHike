@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import com.cc221001.cc221015.Poke_Hike.service.SimpleForecast
 import com.cc221001.cc221015.Poke_Hike.service.WeatherRepository
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
 import com.cc221001.cc221015.Poke_Hike.service.dto.ForecastWeather
@@ -20,9 +21,9 @@ class WeatherViewModel @Inject constructor (
 ) : ViewModel() {
 
     val weather: Flow<CurrentWeather?> = repository.getCurrentWeather()
-    val forecast: Flow<ForecastWeather?> = repository.weatherForecast()
+    val forecast: Flow<List<SimpleForecast>> = repository.weatherForecast()
 
-    fun onPermissionGranted(): Pair<Flow<CurrentWeather?>, Flow<ForecastWeather?>> {
+    fun onPermissionGranted(): Pair<Flow<CurrentWeather?>, Flow<List<SimpleForecast>>> {
         return Pair(weather, forecast)
     }
 }

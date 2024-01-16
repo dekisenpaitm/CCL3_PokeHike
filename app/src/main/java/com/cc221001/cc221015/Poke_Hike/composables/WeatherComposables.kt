@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,14 +26,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cc221001.cc221015.Poke_Hike.R
+import com.cc221001.cc221015.Poke_Hike.service.SimpleForecast
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
+import com.cc221001.cc221015.Poke_Hike.service.dto.ForecastWeather
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 import kotlin.math.roundToInt
 
 @Composable
 fun DisplayWeather(weatherViewModel: WeatherViewModel) {
     val weather by weatherViewModel.weather.collectAsState(null)
-    val forecast by weatherViewModel.forecast.collectAsState(null)
+    val forecast by weatherViewModel.forecast.collectAsState(emptyList())
     println("Current Weather: $weather")
     println("Forecast: $forecast")
     Column(Modifier.fillMaxSize()) {
@@ -40,6 +44,7 @@ fun DisplayWeather(weatherViewModel: WeatherViewModel) {
             TemperatureSummary(it)
             Divider(color = Color.White)
         }
+            FiveDayForecast(forecast)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -105,22 +110,21 @@ fun TemperatureSummary(weather: CurrentWeather) {
 }
 
 @Composable
-/*fun FiveDayForecast(forecast: ForecastWeather){
-    LazyColumn{
+fun FiveDayForecast(forecast: List<SimpleForecast>){
+    LazyColumn {
         items(forecast) { dayForecast ->
-            Box(
+            Row(
                 Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 32.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = SimpleDateFormat("EEEE").format(Date(dayForecast.dt)),
-                    color = Color.White,
-                )
+                Text(dayForecast.date.toString())
+                Text(formatTemperature(dayForecast.temperature))
             }
-
         }
     }
-}*/
+}
 
 @DrawableRes
 private fun CurrentWeather.background(): Int {

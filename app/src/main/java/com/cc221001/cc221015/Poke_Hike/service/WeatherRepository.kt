@@ -16,25 +16,48 @@ import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
-/**
- * Repository class responsible for fetching weather data based on the current device location.
- */
-class WeatherRepository @Inject constructor(
-    private val application: Application
-) {
-    private val service = OpenWeatherService()
+class SimpleForecast(
+    val date: Date, val condition: String, val temperature: Double
+)
 
-    /**
-     * Creates a Flow that emits the device's current location.
-     *
-     * @param context The application context.
-     * @return A channelFlow emitting the device's current location updates.
-     */
+class WeatherRepository @Inject constructor(
+    private val application: Application, private val service: OpenWeatherService
+) {
+
+    private fun transform(forecast: ForecastWeather): List<SimpleForecast> {
+        val today = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+        val filtered = forecast.list.filter {
+            val calendar = Calendar.getInstance().apply {
+                time = Date(it.dt * 1000L) // Assuming dt is in seconds, so convert to milliseconds
+            }
+            calendar.get(Calendar.DAY_OF_MONTH) > today
+        }
+
+        val group = filtered.groupBy {
+            Calendar.getInstance().apply {
+                time = Date(it.dt * 1000L)
+            }.get(Calendar.DAY_OF_MONTH)
+        }
+
+        return group.mapValues { (_, forecastList) ->
+            forecastList[4]
+        }.map { (_, forecast) ->
+            SimpleForecast(
+                Date(forecast.dt * 1000L), forecast.weather.first().main, forecast.main.temp
+            )
+        }
+    }
+
+
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    private fun locationFlow () = channelFlow<Location>{
+    private fun locationFlow() = channelFlow<Location> {
         // Fused Location Provider client for obtaining location updates
         val client = LocationServices.getFusedLocationProviderClient(application)
 
@@ -63,29 +86,22 @@ class WeatherRepository @Inject constructor(
         }
     }
 
-    /**
-     * Fetches the current weather based on the device's location.
-     *
-     * @param context The application context.
-     * @return A Flow emitting the current WeatherResponse or null if the location is not available.
-     */
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     fun getCurrentWeather(): Flow<CurrentWeather?> {
-        val flow = locationFlow().map{
+        val flow = locationFlow().map {
             // Fetch current weather data using the obtained location
-            service.getCurrentWeather(it.latitude, it.longitude, BuildConfig.API_KEY)
-                .body()
+            service.getCurrentWeather(it.latitude, it.longitude, BuildConfig.API_KEY).body()
         }
         return flow
     }
 
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    fun weatherForecast(): Flow<ForecastWeather?> {
-        val flow = locationFlow().map{
-            service.getForecastWeather(it.latitude, it.longitude, BuildConfig.API_KEY)
-                .body()
+    fun weatherForecast(): Flow<List<SimpleForecast>> {
+        return locationFlow().map {
+            service.getForecastWeather(it.latitude, it.longitude, BuildConfig.API_KEY).body()
+        }.filterNotNull().map {
+            transform(it)
         }
-        return flow
-    }
 
+    }
 }

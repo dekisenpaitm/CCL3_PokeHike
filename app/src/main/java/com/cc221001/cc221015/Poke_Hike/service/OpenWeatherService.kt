@@ -36,15 +36,3 @@ interface OpenWeatherService {
     ) : Response<ForecastWeather>
 }
 
-/**
- * Function to create an instance of [OpenWeatherService] using Retrofit.
- *
- * @return An instance of [OpenWeatherService].
- */
-fun OpenWeatherService(): OpenWeatherService {
-    return Retrofit.Builder()
-        .baseUrl("https://api.openweathermap.org/data/2.5/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create()
-}
