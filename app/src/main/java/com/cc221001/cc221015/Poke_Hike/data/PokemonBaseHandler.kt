@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
+import kotlinx.coroutines.runBlocking
 
 // This class handles database operations for storing Pokemon data.
 class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, null, 1) {
@@ -17,6 +18,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         private const val type1 = "type1"
         private const val imageUrl = "imageUrl"
         private const val liked = "liked"
+        private const val owned = "owned"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -28,7 +30,8 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                     "$type0 VARCHAR(256), " +
                     "$type1 VARCHAR(256), " +
                     "$imageUrl VARCHAR(256), " +
-                    "$liked VARCHAR(256));"
+                    "$liked VARCHAR(256)," +
+                    "$owned VARCHAR(256));"
         )
     }
 
@@ -47,6 +50,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         values.put(type0, pokemon.type0)
         values.put(type1, pokemon.type1)
         values.put(liked, pokemon.liked)
+        values.put(owned, pokemon.owned)
         values.put(imageUrl, pokemon.imageUrl)
 
         db.insert(tableName, null, values)
@@ -96,6 +100,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                 )
         }
 
+        println("those are all your pokemon: $allPokemons")
         return allPokemons.toList()
     }
 
@@ -135,4 +140,63 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
             unlikePokemon(pokemon)
         }
     }
+
+    fun getPokemonsOfType(type:String):List<Pokemon?> {
+        println("pokemonOfTypeCalled")
+        var allPokemons = mutableListOf<Pokemon>()
+
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND $type0 LIKE '%$type%';", null)
+        while (cursor.moveToNext()) {
+            val idID = cursor.getColumnIndex(id)
+            val nameID = cursor.getColumnIndex(name)
+            val type0ID = cursor.getColumnIndex(type0)
+            val type1ID = cursor.getColumnIndex(type1)
+            val likedID = cursor.getColumnIndex(liked)
+            val imageUrlID = cursor.getColumnIndex(imageUrl)
+            if (nameID >= 0)
+                allPokemons.add(
+                    Pokemon(
+                        cursor.getInt(idID),
+                        cursor.getString(nameID),
+                        cursor.getString(type0ID),
+                        cursor.getString(type1ID),
+                        cursor.getString(imageUrlID),
+                        cursor.getString(likedID)
+                    )
+                )
+        }
+        return allPokemons.toList()
+    }
+    fun getRandomNewPokemon(type1: String = "", type2: String = "", type3: String = ""): Pokemon? {
+        val pokemonsOfTypeOne = if (type1.isNotEmpty()) getPokemonsOfType(type1) else emptyList()
+        val pokemonsOfTypeTwo = if (type2.isNotEmpty()) getPokemonsOfType(type2) else emptyList()
+        val pokemonsOfTypeThree = if (type3.isNotEmpty()) getPokemonsOfType(type3) else emptyList()
+
+        val combinedPokemonList = pokemonsOfTypeOne + pokemonsOfTypeTwo + pokemonsOfTypeThree
+
+        if (combinedPokemonList.isEmpty()) {
+            // If no valid types were provided, return null or handle it accordingly
+            println("No valid types provided. Unable to get a random Pokemon.")
+            return null
+        }
+
+        val randomPokemon = combinedPokemonList.random()
+        if(randomPokemon != null) {
+            //ACTIVATE TO TAG POKEMONS AS OWNED!
+            //tagPokemonAsOwned(randomPokemon)
+        }
+        println("This is your random Pokemon: $randomPokemon")
+        return randomPokemon
+    }
+
+    fun tagPokemonAsOwned(randomPokemon:Pokemon){
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put(owned, "true")
+
+        db.update(tableName, values, "_id = ?", arrayOf(randomPokemon?.number.toString()))
+    }
+
 }
+
