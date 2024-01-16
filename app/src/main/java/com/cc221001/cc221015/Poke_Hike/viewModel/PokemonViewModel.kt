@@ -21,13 +21,16 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 
 	// Fetch and load all Pokemon from the database.
 	fun getPokemon() {
-		println("I_Fatched_Pokemon")
 		_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
 	}
 
 	// Fetch and load favorite Pokemon from the database.
 	fun getFavPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getFavPokemons()) }
+	}
+	//Fetches a certain type of Pokemon & checks if the Pokemon are already owned
+	fun getRandomPokemon(type1:String, type2:String, type3:String) {
+		_pokemonViewState.update { it.copy(pokemon = db.getRandomNewPokemon(type1, type2, type3)) }
 	}
 
 	// Select a screen in the UI.

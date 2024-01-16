@@ -8,5 +8,6 @@ data class Pokemon (
 	val type1: String,  // The secondary type of the Pokemon (e.g., Flying, Psychic).
 	val imageUrl: String = "https://img.pokemondb.net/sprites/diamond-pearl/normal/$name.png",
 	// The URL of the Pokemon's image. Defaults to a standard Pokemon sprite URL.
-	val liked: String = "false"  // Indicates whether the Pokemon is liked by the user (defaults to "false").
+	val liked: String = "false",  // Indicates whether the Pokemon is liked by the user (defaults to "false").
+	val owned: String = "false"  // Indicates whether the Pokemon is liked by the user (defaults to "false").
 )

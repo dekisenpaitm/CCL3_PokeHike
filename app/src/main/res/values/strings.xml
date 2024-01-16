@@ -11,4 +11,5 @@
     <string name="editmodal_button_save">Confirm</string>
     <string name="decorative_android_icon">Decorative Android Icon</string>
     <string name="displayPokemon_title">Your Fav Pokemon:</string>
+    <string name="title_activity_test">TestActivity</string>
 </resources>

@@ -5,9 +5,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
-import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 
-class ShopBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, null, 1) {
+class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, null, 1) {
     companion object PokeBallDatabase {
         private const val dbName = "PokemonBallDatabase"
         private const val tableName = "PokeBall"
@@ -19,7 +18,7 @@ class ShopBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, nul
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        // Create the Pokemon table when the database is first created.
+        // Create the Pokeball table when the database is first created.
         db?.execSQL(
             "CREATE TABLE IF NOT EXISTS $tableName (" +
                     "$id INTEGER PRIMARY KEY, " +
@@ -36,7 +35,7 @@ class ShopBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, nul
         onCreate(db)
     }
 
-    // Insert a Pokemon into the database.
+    // Insert a Pokeball into the database.
     fun insertPokemonBall(pokeball: Pokeball) {
         val db = this.writableDatabase
         val values = ContentValues()
@@ -49,7 +48,7 @@ class ShopBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, nul
         db.insert(tableName, null, values)
     }
 
-    // Retrieve all Pokemons from the database.
+    // Retrieve all Pokeballs from the database.
     fun getAllPokeballs(): List<Pokeball> {
         var allPokeballs = mutableListOf<Pokeball>()
 
@@ -76,9 +75,9 @@ class ShopBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, nul
         return allPokeballs.toList()
     }
 
-    // Retrieve favorite Pokemons from the database.
-    fun getSpecialPokeball(weather:String): List<Pokemon> {
-        var specialPokeball = mutableListOf<Pokemon>()
+    // Retrieve special Pokeballs from the database.
+    fun getSpecialPokeball(weather:String): List<Pokeball> {
+        var specialPokeball = mutableListOf<Pokeball>()
 
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $type0=$weather", null)
@@ -90,11 +89,11 @@ class ShopBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, nul
             val imageUrlID = cursor.getColumnIndex(imageUrl)
             if (nameID >= 0)
                 specialPokeball.add(
-                    Pokemon(
+                    Pokeball(
                         cursor.getInt(idID),
                         cursor.getString(nameID),
                         cursor.getString(type0ID),
-                        cursor.getString(priceID),
+                        cursor.getInt(priceID),
                         cursor.getString(imageUrlID)
                     )
                 )
