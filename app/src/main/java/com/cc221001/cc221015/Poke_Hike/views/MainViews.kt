@@ -1,8 +1,21 @@
 package com.cc221001.cc221015.Poke_Hike.views
 
+import android.graphics.drawable.shapes.Shape
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.ProvideTextStyle
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
@@ -14,26 +27,36 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayPokeballList
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayTrainerProfile
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayWeather
 import com.cc221001.cc221015.Poke_Hike.composables.ErrorScreen
 import com.cc221001.cc221015.Poke_Hike.composables.MyPokemonList
-import com.cc221001.cc221015.Poke_Hike.composables.SetBackgroundMain
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
+import kotlin.math.round
 
 // https://kotlinlang.org/docs/sealed-classes.html
 // Define a sealed class named 'Screen' to represent different screens in the app.
@@ -47,8 +70,8 @@ sealed class Screen(val route: String) {
     object Weather : Screen("weather") // Represents the second screen with route "second"
     object Favourites : Screen("favourites")   // Represents the third screen with route "third"
     object List : Screen("list") // Represents the fourth screen with route "fourth"
-    object Profile : Screen("Profile") // Represents the fourth screen with route "fourth"
-    object Shop : Screen("Shop") // Represents the fourth screen with route "fourth"
+    object Profile : Screen("profile") // Represents the fourth screen with route "fourth"
+    object Shop : Screen("shop") // Represents the fourth screen with route "fourth"
 
 }
 
@@ -71,8 +94,18 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
     // Scaffold is a material design container that includes standard layout structures.
     Scaffold(
         // Define the bottom navigation bar for the Scaffold.
-        bottomBar = { BottomNavigationBar(navController, state.value.selectedScreen) }
+        topBar = { MyTopAppBar(navController, state.value.selectedScreen)},
+        bottomBar = { BottomNavigationBar(navController, state.value.selectedScreen) },
+        containerColor = Color.White,
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.hills_background),
+            contentDescription = "Login_Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(20.dp))
+        )
         // NavHost manages composable destinations for navigation.
         NavHost(
             navController = navController,
@@ -81,7 +114,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
         ) {
             // Define the composable function for the 'Home' route.
             composable(Screen.Home.route) {
-                SetBackgroundMain() // Set the main background for this view.
                 mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
                 // Check if the pokemon trainers list is not empty.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
@@ -96,7 +128,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
             // Define the composable function for the 'Weather' route.
             composable(Screen.Weather.route) {
                 mainViewModel.getPokemonTrainer()
-                SetBackgroundMain()
                 // Similar logic as above for the fourth screen.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
                     mainViewModel.selectScreen(Screen.Weather)
@@ -109,7 +140,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
 
             // Define the composable function for the 'Favourites' route.
             composable(Screen.Favourites.route) {
-                SetBackgroundMain()
                 mainViewModel.getPokemonTrainer()
                 // Similar logic as the 'First' route but for the second screen.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
@@ -124,7 +154,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
 
             // Define the composable function for the 'List' route.
             composable(Screen.List.route) {
-                SetBackgroundMain()
                 mainViewModel.getPokemonTrainer()
                 // Similar logic as above for the third screen.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
@@ -140,7 +169,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
             // Define the composable function for the 'Profile' route.
             composable(Screen.Profile.route) {
                 mainViewModel.getPokemonTrainer()
-                SetBackgroundMain()
                 // Similar logic as above for the Profile screen.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
                     mainViewModel.selectScreen(Screen.Profile)
@@ -154,7 +182,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
             // Define the composable function for the 'Shop' route.
             composable(Screen.Shop.route) {
                 mainViewModel.getPokemonTrainer()
-                SetBackgroundMain()
                 // Similar logic as above for the fourth screen.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
                     mainViewModel.selectScreen(Screen.Shop)
@@ -169,7 +196,71 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
 }
 
 
+@Composable
+fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
+    TopAppBar(
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = Color.Transparent,
+        elevation = 0.dp,
+    ) {
+        // TopAppBar Content
+        Row(Modifier.height(32.dp)) {
 
+            // Navigation Icon - Box1
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                CompositionLocalProvider(
+                    LocalContentAlpha provides ContentAlpha.high,
+                ) {
+                    IconButton(
+                        onClick = { navController.navigate(Screen.Home.route) },
+                        enabled = false,
+                    ) {
+                    }
+                }
+            }
+
+            // Title - Box2
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically),
+                contentAlignment = Alignment.Center
+            ) {
+                ProvideTextStyle(value = MaterialTheme.typography.bodyMedium) {
+                    CompositionLocalProvider(
+                        LocalContentAlpha provides ContentAlpha.high,
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            text = "Hello"
+                        )
+                    }
+                }
+            }
+
+            // Account Icon - Box3
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                IconButton(
+                    onClick = { navController.navigate(Screen.Profile.route)},
+                    enabled = true,
+                ) {
+                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "")
+                }
+            }
+        }
+    }
+}
 // Define a Composable function for creating a Bottom Navigation Bar.
 @Composable
 fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen) {
@@ -208,17 +299,6 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             selected = (selectedScreen == Screen.List),
             onClick = { navController.navigate(Screen.List.route) },
             icon = { Icon(imageVector = Icons.Default.List, contentDescription = "") }
-        )
-
-        //REMOVE THE PROFILE ICON FROM HERE AND CREATE A TOP NAVIGATION FOR THE PROFILE
-        //CHANGE THE CODE BELOW TO SHOP!
-
-        // NavigationBarItem for the 'Profile' screen.
-        NavigationBarItem(
-            // Similar configuration as above for the 'Fourth' screen.
-            selected = (selectedScreen == Screen.Profile),
-            onClick = { navController.navigate(Screen.Profile.route) },
-            icon = { Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "") }
         )
 
         NavigationBarItem(

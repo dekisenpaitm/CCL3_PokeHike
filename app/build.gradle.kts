@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.cc221001.cc221015.Poke_Hike"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -77,6 +77,8 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     //Set up Google Play services
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    implementation ("androidx.health.connect:connect-client:1.1.0-alpha02")
 
     implementation("com.google.dagger:hilt-android:2.44")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))

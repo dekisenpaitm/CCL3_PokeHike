@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -61,7 +62,7 @@ fun DisplayPokeballList(pokeballViewModel: PokeballViewModel, weatherViewModel: 
     Column {
         // A Row for displaying the title, with dynamic text based on the 'favorite' flag.
         Row(modifier = Modifier
-            .height(50.dp)
+            .height(200.dp)
             .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
@@ -71,8 +72,9 @@ fun DisplayPokeballList(pokeballViewModel: PokeballViewModel, weatherViewModel: 
         }
 
         // A Row to display the list of Pokemon.
-        Row {
-            // Calling PokemonList Composable to display the actual list.
+        Row (modifier = Modifier
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd= 20.dp, bottomEnd = 0.dp, bottomStart=0.dp))){
+            // Calling PokeballList Composable to display the actual list.
             PokeballList(pokeballs = pokeballList, pokeballViewModel = pokeballViewModel)
         }
     }
@@ -82,12 +84,20 @@ fun DisplayPokeballList(pokeballViewModel: PokeballViewModel, weatherViewModel: 
 fun PokeballList(pokeballs: List<Pokeball?>, pokeballViewModel: PokeballViewModel) {
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
-    LazyColumn {
+    LazyColumn (modifier=Modifier
+        .background(color=Color(0,0,0,125))
+        .padding(top=20.dp)
+        .fillMaxSize()
+    ){
         // Iterating over each Pokemon in the pokemonList.
         items(pokeballs) { pokeball ->
             // PokemonItem Composable is called for each Pokemon in the list.
             // It displays individual Pokemon details.
+            Box(modifier=Modifier
+                .padding(8.dp)
+                .clip(RoundedCornerShape(10.dp))) {
             PokeballsItem(pokeball = pokeball)
+            }
         }
     }
 }
@@ -107,8 +117,9 @@ fun PokeballsItem(pokeball: Pokeball?){
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .background(color = Color(255, 255, 255, 125))
-            .border(color = Color.Black, width = 1.dp),
+            .background(color = Color(255,255,255,225))
+            .clip(RoundedCornerShape(20.dp))
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         maxItemsInEachRow = 4 // Sets the max number of items in each row.
     ) {
         // Modifier for individual items in the FlowRow.
