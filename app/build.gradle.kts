@@ -77,6 +77,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     //Set up Google Play services
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+
     implementation ("androidx.health.connect:connect-client:1.1.0-alpha02")
 
     implementation("com.google.dagger:hilt-android:2.44")
