@@ -32,6 +32,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -120,7 +122,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 // Check if the pokemon trainers list is not empty.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
                     Box(modifier=Modifier.width(200.dp)){
-                        Text(text = stepCounterViewModel.toString())
+                        StepCounterDisplay(stepCounterViewModel)
                     }
                     mainViewModel.selectScreen(Screen.Home)
                     mainScreen(mainViewModel) // Show the main screen if trainers exist.
@@ -200,6 +202,13 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
     }
 }
 
+@Composable
+fun StepCounterDisplay(viewModel: StepCounterViewModel) {
+    val stepCount by viewModel.stepCountLiveData.observeAsState(initial = 0)
+
+    // Display step count in a Text Composable or similar
+    Text(text = "Steps: $stepCount")
+}
 
 @Composable
 fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {

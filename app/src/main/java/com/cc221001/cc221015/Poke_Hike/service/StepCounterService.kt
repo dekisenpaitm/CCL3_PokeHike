@@ -34,7 +34,7 @@ class StepCounterService : Service(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
             val newStepCount = event.values[0].toInt()
-            // TODO: Update the ViewModel with new step count
+            StepCounterRepository.updateStepCount(newStepCount)
         }
     }
 
