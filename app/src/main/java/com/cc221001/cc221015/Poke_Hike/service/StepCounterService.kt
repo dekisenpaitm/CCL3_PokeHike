@@ -10,21 +10,28 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.IBinder
+import android.util.Log
 import com.cc221001.cc221015.Poke_Hike.R
 
 class StepCounterService : Service(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var stepSensor: Sensor? = null
 
-    // TODO: You need to set up a way to communicate with the ViewModel, maybe through a repository or shared data.
-    // private lateinit var stepCounterViewModel: StepCounterViewModel
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("StepCounterService", "onCreate")
+        println("Stepcounter.onCreate")
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL)
         startForeground(1, createNotification())
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("StepCounterService", "onStartCommand")
+        // Handle any additional logic when the service is started
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -58,6 +65,7 @@ class StepCounterService : Service(), SensorEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("StepCounterService", "onDestroy")
         sensorManager.unregisterListener(this)
     }
 }

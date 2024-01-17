@@ -9,5 +9,6 @@ object StepCounterRepository {
 
     fun updateStepCount(newStepCount: Int) {
         _stepCountLiveData.postValue(newStepCount)
+        println("This is live stepcount: $_stepCountLiveData")
     }
 }

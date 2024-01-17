@@ -10,9 +10,16 @@ import androidx.lifecycle.MutableLiveData
 import com.cc221001.cc221015.Poke_Hike.service.StepCounterRepository
 
 class StepCounterViewModel(application: Application) : AndroidViewModel(application), SensorEventListener {
-    val stepCountLiveData: LiveData<Int> = StepCounterRepository.stepCountLiveData
+    private val _stepCountLiveData = MutableLiveData<Int>()
+    val stepCountLiveData: LiveData<Int> = _stepCountLiveData
+    init {
+        // Observe the repository's LiveData and update the ViewModel's LiveData
+        StepCounterRepository.stepCountLiveData.observeForever { newStepCount ->
+            _stepCountLiveData.value = newStepCount
+            println("This is stepcount in ViewModel: $newStepCount")
+        }
+    }
     override fun onSensorChanged(event: SensorEvent?) {
-        // Handle sensor changes here if needed
     }
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Handle sensor accuracy changes if needed

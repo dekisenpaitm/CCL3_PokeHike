@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
             requestPermissionStepCounter.launch(Manifest.permission.ACTIVITY_RECOGNITION)
         } else {
             // Permission is already granted, start the service
+            println("StepCounter Started")
             startForegroundService(Intent(this, StepCounterService::class.java))
         }
 
