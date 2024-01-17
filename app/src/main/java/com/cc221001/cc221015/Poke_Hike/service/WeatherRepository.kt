@@ -47,7 +47,7 @@ class WeatherRepository @Inject constructor(
         }
 
         return group.mapValues { (_, forecastList) ->
-            forecastList[4]
+            forecastList[forecastList.size-1]
         }.map { (_, forecast) ->
             SimpleForecast(
                 Date(forecast.dt * 1000L), forecast.weather.first().main, forecast.main.temp
