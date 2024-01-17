@@ -78,7 +78,7 @@ dependencies {
     //Set up Google Play services
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
-    implementation ("androidx.health.connect:connect-client:1.1.0-alpha02")
+    implementation ("androidx.lifecycle:lifecycle-service:2.2.0")
 
     implementation("com.google.dagger:hilt-android:2.44")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
