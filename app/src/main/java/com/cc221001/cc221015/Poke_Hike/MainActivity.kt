@@ -22,6 +22,7 @@ import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 import com.cc221001.cc221015.Poke_Hike.views.MainView
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +49,9 @@ class MainActivity : ComponentActivity() {
     private val pokeballViewModel = PokeballViewModel(pbdb)
 
     private val weatherViewModel: WeatherViewModel by viewModels()
+
+    private val stepCounterViewModel:StepCounterViewModel by viewModels()
+
     // Creating a property to hold the ActivityResultLauncher for requesting a permission.
     private val requestPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -93,7 +97,7 @@ class MainActivity : ComponentActivity() {
                     CreatePokeballEntries(pokeballViewModel)
                     db.getPokemonTrainers()
                     // Create and display the main view with associated ViewModels.
-                    MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel)
+                    MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel)
                 }
             }
         }

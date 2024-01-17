@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.ContentAlpha
@@ -55,6 +56,7 @@ import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 import kotlin.math.round
 
@@ -83,7 +85,7 @@ sealed class Screen(val route: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 // MainView is a Composable function that creates the main view of your app.
 @Composable
-fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel) {
+fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel) {
 
     // Collect the current state of the main view from the MainViewModel.
     val state = mainViewModel.mainViewState.collectAsState()
@@ -117,6 +119,9 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
                 // Check if the pokemon trainers list is not empty.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
+                    Box(modifier=Modifier.width(200.dp)){
+                        Text(text = stepCounterViewModel.toString())
+                    }
                     mainViewModel.selectScreen(Screen.Home)
                     mainScreen(mainViewModel) // Show the main screen if trainers exist.
                 } else {
