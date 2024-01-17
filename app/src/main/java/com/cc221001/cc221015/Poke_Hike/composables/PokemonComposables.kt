@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,7 @@ import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import java.util.Locale
 
+
 // Composable function to display a list of Pokemon.
 @Composable
 fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
@@ -44,10 +48,10 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
     val pokemonList = pokemonViewModel.pokemonViewState.collectAsState().value.pokemons
 
     // Using a Column to layout elements vertically.
-    Column {
+    Column() {
         // A Row for displaying the title, with dynamic text based on the 'favorite' flag.
         Row(modifier = Modifier
-            .height(50.dp)
+            .height(200.dp)
             .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
@@ -57,7 +61,8 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
         }
 
         // A Row to display the list of Pokemon.
-        Row {
+        Row (modifier = Modifier
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd= 20.dp, bottomEnd = 0.dp, bottomStart=0.dp))){
             // Calling PokemonList Composable to display the actual list.
             PokemonList(pokemonList = pokemonList, pokemonViewModel, favorite)
         }
@@ -73,12 +78,21 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
 fun PokemonList(pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel, favorite: Boolean) {
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
-    LazyColumn {
+    LazyColumn (modifier=Modifier
+        .background(color=Color(0,0,0,125))
+        .padding(top=20.dp)
+        .fillMaxSize()
+        )
+        {
         // Iterating over each Pokemon in the pokemonList.
         items(pokemonList) { pokemon ->
             // PokemonItem Composable is called for each Pokemon in the list.
             // It displays individual Pokemon details.
-            PokemonItem(pokemon = pokemon, pokemonViewModel = pokemonViewModel, favorite)
+            Box(modifier=Modifier
+                .padding(8.dp)
+                .clip(RoundedCornerShape(10.dp))) {
+                PokemonItem(pokemon = pokemon, pokemonViewModel = pokemonViewModel, favorite)
+            }
         }
     }
 }
@@ -102,9 +116,10 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .background(color = Color(255, 255, 255, 125))
-            .border(color = Color.Black, width = 1.dp),
-        maxItemsInEachRow = 4 // Sets the max number of items in each row.
+            .background(color = Color(255,255,255,225))
+            .clip(RoundedCornerShape(20.dp))
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        maxItemsInEachRow = 5 // Sets the max number of items in each row.
     ) {
         // Modifier for individual items in the FlowRow.
         val itemModifier = Modifier.clip(RoundedCornerShape(8.dp))
@@ -117,7 +132,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
                     contentDescription = "Pokemon Image",
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(90.dp)
                         .clip(MaterialTheme.shapes.medium)
                 )
             }
@@ -132,6 +147,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
                     text = pokemon.name.replaceFirstChar { it.titlecase() },
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp),
+                    color=Color.Black,
                 )
             }
         }
@@ -141,7 +157,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
             .fillMaxHeight()
             .weight(1f), contentAlignment = Alignment.Center) {
             // List of specific Pokemon types.
-            val specificTypes = listOf("fire", "water", "electric", "grass", "bug", "normal", "poison", "ground", "ghost", "psychic", "fairy", "fighting", "rock", "dragon", "ice")
+            val specificTypes = listOf("fire", "water", "electric", "grass", "bug", "normal", "poison", "flying", "ground", "ghost", "psychic", "fairy", "fighting", "rock", "dragon", "ice")
             if (pokemon != null) {
                 val matchingTypes = listOf(pokemon.type0, pokemon.type1).mapNotNull { type ->
                     specificTypes.find { specificType -> type.toString().contains(specificType, ignoreCase = true) }?.toLowerCase(
@@ -151,7 +167,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
                     Column {
                         matchingTypes.forEach { pokemonType ->
                             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                                Text(text = pokemonType.replaceFirstChar { it.uppercase() })
+                                Text(text = pokemonType.replaceFirstChar { it.uppercase() }, color=Color.Black)
                             }
                         }
                     }
@@ -162,7 +178,8 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         // Box for the like/unlike button.
         Box(modifier = itemModifier
             .fillMaxHeight()
-            .weight(1f), contentAlignment = Alignment.Center) {
+            .weight(0.5f),
+            contentAlignment = Alignment.Center) {
             if (pokemon != null) {
                 IconButton(onClick = {
                     if (pokemon.liked == "true") {
@@ -174,6 +191,17 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
                     val tint = if (pokemon.liked == "true") Color.Red else Color.Gray
                     Icon(Icons.Default.Favorite, "Like", tint = tint, modifier = Modifier.size(20.dp))
                 }
+            }
+        }
+
+        // Box for the owned/notOwned
+        Box(modifier = itemModifier
+            .fillMaxHeight()
+            .weight(0.5f),
+            contentAlignment = Alignment.Center) {
+            if (pokemon != null) {
+                val tint = if (pokemon.owned == "true") Color.Red else Color.Gray
+                Icon(Icons.Default.CheckCircle, "Like", tint = tint, modifier = Modifier.size(20.dp))
             }
         }
     }
