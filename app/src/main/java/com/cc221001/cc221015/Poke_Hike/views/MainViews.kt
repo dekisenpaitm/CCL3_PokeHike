@@ -56,6 +56,7 @@ import com.cc221001.cc221015.Poke_Hike.composables.MyPokemonList
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
@@ -87,7 +88,7 @@ sealed class Screen(val route: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 // MainView is a Composable function that creates the main view of your app.
 @Composable
-fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel) {
+fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel, pokeCoinViewModel: PokeCoinViewModel) {
 
     // Collect the current state of the main view from the MainViewModel.
     val state = mainViewModel.mainViewState.collectAsState()

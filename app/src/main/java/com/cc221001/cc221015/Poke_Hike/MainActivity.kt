@@ -14,12 +14,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.cc221001.cc221015.Poke_Hike.composables.CreatePokeballEntries
+import com.cc221001.cc221015.Poke_Hike.composables.CreateTrainerStash
+import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
 import com.cc221001.cc221015.Poke_Hike.service.StepCounterService
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
@@ -30,26 +33,26 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    // Database handler for Pokemon trainers.
+    // Database handler for Pokemon trainers && ViewModel for the main screen.
     private val db = TrainerBaseHandler(this)
-
-    // ViewModel for the main screen.
     private val mainViewModel = MainViewModel(db)
 
-    // Database handler for Pokemon entities.
+    // Database handler for Pokemon entities && ViewModel for the Pokemon-related view.
     private val pdb = PokemonBaseHandler(this)
-
-    // ViewModel for the Pokemon-related view.
     private val pokemonViewModel = PokemonViewModel(pdb)
 
-    // Database handler for Pokemon entities.
+    // Database handler for Pokeball entities && ViewModel for the Pokeball-related view.
     private val pbdb = PokeballBaseHandler(this)
-
-    // ViewModel for the Pokemon-related view.
     private val pokeballViewModel = PokeballViewModel(pbdb)
 
+    //Database handler for PokeCoin entities && ViewModel for the PokeCoin-related view
+    private val pcdb = PokeCoinBaseHandler(this)
+    private val pokeCoinViewModel = PokeCoinViewModel(pcdb)
+
+    // ViewModel for the Weather-related view.
     private val weatherViewModel: WeatherViewModel by viewModels()
 
+    // ViewModel for the StepCounter-related view.
     private val stepCounterViewModel:StepCounterViewModel by viewModels()
 
     // Creating a property to hold the ActivityResultLauncher for requesting a permission.
@@ -96,9 +99,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     // Initialize and fetch Pokemon trainers from the database.
                     CreatePokeballEntries(pokeballViewModel)
+                    CreateTrainerStash(pokeCoinViewModel)
                     db.getPokemonTrainers()
                     // Create and display the main view with associated ViewModels.
-                    MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel)
+                    MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel, pokeCoinViewModel)
                 }
             }
         }
