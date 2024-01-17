@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
             // If the permission is granted, call the checkLocation() function. it = isPermissionGranted
             if (it) weatherViewModel.onPermissionGranted()
         }
-
+            //comment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
