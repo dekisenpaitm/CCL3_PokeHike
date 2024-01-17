@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
         }
 
     // Create a set of permissions for health connect
-    val PERMISSIONS =
+    val permissions =
         setOf(
             HealthPermission.getReadPermission(StepsRecord::class),
             HealthPermission.getWritePermission(StepsRecord::class)
@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
     val requestPermissionActivityContract = PermissionController.createRequestPermissionResultContract()
 
     val requestPermissions = registerForActivityResult(requestPermissionActivityContract) { granted ->
-        if (granted.containsAll(PERMISSIONS)) {
+        if (granted.containsAll(permissions)) {
             // Permissions successfully granted
             // You can proceed with any necessary actions here
         } else {
@@ -88,12 +88,12 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(34)
     suspend fun checkPermissionsAndRun(healthConnectClient: HealthConnectClient) {
         val granted = healthConnectClient.permissionController.getGrantedPermissions()
-        if (granted.containsAll(PERMISSIONS)) {
+        if (granted.containsAll(permissions)) {
             // Permissions already granted; proceed with inserting or reading data
             // You can perform your desired operations here
         } else {
             // Request permissions
-            requestPermissions.launch(PERMISSIONS)
+            requestPermissions.launch(permissions)
         }
     }
 
