@@ -29,7 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import com.cc221001.cc221015.Poke_Hike.data.PokemonTrainer
+import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 

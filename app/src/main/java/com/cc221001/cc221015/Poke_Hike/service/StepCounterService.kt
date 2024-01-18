@@ -12,20 +12,25 @@ import android.hardware.SensorManager
 import android.os.IBinder
 import android.util.Log
 import com.cc221001.cc221015.Poke_Hike.R
+import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
+import com.cc221001.cc221015.Poke_Hike.data.StepCounterBaseHandler
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 
 class StepCounterService : Service(), SensorEventListener {
+    private lateinit var stepCounterBaseHandler: StepCounterBaseHandler
+    private lateinit var pokeCoinBaseHandler:PokeCoinBaseHandler
     private lateinit var sensorManager: SensorManager
     private var stepSensor: Sensor? = null
 
     override fun onCreate() {
         super.onCreate()
         Log.d("StepCounterService", "onCreate")
-        println("Stepcounter.onCreate")
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL)
         startForeground(1, createNotification())
+        stepCounterBaseHandler = StepCounterBaseHandler(this)
+        pokeCoinBaseHandler = PokeCoinBaseHandler(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -41,10 +46,15 @@ class StepCounterService : Service(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
             val newStepCount = event.values[0].toInt()
-            val difference = newStepCount - StepCounterRepository.previousSteps
-            CoinStashRepository.plusCoinStash(difference)
-            StepCounterRepository.previousSteps = newStepCount
+            val previousStepCount =
+                stepCounterBaseHandler.retrieveSteps(0)?.amount
+            val difference = newStepCount - previousStepCount!!
+            //CoinStashRepository.plusCoinStash(difference)
+            pokeCoinBaseHandler.updatePokeCoin(pokeCoinBaseHandler.getPokeCoinById(1),pokeCoinBaseHandler.getPokeCoinById(1).amount + difference)
+            println("this is your stash: ${pokeCoinBaseHandler.getPokeCoinById(1)}")
             StepCounterRepository.updateStepCount(newStepCount)
+            stepCounterBaseHandler.updateCurrentSteps(0,newStepCount)
+            println(stepCounterBaseHandler.retrieveSteps(0))
         }
     }
 
@@ -72,3 +82,4 @@ class StepCounterService : Service(), SensorEventListener {
         sensorManager.unregisterListener(this)
     }
 }
+
