@@ -29,8 +29,8 @@ class PokeballViewModel(private val db: PokeballBaseHandler) : ViewModel() {
         _pokeballViewState.update { it.copy(selectedScreen = screen) }
     }
 
-    fun createPokeball(name: String, type: String, price: Int, imageUrl: String) {
-        val pokeball = Pokeball(name= name, type0= type, price= price, imageUrl=imageUrl)
+    fun createPokeball(name: String, type0: String, type1: String, type2: String, type3: String,  price: Int, imageUrl: String) {
+        val pokeball = Pokeball(name= name, type0= type0, type1= type1, type2 = type2, type3= type3, price= price, imageUrl=imageUrl)
         db.insertPokemonBall(pokeball)
     }
 }

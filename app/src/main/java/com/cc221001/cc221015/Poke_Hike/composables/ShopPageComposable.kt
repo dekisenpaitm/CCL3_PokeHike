@@ -118,7 +118,7 @@ fun PokeballList(pokemonViewModel: PokemonViewModel, pokeballs: List<Pokeball?>,
                     .clip(RoundedCornerShape(10.dp))
             ) {
                 PokeballsItem(pokemonViewModel = pokemonViewModel, pokeball = pokeball, onBuyClick = {
-                    println("You bought ${pokeball?.name}?")
+                    println("You bought ${pokeball?.name}!")
                     pokemonViewModel.getRandomPokemon("","",""
                         //pokeball.type1,
                         //pokeball.type2,

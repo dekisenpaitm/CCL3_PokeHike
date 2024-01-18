@@ -13,6 +13,9 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
         private const val id = "_id"
         private const val name = "name"
         private const val type0 = "type0"
+        private const val type1 = "type1"
+        private const val type2 = "type2"
+        private const val type3 = "type3"
         private const val imageUrl = "imageUrl"
         private const val price = "price"
     }
@@ -24,6 +27,9 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
                     "$id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "$name VARCHAR(30), " +
                     "$type0 VARCHAR(256), " +
+                    "$type1 VARCHAR(256), " +
+                    "$type2 VARCHAR(256), " +
+                    "$type3 VARCHAR(256), " +
                     "$price VARCHAR(256), " +
                     "$imageUrl VARCHAR(256));"
         )
@@ -43,6 +49,9 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
             val values = ContentValues()
             values.put(name, pokeball.name)
             values.put(type0, pokeball.type0)
+            values.put(type1, pokeball.type1)
+            values.put(type2, pokeball.type2)
+            values.put(type3, pokeball.type3)
             values.put(price, pokeball.price)
             values.put(imageUrl, pokeball.imageUrl)
 
@@ -79,6 +88,9 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)
             val type0ID = cursor.getColumnIndex(type0)
+            val type1ID = cursor.getColumnIndex(type1)
+            val type2ID = cursor.getColumnIndex(type2)
+            val type3ID = cursor.getColumnIndex(type3)
             val priceID = cursor.getColumnIndex(price)
             val imageUrlID = cursor.getColumnIndex(imageUrl)
             if (nameID >= 0)
@@ -87,6 +99,9 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
                         cursor.getInt(idID),
                         cursor.getString(nameID),
                         cursor.getString(type0ID),
+                        cursor.getString(type1ID),
+                        cursor.getString(type2ID),
+                        cursor.getString(type3ID),
                         cursor.getInt(priceID),
                         cursor.getString(imageUrlID),
                     )
@@ -105,6 +120,9 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)
             val type0ID = cursor.getColumnIndex(type0)
+            val type1ID = cursor.getColumnIndex(type1)
+            val type2ID = cursor.getColumnIndex(type2)
+            val type3ID = cursor.getColumnIndex(type3)
             val priceID = cursor.getColumnIndex(price)
             val imageUrlID = cursor.getColumnIndex(imageUrl)
             if (nameID >= 0)
@@ -113,6 +131,9 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
                         cursor.getInt(idID),
                         cursor.getString(nameID),
                         cursor.getString(type0ID),
+                        cursor.getString(type1ID),
+                        cursor.getString(type2ID),
+                        cursor.getString(type3ID),
                         cursor.getInt(priceID),
                         cursor.getString(imageUrlID)
                     )
