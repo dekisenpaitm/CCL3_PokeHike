@@ -101,6 +101,8 @@ class MainActivity : ComponentActivity() {
                     CreatePokeballEntries(pokeballViewModel)
                     CreateTrainerStash(pokeCoinViewModel)
                     pokeCoinViewModel.observeCoinStashChanges()
+                    pokeCoinViewModel.updateCoinRepository()
+                    pokeCoinViewModel.usePokeCoins(pcdb.getPokeCoinById(0),100)
                     db.getPokemonTrainers()
                     // Create and display the main view with associated ViewModels.
                     MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel, pokeCoinViewModel)
