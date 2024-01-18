@@ -1,4 +1,4 @@
-package com.cc221001.cc221015.Poke_Hike.data
+package com.cc221001.cc221015.Poke_Hike.domain
 
 // Represents a Pokemon trainer with optional ID, name, gender, and sprite.
 data class PokemonTrainer(

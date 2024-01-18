@@ -32,10 +32,8 @@ class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, nu
 
     fun insertCoin(pokeCoin: PokeCoin){
         val db = this.writableDatabase
-
         if(!pokeCoinExists(db, pokeCoin.name)){
             val values = ContentValues()
-            values.put(id, pokeCoin.id)
             values.put(name, pokeCoin.name)
             values.put(amount, pokeCoin.amount)
 

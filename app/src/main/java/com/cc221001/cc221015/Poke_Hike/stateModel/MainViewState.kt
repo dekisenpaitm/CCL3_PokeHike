@@ -1,6 +1,6 @@
 package com.cc221001.cc221015.Poke_Hike.stateModel
 
-import com.cc221001.cc221015.Poke_Hike.data.PokemonTrainer
+import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.views.Screen
 
 // Represents the state of the main screen in the application.

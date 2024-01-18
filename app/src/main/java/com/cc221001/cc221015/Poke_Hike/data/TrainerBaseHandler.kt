@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 
 // This class handles database operations for storing Pokemon trainers' data.
 class TrainerBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, null, 1) {
