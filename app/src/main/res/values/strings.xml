@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Nav</string>
+    <string name="app_name">PokeHike</string>
     <string name="login_button">Login</string>
     <string name="createUser_Button">Register</string>
     <string name="mainscreen_title">Pokedex</string>
@@ -13,4 +13,5 @@
     <string name="displayPokemon_title">Your Fav Pokemon:</string>
     <string name="temperature_degrees">%d°C</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="default_notification_channel_id">my_notification_channel</string>
 </resources>
