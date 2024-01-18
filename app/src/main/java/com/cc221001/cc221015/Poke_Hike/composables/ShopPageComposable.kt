@@ -119,11 +119,13 @@ fun PokeballList(pokemonViewModel: PokemonViewModel, pokeballs: List<Pokeball?>,
             ) {
                 PokeballsItem(pokemonViewModel = pokemonViewModel, pokeball = pokeball, onBuyClick = {
                     println("You bought ${pokeball?.name}!")
-                    pokemonViewModel.getRandomPokemon("","",""
-                        //pokeball.type1,
-                        //pokeball.type2,
-                        //pokeball.type3
-                    )
+                    if (pokeball != null) {
+                        pokemonViewModel.getRandomPokemon(
+                            pokeball.type1,
+                            pokeball.type2,
+                            pokeball.type3
+                        )
+                    }
                 })
             }
         }
