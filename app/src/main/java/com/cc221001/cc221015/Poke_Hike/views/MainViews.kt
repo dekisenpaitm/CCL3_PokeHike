@@ -53,9 +53,11 @@ import com.cc221001.cc221015.Poke_Hike.composables.DisplayTrainerProfile
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayWeather
 import com.cc221001.cc221015.Poke_Hike.composables.ErrorScreen
 import com.cc221001.cc221015.Poke_Hike.composables.MyPokemonList
+import com.cc221001.cc221015.Poke_Hike.composables.StepCounterDisplay
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
@@ -87,7 +89,7 @@ sealed class Screen(val route: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 // MainView is a Composable function that creates the main view of your app.
 @Composable
-fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel) {
+fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel, pokeCoinViewModel: PokeCoinViewModel) {
 
     // Collect the current state of the main view from the MainViewModel.
     val state = mainViewModel.mainViewState.collectAsState()
@@ -121,9 +123,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
                 // Check if the pokemon trainers list is not empty.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
-                    Box(modifier=Modifier.width(200.dp)){
-                        StepCounterDisplay(stepCounterViewModel)
-                    }
+                    StepCounterDisplay(stepCounterViewModel)
                     mainViewModel.selectScreen(Screen.Home)
                     mainScreen(mainViewModel) // Show the main screen if trainers exist.
                 } else {
@@ -200,14 +200,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
             }
         }
     }
-}
-
-@Composable
-fun StepCounterDisplay(viewModel: StepCounterViewModel) {
-    val stepCount by viewModel.stepCountLiveData.observeAsState(initial = 0)
-
-    // Display step count in a Text Composable or similar
-    Text(text = "Steps: $stepCount")
 }
 
 @Composable
