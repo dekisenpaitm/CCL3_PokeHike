@@ -18,7 +18,9 @@ import com.cc221001.cc221015.Poke_Hike.composables.CreateTrainerStash
 import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
+import com.cc221001.cc221015.Poke_Hike.data.StepCounterBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
+import com.cc221001.cc221015.Poke_Hike.domain.StepCounter
 import com.cc221001.cc221015.Poke_Hike.service.StepCounterService
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
@@ -49,11 +51,11 @@ class MainActivity : ComponentActivity() {
     private val pcdb = PokeCoinBaseHandler(this)
     private val pokeCoinViewModel = PokeCoinViewModel(pcdb)
 
+    private val scdb = StepCounterBaseHandler(this)
+    private val stepCounterViewModel = StepCounterViewModel(scdb, pcdb)
+
     // ViewModel for the Weather-related view.
     private val weatherViewModel: WeatherViewModel by viewModels()
-
-    // ViewModel for the StepCounter-related view.
-    private val stepCounterViewModel:StepCounterViewModel by viewModels()
 
     // Creating a property to hold the ActivityResultLauncher for requesting a permission.
     private val requestPermission =
@@ -100,9 +102,10 @@ class MainActivity : ComponentActivity() {
                     // Initialize and fetch Pokemon trainers from the database.
                     CreatePokeballEntries(pokeballViewModel)
                     CreateTrainerStash(pokeCoinViewModel)
-                    pokeCoinViewModel.observeCoinStashChanges()
-                    pokeCoinViewModel.updateCoinRepository()
-                    pokeCoinViewModel.usePokeCoins(pcdb.getPokeCoinById(0),100)
+                    //.oupokeCoinViewModel.observeCoinStashChanges()
+                    //pokeCoinViewModel.updateCoinRepository()
+                    //pokeCoinViewModel.usePokeCoins(pcdb.getPokeCoinById(0),100)
+                    scdb.insertSteps(StepCounter(0,0))
                     db.getPokemonTrainers()
                     // Create and display the main view with associated ViewModels.
                     MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel, pokeCoinViewModel)

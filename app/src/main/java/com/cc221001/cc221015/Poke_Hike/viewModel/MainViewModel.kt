@@ -1,7 +1,7 @@
 package com.cc221001.cc221015.Poke_Hike.viewModel
 
 import androidx.lifecycle.ViewModel
-import com.cc221001.cc221015.Poke_Hike.data.PokemonTrainer
+import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
 import com.cc221001.cc221015.Poke_Hike.stateModel.MainViewState
 import com.cc221001.cc221015.Poke_Hike.views.Screen
