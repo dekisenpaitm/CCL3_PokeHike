@@ -45,7 +45,6 @@ class StepCounterService : Service(), SensorEventListener {
             CoinStashRepository.plusCoinStash(difference)
             StepCounterRepository.previousSteps = newStepCount
             StepCounterRepository.updateStepCount(newStepCount)
-
         }
     }
 
