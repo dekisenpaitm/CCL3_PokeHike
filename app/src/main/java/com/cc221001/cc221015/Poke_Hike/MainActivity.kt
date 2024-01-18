@@ -100,6 +100,7 @@ class MainActivity : ComponentActivity() {
                     // Initialize and fetch Pokemon trainers from the database.
                     CreatePokeballEntries(pokeballViewModel)
                     CreateTrainerStash(pokeCoinViewModel)
+                    pokeCoinViewModel.observeCoinStashChanges()
                     db.getPokemonTrainers()
                     // Create and display the main view with associated ViewModels.
                     MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel, pokeCoinViewModel)

@@ -13,9 +13,8 @@ object CoinStashRepository {
         println("This is your current Stash: ${_coinStashLiveData.value}")
     }
 
-    fun minusCoinStash(removeCoins:Int){
+    fun minusCoinStash(removeCoins: Int) {
         val updatedCoins = _coinStashLiveData.value?.minus(removeCoins)
         _coinStashLiveData.postValue(updatedCoins)
-        println("This is your current Stash: $_coinStashLiveData")
     }
 }

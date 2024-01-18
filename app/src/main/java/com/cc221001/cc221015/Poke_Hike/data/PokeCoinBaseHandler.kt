@@ -59,8 +59,27 @@ class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, nu
         return false
     }
 
+    fun getPokeCoinById(coinId: Int): PokeCoin {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $id = ?", arrayOf(coinId.toString()))
+
+        var pokeCoin = PokeCoin(0, "Default", 0)
+        if (cursor.moveToFirst()) {
+            val idIndex = cursor.getColumnIndex(id)
+            val nameIndex = cursor.getColumnIndex(name)
+            val amountIndex = cursor.getColumnIndex(amount)
+            pokeCoin = PokeCoin(
+                cursor.getInt(idIndex),
+                cursor.getString(nameIndex),
+                cursor.getInt(amountIndex)
+            )
+        }
+        cursor.close()
+        return pokeCoin
+    }
+
     fun getAllPokeCoins():List<PokeCoin>{
-        var allPokeCoins = mutableListOf<PokeCoin>()
+        val allPokeCoins = mutableListOf<PokeCoin>()
 
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $tableName", null)
@@ -82,12 +101,24 @@ class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, nu
         return allPokeCoins.toList()
     }
 
-    fun updatePokeCoin(pokeCoin: PokeCoin): List<PokeCoin?> {
+    fun updatePokeCoin(pokeCoin: PokeCoin, changeAmount:Int): List<PokeCoin?> {
         val db = this.writableDatabase
         val values = ContentValues()
         values.put(id, pokeCoin.id)
         values.put(name, pokeCoin.name)
-        values.put(amount, pokeCoin.amount)
+        values.put(amount,changeAmount)
+
+        db.update(tableName, values, "_id = ?", arrayOf(pokeCoin.id.toString()))
+
+        return getAllPokeCoins()
+    }
+
+    fun usePokeCoin(pokeCoin: PokeCoin, changeAmount:Int): List<PokeCoin?> {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put(id, pokeCoin.id)
+        values.put(name, pokeCoin.name)
+        values.put(amount, pokeCoin.amount.plus(changeAmount))
 
         db.update(tableName, values, "_id = ?", arrayOf(pokeCoin.id.toString()))
 

@@ -12,6 +12,7 @@ import android.hardware.SensorManager
 import android.os.IBinder
 import android.util.Log
 import com.cc221001.cc221015.Poke_Hike.R
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 
 class StepCounterService : Service(), SensorEventListener {
     private lateinit var sensorManager: SensorManager

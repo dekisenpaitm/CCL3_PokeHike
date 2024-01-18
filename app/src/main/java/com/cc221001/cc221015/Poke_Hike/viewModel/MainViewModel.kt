@@ -15,6 +15,7 @@ class MainViewModel(private val db: TrainerBaseHandler) : ViewModel() {
     private val _mainViewState = MutableStateFlow(MainViewState())
     val mainViewState: StateFlow<MainViewState> = _mainViewState.asStateFlow()
 
+
     // Save a PokemonTrainer in the database.
     fun save(pokemonTrainer: PokemonTrainer) {
         db.insertPokemonTrainer(pokemonTrainer)
