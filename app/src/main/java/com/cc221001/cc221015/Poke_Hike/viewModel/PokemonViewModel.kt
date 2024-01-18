@@ -102,4 +102,9 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 			}
 		}
 	}
+
+
+
+
+
 }
