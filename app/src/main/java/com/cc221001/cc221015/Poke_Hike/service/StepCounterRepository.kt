@@ -7,8 +7,13 @@ object StepCounterRepository {
     private val _stepCountLiveData = MutableLiveData<Int>()
     val stepCountLiveData: LiveData<Int> = _stepCountLiveData
 
+
+    init {
+        println("I've been created")
+    }
+
     fun updateStepCount(newStepCount: Int) {
         _stepCountLiveData.postValue(newStepCount)
-        println("This is live stepcount: $_stepCountLiveData")
+        println("This is live stepcount: ${_stepCountLiveData.value}")
     }
 }

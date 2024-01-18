@@ -53,6 +53,7 @@ import com.cc221001.cc221015.Poke_Hike.composables.DisplayTrainerProfile
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayWeather
 import com.cc221001.cc221015.Poke_Hike.composables.ErrorScreen
 import com.cc221001.cc221015.Poke_Hike.composables.MyPokemonList
+import com.cc221001.cc221015.Poke_Hike.composables.StepCounterDisplay
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
@@ -122,9 +123,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
                 // Check if the pokemon trainers list is not empty.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
-                    Box(modifier=Modifier.width(200.dp)){
-                        StepCounterDisplay(stepCounterViewModel)
-                    }
+                    StepCounterDisplay(stepCounterViewModel)
                     mainViewModel.selectScreen(Screen.Home)
                     mainScreen(mainViewModel) // Show the main screen if trainers exist.
                 } else {
@@ -201,14 +200,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
             }
         }
     }
-}
-
-@Composable
-fun StepCounterDisplay(viewModel: StepCounterViewModel) {
-    val stepCount by viewModel.stepCountLiveData.observeAsState(initial = 0)
-
-    // Display step count in a Text Composable or similar
-    Text(text = "Steps: $stepCount")
 }
 
 @Composable
