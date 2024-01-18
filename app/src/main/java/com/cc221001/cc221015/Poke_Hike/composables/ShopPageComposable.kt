@@ -25,6 +25,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,11 +39,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
+import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
@@ -57,7 +60,11 @@ fun GetWeatherResponse(weatherViewModel: WeatherViewModel): CurrentWeather? {
 }
 
 @Composable
-fun DisplayPokeballList(pokemonViewModel: PokemonViewModel, pokeballViewModel: PokeballViewModel, weatherViewModel: WeatherViewModel) {
+fun DisplayPokeballList(
+    pokemonViewModel: PokemonViewModel,
+    pokeballViewModel: PokeballViewModel,
+    weatherViewModel: WeatherViewModel
+) {
     // Collecting the list of Pokemons from the ViewModel.
     val weather = GetWeatherResponse(weatherViewModel = weatherViewModel)
     val condition = weather?.weather?.first()?.main
@@ -87,19 +94,29 @@ fun DisplayPokeballList(pokemonViewModel: PokemonViewModel, pokeballViewModel: P
         // A Row to display the list of Pokemon.
         Row(
             modifier = Modifier.clip(
-                    RoundedCornerShape(
-                        topStart = 20.dp, topEnd = 20.dp, bottomEnd = 0.dp, bottomStart = 0.dp
-                    )
+                RoundedCornerShape(
+                    topStart = 20.dp, topEnd = 20.dp, bottomEnd = 0.dp, bottomStart = 0.dp
                 )
+            )
         ) {
             // Calling PokeballList Composable to display the actual list.
-            PokeballList(pokemonViewModel = pokemonViewModel, pokeballs = pokeballList, pokeballViewModel = pokeballViewModel)
+            PokeballList(
+                pokemonViewModel = pokemonViewModel,
+                pokeballs = pokeballList,
+                pokeballViewModel = pokeballViewModel
+            )
         }
     }
 }
 
 @Composable
-fun PokeballList(pokemonViewModel: PokemonViewModel, pokeballs: List<Pokeball?>, pokeballViewModel: PokeballViewModel) {
+fun PokeballList(
+    pokemonViewModel: PokemonViewModel,
+    pokeballs: List<Pokeball?>,
+    pokeballViewModel: PokeballViewModel
+) {
+    // State to track whether a Pokemon has been bought
+    var pokemonBought by remember { mutableStateOf(false) }
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
     LazyColumn(
@@ -117,16 +134,28 @@ fun PokeballList(pokemonViewModel: PokemonViewModel, pokeballs: List<Pokeball?>,
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
             ) {
-                PokeballsItem(pokemonViewModel = pokemonViewModel, pokeball = pokeball, onBuyClick = {
-                    println("You bought ${pokeball?.name}!")
-                    if (pokeball != null) {
-                        pokemonViewModel.getRandomPokemon(
-                            pokeball.type1,
-                            pokeball.type2,
-                            pokeball.type3
-                        )
-                    }
-                })
+                PokeballsItem(
+                    pokemonViewModel = pokemonViewModel,
+                    pokeball = pokeball,
+                    onBuyClick = {
+                        println("You bought ${pokeball?.name}!")
+                        if (pokeball != null) {
+                            pokemonViewModel.getRandomPokemon(
+                                pokeball.type1, pokeball.type2, pokeball.type3
+                            )
+                            pokemonBought = true
+                        }
+                    })
+            }
+        }
+    }
+    // Display the Pokemon message conditionally outside LazyColumn
+    if (pokemonBought) {
+        val randomPokemon by pokemonViewModel.pokemonViewState.collectAsState()
+        if (randomPokemon != null) {
+            DisplayPokemonMessage(pokemonViewModel) {
+                // Reset the state when the message is dismissed
+                pokemonBought = false
             }
         }
     }
@@ -134,7 +163,9 @@ fun PokeballList(pokemonViewModel: PokemonViewModel, pokeballs: List<Pokeball?>,
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PokeballsItem(pokemonViewModel: PokemonViewModel, pokeball: Pokeball?, onBuyClick: (Pokeball) -> Unit) {
+fun PokeballsItem(
+    pokemonViewModel: PokemonViewModel, pokeball: Pokeball?, onBuyClick: (Pokeball) -> Unit
+) {
     // Declare a state variable to track if the dialog is shown
     var showDialog by remember { mutableStateOf(false) }
     //val pokemonViewModel: PokemonViewModel = viewModel()
@@ -235,34 +266,70 @@ fun PokeballsItem(pokemonViewModel: PokemonViewModel, pokeball: Pokeball?, onBuy
                 Text(text = "Buy", fontWeight = FontWeight.Bold)
             }
         }
+        // Show the AlertDialog when showDialog is true
+        if (showDialog) {
+            AlertDialog(onDismissRequest = {
+                // Dismiss the dialog when clicking outside of it
+                showDialog = false
+            }, title = {
+                Text(text = "Buy ${pokeball?.name}?")
+            }, text = {
+                Text(text = "Are you sure you want to buy ${pokeball?.name}?")
+            }, confirmButton = {
+                Button(onClick = {
+                    // Call the onBuyClick callback when confirming the purchase
+                    onBuyClick(pokeball!!)
+                    showDialog = false
+                }) {
+                    Icon(imageVector = Icons.Default.Check, contentDescription = null)
+                    Text(text = "Yes", fontWeight = FontWeight.Bold)
+                }
+            }, dismissButton = {
+                Button(onClick = {
+                    // Dismiss the dialog when canceling the purchase
+                    showDialog = false
+                }) {
+                    Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                    Text(text = "No", color = Color.White)
+                }
+            })
+        }
     }
 
-    // Show the AlertDialog when showDialog is true
-    if (showDialog) {
-        AlertDialog(onDismissRequest = {
-            // Dismiss the dialog when clicking outside of it
-            showDialog = false
-        }, title = {
-            Text(text = "Buy ${pokeball?.name}?")
+}
+
+@Composable
+fun DisplayPokemonMessage(
+    pokemonViewModel: PokemonViewModel, onDismiss: () -> Unit = {}
+) {
+    val randomPokemon by pokemonViewModel.pokemonViewState.collectAsState()
+
+    if (randomPokemon != null) {
+        AlertDialog(onDismissRequest = onDismiss, title = {
+            // Display the Pokemon image.
+            AsyncImage(
+                model = randomPokemon.pokemon?.imageUrl,
+                contentDescription = "Random Pokemon Image",
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(MaterialTheme.shapes.medium)
+            )
         }, text = {
-            Text(text = "Are you sure you want to buy ${pokeball?.name}?")
+            // Display a message to the user.
+            Text(
+                text = "Congratulations!\nYou have got a ${randomPokemon.pokemon?.name?.replaceFirstChar { it.uppercaseChar() }}!",
+                color = Color.Black,
+                textAlign = TextAlign.Center
+            )
         }, confirmButton = {
-            Button(onClick = {
-                // Call the onBuyClick callback when confirming the purchase
-                onBuyClick(pokeball!!)
-                showDialog = false
-            }) {
-                Icon(imageVector = Icons.Default.Check, contentDescription = null)
-                Text(text = "Yes", fontWeight = FontWeight.Bold)
+            // You can customize the confirm button if needed.
+            Button(onClick = onDismiss) {
+                Text(text = "OK")
             }
-        }, dismissButton = {
-            Button(onClick = {
-                // Dismiss the dialog when canceling the purchase
-                showDialog = false
-            }) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = null)
-                Text(text = "No", color = Color.Red)
-            }
-        })
+        }, modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+        )
     }
 }

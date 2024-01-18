@@ -7,8 +7,8 @@ fun CreatePokeballEntries(pokeballViewModel: PokeballViewModel){
 
 
     pokeballViewModel.createPokeball( "SunfireBall", "Clear", "Normal", "Grass", "Fire",1000, "https://archives.bulbagarden.net/media/upload/4/44/Dream_Fast_Ball_Sprite.png")
-    pokeballViewModel.createPokeball( "EnchantedCloudBall", "Clouds", "Fairy", "Fighting", "Psychic",1000, "https://archives.bulbagarden.net/media/upload/2/27/Dream_Dream_Ball_Sprite.png")
-    pokeballViewModel.createPokeball( "ThunderstormBall", "Thunderstorm", "Electric", "Flying", "Dragon",1000, "https://archives.bulbagarden.net/media/upload/1/19/Dream_Level_Ball_Sprite.png")
+    pokeballViewModel.createPokeball( "EnchantedBall", "Clouds", "Fairy", "Fighting", "Psychic",1000, "https://archives.bulbagarden.net/media/upload/2/27/Dream_Dream_Ball_Sprite.png")
+    pokeballViewModel.createPokeball( "ThunderBall", "Thunderstorm", "Electric", "Flying", "Dragon",1000, "https://archives.bulbagarden.net/media/upload/1/19/Dream_Level_Ball_Sprite.png")
     pokeballViewModel.createPokeball( "AquaMistBall", "Drizzle", "Water", "Ice", "Electric",1000, "https://archives.bulbagarden.net/media/upload/9/9a/Dream_Dive_Ball_Sprite.png")
     pokeballViewModel.createPokeball( "RainBall",  "Rain", "Water", "Electric", "Bug",1000, "https://archives.bulbagarden.net/media/upload/a/a0/Dream_Net_Ball_Sprite.png")
     pokeballViewModel.createPokeball( "SnowBall", "Snow", "Ice", "Steel", "Water",1000, "https://archives.bulbagarden.net/media/upload/6/64/Dream_Premier_Ball_Sprite.png")
