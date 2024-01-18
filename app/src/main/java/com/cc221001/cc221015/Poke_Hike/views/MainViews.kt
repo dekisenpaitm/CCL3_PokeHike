@@ -192,7 +192,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 // Similar logic as above for the fourth screen.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
                     mainViewModel.selectScreen(Screen.Shop)
-                    DisplayPokeballList(pokeballViewModel = pokeballViewModel, weatherViewModel = weatherViewModel)
+                    DisplayPokeballList(pokemonViewModel = pokemonViewModel, pokeballViewModel = pokeballViewModel, weatherViewModel = weatherViewModel)
                 } else {
                     mainViewModel.selectScreen(Screen.Shop)
                     ErrorScreen()

@@ -57,7 +57,7 @@ fun GetWeatherResponse(weatherViewModel: WeatherViewModel): CurrentWeather? {
 }
 
 @Composable
-fun DisplayPokeballList(pokeballViewModel: PokeballViewModel, weatherViewModel: WeatherViewModel) {
+fun DisplayPokeballList(pokemonViewModel: PokemonViewModel, pokeballViewModel: PokeballViewModel, weatherViewModel: WeatherViewModel) {
     // Collecting the list of Pokemons from the ViewModel.
     val weather = GetWeatherResponse(weatherViewModel = weatherViewModel)
     val condition = weather?.weather?.first()?.main
@@ -93,13 +93,13 @@ fun DisplayPokeballList(pokeballViewModel: PokeballViewModel, weatherViewModel: 
                 )
         ) {
             // Calling PokeballList Composable to display the actual list.
-            PokeballList(pokeballs = pokeballList, pokeballViewModel = pokeballViewModel)
+            PokeballList(pokemonViewModel = pokemonViewModel, pokeballs = pokeballList, pokeballViewModel = pokeballViewModel)
         }
     }
 }
 
 @Composable
-fun PokeballList(pokeballs: List<Pokeball?>, pokeballViewModel: PokeballViewModel) {
+fun PokeballList(pokemonViewModel: PokemonViewModel, pokeballs: List<Pokeball?>, pokeballViewModel: PokeballViewModel) {
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
     LazyColumn(
@@ -117,7 +117,14 @@ fun PokeballList(pokeballs: List<Pokeball?>, pokeballViewModel: PokeballViewMode
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
             ) {
-                PokeballsItem(pokeball = pokeball, onBuyClick = {})
+                PokeballsItem(pokemonViewModel = pokemonViewModel, pokeball = pokeball, onBuyClick = {
+                    println("You bought ${pokeball?.name}?")
+                    pokemonViewModel.getRandomPokemon("","",""
+                        //pokeball.type1,
+                        //pokeball.type2,
+                        //pokeball.type3
+                    )
+                })
             }
         }
     }
@@ -125,10 +132,10 @@ fun PokeballList(pokeballs: List<Pokeball?>, pokeballViewModel: PokeballViewMode
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PokeballsItem(pokeball: Pokeball?, onBuyClick: (Pokeball) -> Unit) {
+fun PokeballsItem(pokemonViewModel: PokemonViewModel, pokeball: Pokeball?, onBuyClick: (Pokeball) -> Unit) {
     // Declare a state variable to track if the dialog is shown
     var showDialog by remember { mutableStateOf(false) }
-    val pokemonViewModel: PokemonViewModel = viewModel()
+    //val pokemonViewModel: PokemonViewModel = viewModel()
 
     // Spacer to add some space before the item starts.
     Spacer(
@@ -240,12 +247,7 @@ fun PokeballsItem(pokeball: Pokeball?, onBuyClick: (Pokeball) -> Unit) {
         }, confirmButton = {
             Button(onClick = {
                 // Call the onBuyClick callback when confirming the purchase
-/*                onBuyClick(pokeball!!)
-                pokemonViewModel.getRandomPokemon(
-                    pokeball.type1,
-                    pokeball.type2,
-                    pokeball.type3
-                )*/
+                onBuyClick(pokeball!!)
                 showDialog = false
             }) {
                 Icon(imageVector = Icons.Default.Check, contentDescription = null)
