@@ -30,7 +30,7 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
                     "$type1 VARCHAR(256), " +
                     "$type2 VARCHAR(256), " +
                     "$type3 VARCHAR(256), " +
-                    "$price VARCHAR(256), " +
+                    "$price INTEGER, " +
                     "$imageUrl VARCHAR(256));"
         )
     }

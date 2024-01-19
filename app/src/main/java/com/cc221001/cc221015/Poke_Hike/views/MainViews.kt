@@ -2,12 +2,16 @@ package com.cc221001.cc221015.Poke_Hike.views
 
 import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
@@ -18,6 +22,7 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -28,6 +33,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,17 +51,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.cc221001.cc221015.Poke_Hike.R
+import com.cc221001.cc221015.Poke_Hike.composables.CoinCounterDisplay
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayPokeballList
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayTrainerProfile
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayWeather
 import com.cc221001.cc221015.Poke_Hike.composables.ErrorScreen
 import com.cc221001.cc221015.Poke_Hike.composables.MyPokemonList
-import com.cc221001.cc221015.Poke_Hike.composables.StepCounterDisplay
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
@@ -111,7 +119,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .clip(RoundedCornerShape(20.dp))
         )
         // NavHost manages composable destinations for navigation.
         NavHost(
@@ -124,12 +131,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
                 // Check if the pokemon trainers list is not empty.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
-                    StepCounterDisplay(pokeCoinViewModel)
-                    Box(modifier=Modifier.fillMaxWidth(),
-                        Alignment.TopCenter){
-                        Button(onClick = {pokeCoinViewModel.usePokeCoins(pokeCoinViewModel.getPokeCoins(),100)}) {
-                        }
-                    }
+                    CoinCounterDisplay(pokeCoinViewModel)
                     mainViewModel.selectScreen(Screen.Home)
                     mainScreen(mainViewModel) // Show the main screen if trainers exist.
                 } else {
@@ -198,7 +200,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 // Similar logic as above for the fourth screen.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
                     mainViewModel.selectScreen(Screen.Shop)
-                    DisplayPokeballList(pokemonViewModel = pokemonViewModel, pokeballViewModel = pokeballViewModel, weatherViewModel = weatherViewModel)
+                    DisplayPokeballList(pokemonViewModel,pokeballViewModel,weatherViewModel,pokeCoinViewModel)
                 } else {
                     mainViewModel.selectScreen(Screen.Shop)
                     ErrorScreen()
@@ -211,63 +213,89 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
 @Composable
 fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
     TopAppBar(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .height(150.dp),
         backgroundColor = Color.Transparent,
         elevation = 0.dp,
     ) {
-        // TopAppBar Content
-        Row(Modifier.height(32.dp)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Row(modifier = Modifier.height(32.dp)) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ProvideTextStyle(value = MaterialTheme.typography.bodyMedium) {
+                        CompositionLocalProvider(
+                            LocalContentAlpha provides ContentAlpha.high,
+                        ) {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                text = "Pokehike",
+                                color=Color.White
+                            )
+                        }
+                    }
+                }
+            }
+            // TopAppBar Content
+            Row() {
+                // Navigation Icon - Box1
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically)
+                        .padding(8.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    ProvideTextStyle(value = MaterialTheme.typography.bodyLarge) {
+                        CompositionLocalProvider(
+                            LocalContentAlpha provides ContentAlpha.high,
+                        ) {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                fontSize = 50.sp,
+                                maxLines = 1,
+                                text = "Home",
+                                color=Color.White
+                            )
+                        }
+                    }
+                }
+                // Title - Box2
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ProvideTextStyle(value = MaterialTheme.typography.bodyMedium) {
+                        CompositionLocalProvider(
+                            LocalContentAlpha provides ContentAlpha.high,
+                        ) {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                text = ""
+                            )
+                        }
+                    }
+                }
 
-            // Navigation Icon - Box1
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                CompositionLocalProvider(
-                    LocalContentAlpha provides ContentAlpha.high,
+                // Account Icon - Box3
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically)
+                        .padding(0.dp,8.dp,0.dp,0.dp),
+                    contentAlignment = Alignment.CenterEnd
                 ) {
                     IconButton(
-                        onClick = { navController.navigate(Screen.Home.route) },
-                        enabled = false,
+                        onClick = { navController.navigate(Screen.Profile.route) },
+                        enabled = true,
                     ) {
+                        Icon(imageVector = Icons.Default.AccountBox, contentDescription = "", modifier=Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)), tint = Color.White)
                     }
-                }
-            }
-
-            // Title - Box2
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically),
-                contentAlignment = Alignment.Center
-            ) {
-                ProvideTextStyle(value = MaterialTheme.typography.bodyMedium) {
-                    CompositionLocalProvider(
-                        LocalContentAlpha provides ContentAlpha.high,
-                    ) {
-                        Text(
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                            text = "Hello"
-                        )
-                    }
-                }
-            }
-
-            // Account Icon - Box3
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                IconButton(
-                    onClick = { navController.navigate(Screen.Profile.route)},
-                    enabled = true,
-                ) {
-                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "")
                 }
             }
         }
@@ -279,14 +307,16 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
     val context = LocalContext.current
     // BottomNavigation is a Material Design component that provides bottom navigation.
     BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.primary // Set the background color of the navigation bar.
+        backgroundColor = Color(0,0,0,125),
     ) {
         // NavigationBarItem for the 'Home' screen.
         NavigationBarItem(
             selected = (selectedScreen == Screen.Home), // Determine if this item is selected based on the current screen.
             onClick = { navController.navigate(Screen.Home.route) }, // Define action on click, navigating to the 'Home' route.
-            icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "") } // Set the icon for this item.
-        )
+            icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            colors = androidx.compose.material3.NavigationBarItemDefaults
+                .colors(
+                    indicatorColor = Color(80,80,125)))
 
         // NavigationBarItem for the 'Weather' screen.
         NavigationBarItem(
@@ -294,31 +324,38 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             selected = (selectedScreen == Screen.Weather),
             onClick = {
                 navController.navigate(Screen.Weather.route) },
-            icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "") }
-        )
+            icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            colors = androidx.compose.material3.NavigationBarItemDefaults
+                .colors(
+                    indicatorColor = Color(80,80,125)))
 
         // NavigationBarItem for the 'Favourites' screen.
         NavigationBarItem(
             // Similar configuration as the first item but for the 'Favourites' screen.
             selected = (selectedScreen == Screen.Favourites),
             onClick = { navController.navigate(Screen.Favourites.route) },
-            icon = { Icon(imageVector = Icons.Default.Favorite, contentDescription = "") }
-        )
-
+            icon = { Icon(imageVector = Icons.Default.Favorite, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            colors = androidx.compose.material3.NavigationBarItemDefaults
+                .colors(
+                    indicatorColor = Color(80,80,125)))
         // NavigationBarItem for the 'List' screen.
         NavigationBarItem(
             // Similar configuration as above for the 'Third' screen.
             selected = (selectedScreen == Screen.List),
             onClick = { navController.navigate(Screen.List.route) },
-            icon = { Icon(imageVector = Icons.Default.List, contentDescription = "") }
-        )
+            icon = { Icon(imageVector = Icons.Default.List, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            colors = androidx.compose.material3.NavigationBarItemDefaults
+                .colors(
+                    indicatorColor = Color(80,80,125)))
 
         NavigationBarItem(
             // Similar configuration as above for the 'Fourth' screen.
             selected = (selectedScreen == Screen.Shop),
             onClick = { navController.navigate(Screen.Shop.route) },
-            icon = { Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "") }
-        )
+            icon = { Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            colors = androidx.compose.material3.NavigationBarItemDefaults
+                .colors(
+                    indicatorColor = Color(80,80,125)))
     }
 }
 

@@ -1,5 +1,7 @@
 package com.cc221001.cc221015.Poke_Hike.composables
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +25,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,13 +45,12 @@ import java.util.Locale
 
 
 // Composable function to display a list of Pokemon.
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
     // Collecting the list of Pokemons from the ViewModel.
     val pokemonList = pokemonViewModel.pokemonViewState.collectAsState().value.pokemons
-
     // Using a Column to layout elements vertically.
-    Column() {
         // A Row for displaying the title, with dynamic text based on the 'favorite' flag.
         Row(modifier = Modifier
             .height(200.dp)
@@ -67,28 +69,51 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
             PokemonList(pokemonList = pokemonList, pokemonViewModel, favorite)
         }
     }
-}
 
 // This function decides whether to display the user's favorite Pokemon or the entire Pokedex based on the 'favorite' flag.
 // It uses a Column for vertical arrangement and dynamically sets the title text.
-
+@Composable
+fun ChoiceButton(pokemonViewModel: PokemonViewModel){
+    Column() {
+        Row() {
+            Column {
+                Button(onClick = {
+                    pokemonViewModel.getFavPokemon()
+                }) {
+                    Text(text = "Favourites")
+                }
+            }
+            Column {
+                Button(onClick = {
+                    pokemonViewModel.getOwnedPokemon()
+                }) {
+                    Text(text = "Owned")
+                }
+            }
+        }
+    }
+}
 
 // Composable function to display a list of Pokemon.
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PokemonList(pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel, favorite: Boolean) {
+
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
-    LazyColumn (modifier=Modifier
-        .background(color=Color(0,0,0,125))
-        .padding(top=20.dp)
-        .fillMaxSize()
-        )
+    LazyColumn (modifier= Modifier
+        .background(color = Color(0, 0, 0, 125))
+        .padding(top = 20.dp)
+        .fillMaxSize())
         {
+            stickyHeader {
+                ChoiceButton(pokemonViewModel = pokemonViewModel)
+            }
         // Iterating over each Pokemon in the pokemonList.
         items(pokemonList) { pokemon ->
             // PokemonItem Composable is called for each Pokemon in the list.
             // It displays individual Pokemon details.
-            Box(modifier=Modifier
+            Box(modifier= Modifier
                 .padding(8.dp)
                 .clip(RoundedCornerShape(10.dp))) {
                 PokemonItem(pokemon = pokemon, pokemonViewModel = pokemonViewModel, favorite)
@@ -116,7 +141,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .background(color = Color(255,255,255,225))
+            .background(color = Color(255, 255, 255, 225))
             .clip(RoundedCornerShape(20.dp))
             .padding(horizontal = 8.dp, vertical = 8.dp),
         maxItemsInEachRow = 5 // Sets the max number of items in each row.
@@ -200,7 +225,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
             .weight(0.5f),
             contentAlignment = Alignment.Center) {
             if (pokemon != null) {
-                val tint = if (pokemon.owned == "true") Color.Red else Color.Gray
+                val tint = if (pokemon.owned == "true") Color.Green else Color.Gray
                 Icon(Icons.Default.CheckCircle, "Like", tint = tint, modifier = Modifier.size(20.dp))
             }
         }

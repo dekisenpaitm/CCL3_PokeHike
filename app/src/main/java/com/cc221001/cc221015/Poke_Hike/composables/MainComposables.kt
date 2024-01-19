@@ -39,24 +39,7 @@ fun TextBox(text:String){
 fun mainScreen(mainViewModel: MainViewModel){
 // Using a Column to layout elements vertically.
     Column() {
-        // A Row for displaying the title, with dynamic text based on the 'favorite' flag.
-        Row(modifier = Modifier
-            .height(200.dp)
-            .fillMaxWidth(),
-            verticalAlignment = CenterVertically,
-            horizontalArrangement = Arrangement.Center) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .align(alignment = CenterVertically)) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    val text = "Home"
-                    Text(text = text, fontSize = 40.sp, color = Color(66,66,66,255))
-                }
-                val text = "Home"
-                Text(text = text, fontSize = 100.sp, color = Color(66, 66, 66, 125))
-            }
-        }
-
+        // A Row for displaying the title, with dynamic text based on the 'favorite' flag
         // A Row to display the list of Pokemon.
         Row (modifier = Modifier
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd= 20.dp, bottomEnd = 0.dp, bottomStart=0.dp))){
