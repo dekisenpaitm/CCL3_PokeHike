@@ -47,6 +47,7 @@ import coil.compose.AsyncImage
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
@@ -63,7 +64,8 @@ fun GetWeatherResponse(weatherViewModel: WeatherViewModel): CurrentWeather? {
 fun DisplayPokeballList(
     pokemonViewModel: PokemonViewModel,
     pokeballViewModel: PokeballViewModel,
-    weatherViewModel: WeatherViewModel
+    weatherViewModel: WeatherViewModel,
+    pokeCoinViewModel: PokeCoinViewModel
 ) {
     // Collecting the list of Pokemons from the ViewModel.
     val weather = GetWeatherResponse(weatherViewModel = weatherViewModel)
@@ -103,7 +105,8 @@ fun DisplayPokeballList(
             PokeballList(
                 pokemonViewModel = pokemonViewModel,
                 pokeballs = pokeballList,
-                pokeballViewModel = pokeballViewModel
+                pokeballViewModel = pokeballViewModel,
+                pokeCoinViewModel = pokeCoinViewModel
             )
         }
     }
@@ -113,7 +116,8 @@ fun DisplayPokeballList(
 fun PokeballList(
     pokemonViewModel: PokemonViewModel,
     pokeballs: List<Pokeball?>,
-    pokeballViewModel: PokeballViewModel
+    pokeballViewModel: PokeballViewModel,
+    pokeCoinViewModel: PokeCoinViewModel
 ) {
     // State to track whether a Pokemon has been bought
     var pokemonBought by remember { mutableStateOf(false) }
@@ -135,6 +139,7 @@ fun PokeballList(
                     .clip(RoundedCornerShape(10.dp))
             ) {
                 PokeballsItem(
+                    pokeCoinViewModel=pokeCoinViewModel,
                     pokemonViewModel = pokemonViewModel,
                     pokeball = pokeball,
                     onBuyClick = {
@@ -164,10 +169,11 @@ fun PokeballList(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PokeballsItem(
-    pokemonViewModel: PokemonViewModel, pokeball: Pokeball?, onBuyClick: (Pokeball) -> Unit
+    pokeCoinViewModel: PokeCoinViewModel,pokemonViewModel: PokemonViewModel, pokeball: Pokeball?, onBuyClick: (Pokeball) -> Unit
 ) {
     // Declare a state variable to track if the dialog is shown
     var showDialog by remember { mutableStateOf(false) }
+    val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
     //val pokemonViewModel: PokemonViewModel = viewModel()
 
     // Spacer to add some space before the item starts.
@@ -278,8 +284,14 @@ fun PokeballsItem(
             }, confirmButton = {
                 Button(onClick = {
                     // Call the onBuyClick callback when confirming the purchase
-                    onBuyClick(pokeball!!)
-                    showDialog = false
+                    if (pokeball != null) {
+                        if(currentCoins.pokeCoin.amount >= pokeball.price) {
+                            pokeCoinViewModel.usePokeCoins(currentCoins.pokeCoin, pokeball.price)
+                            onBuyClick(pokeball)
+                            showDialog = false
+                        }
+                    }
+
                 }) {
                     Icon(imageVector = Icons.Default.Check, contentDescription = null)
                     Text(text = "Yes", fontWeight = FontWeight.Bold)

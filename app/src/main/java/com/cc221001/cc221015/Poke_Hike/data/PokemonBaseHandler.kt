@@ -86,6 +86,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
             val type0ID = cursor.getColumnIndex(type0)
             val type1ID = cursor.getColumnIndex(type1)
             val likedID = cursor.getColumnIndex(liked)
+            val ownedID = cursor.getColumnIndex(owned)
             val imageUrlID = cursor.getColumnIndex(imageUrl)
             if (nameID >= 0)
                 allPokemons.add(
@@ -95,7 +96,8 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                         cursor.getString(type0ID),
                         cursor.getString(type1ID),
                         cursor.getString(imageUrlID),
-                        cursor.getString(likedID)
+                        cursor.getString(likedID),
+                        cursor.getString(ownedID)
                     )
                 )
         }
@@ -116,6 +118,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
             val type0ID = cursor.getColumnIndex(type0)
             val type1ID = cursor.getColumnIndex(type1)
             val likedID = cursor.getColumnIndex(liked)
+            val ownedID = cursor.getColumnIndex(owned)
             val imageUrlID = cursor.getColumnIndex(imageUrl)
             if (nameID >= 0)
                 allPokemons.add(
@@ -125,7 +128,38 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                         cursor.getString(type0ID),
                         cursor.getString(type1ID),
                         cursor.getString(imageUrlID),
-                        cursor.getString(likedID)
+                        cursor.getString(likedID),
+                        cursor.getString(ownedID)
+                    )
+                )
+        }
+
+        return allPokemons.toList()
+    }
+
+    fun getOwnedPokemons(): List<Pokemon> {
+        var allPokemons = mutableListOf<Pokemon>()
+
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='true'", null)
+        while (cursor.moveToNext()) {
+            val idID = cursor.getColumnIndex(id)
+            val nameID = cursor.getColumnIndex(name)
+            val type0ID = cursor.getColumnIndex(type0)
+            val type1ID = cursor.getColumnIndex(type1)
+            val likedID = cursor.getColumnIndex(liked)
+            val ownedID = cursor.getColumnIndex(owned)
+            val imageUrlID = cursor.getColumnIndex(imageUrl)
+            if (nameID >= 0)
+                allPokemons.add(
+                    Pokemon(
+                        cursor.getInt(idID),
+                        cursor.getString(nameID),
+                        cursor.getString(type0ID),
+                        cursor.getString(type1ID),
+                        cursor.getString(imageUrlID),
+                        cursor.getString(likedID),
+                        cursor.getString(ownedID)
                     )
                 )
         }
@@ -153,6 +187,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
             val type0ID = cursor.getColumnIndex(type0)
             val type1ID = cursor.getColumnIndex(type1)
             val likedID = cursor.getColumnIndex(liked)
+            val ownedID = cursor.getColumnIndex(owned)
             val imageUrlID = cursor.getColumnIndex(imageUrl)
             if (nameID >= 0)
                 allPokemons.add(
@@ -162,7 +197,8 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                         cursor.getString(type0ID),
                         cursor.getString(type1ID),
                         cursor.getString(imageUrlID),
-                        cursor.getString(likedID)
+                        cursor.getString(likedID),
+                        cursor.getString(ownedID)
                     )
                 )
         }
@@ -181,21 +217,23 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
             return null
         }
 
-        val randomPokemon = combinedPokemonList.random()
+        var randomPokemon = combinedPokemonList.random()
         if(randomPokemon != null) {
             //ACTIVATE TO TAG POKEMONS AS OWNED!
-            //tagPokemonAsOwned(randomPokemon)
+            randomPokemon=tagPokemonAsOwned(randomPokemon)
         }
-        println("This is your random Pokemon: $randomPokemon")
+        println("thisisthetaggedpokemon $randomPokemon")
         return randomPokemon
     }
 
-    fun tagPokemonAsOwned(randomPokemon:Pokemon){
+    fun tagPokemonAsOwned(randomPokemon:Pokemon):Pokemon{
+        println(randomPokemon)
         val db = this.writableDatabase
         val values = ContentValues()
         values.put(owned, "true")
 
         db.update(tableName, values, "_id = ?", arrayOf(randomPokemon?.number.toString()))
+        return randomPokemon
     }
 
 }
