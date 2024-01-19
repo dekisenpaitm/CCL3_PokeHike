@@ -124,7 +124,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
                 // Check if the pokemon trainers list is not empty.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
-                    StepCounterDisplay(stepCounterViewModel)
+                    StepCounterDisplay(pokeCoinViewModel)
                     Box(modifier=Modifier.fillMaxWidth(),
                         Alignment.TopCenter){
                         Button(onClick = {pokeCoinViewModel.usePokeCoins(pokeCoinViewModel.getPokeCoins(),100)}) {

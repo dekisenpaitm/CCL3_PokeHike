@@ -3,6 +3,7 @@ package com.cc221001.cc221015.Poke_Hike.viewModel
 import androidx.lifecycle.ViewModel
 import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.PokeCoin
+import com.cc221001.cc221015.Poke_Hike.service.StepCounterRepository
 import com.cc221001.cc221015.Poke_Hike.stateModel.PokeCoinViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +14,12 @@ class PokeCoinViewModel(private val db: PokeCoinBaseHandler):ViewModel() {
     private val _pokeCoinViewState = MutableStateFlow(PokeCoinViewState())
     val pokeCoinViewState: StateFlow<PokeCoinViewState> = _pokeCoinViewState.asStateFlow()
 
+    init {
+        // Observe the repository's LiveData and update the ViewModel's LiveData
+        StepCounterRepository.stepCountLiveData.observeForever {
+            getPokeCoins()
+        }
+    }
 
     fun getPokeCoins():PokeCoin{
         _pokeCoinViewState.update{it.copy(pokeCoin=db.getPokeCoinById(1))}
