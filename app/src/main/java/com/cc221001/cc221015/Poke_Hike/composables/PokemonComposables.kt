@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,24 +18,31 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,18 +58,6 @@ import java.util.Locale
 fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
     // Collecting the list of Pokemons from the ViewModel.
     val pokemonList = pokemonViewModel.pokemonViewState.collectAsState().value.pokemons
-    // Using a Column to layout elements vertically.
-        // A Row for displaying the title, with dynamic text based on the 'favorite' flag.
-        Row(modifier = Modifier
-            .height(200.dp)
-            .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center) {
-
-            val text = if (favorite) "My Favorites" else "Pokedex"
-            Text(text = text, fontSize = 40.sp, color = Color.White)
-        }
-
         // A Row to display the list of Pokemon.
         Row (modifier = Modifier
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd= 20.dp, bottomEnd = 0.dp, bottomStart=0.dp))){
@@ -74,26 +70,33 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
 // It uses a Column for vertical arrangement and dynamically sets the title text.
 @Composable
 fun ChoiceButton(pokemonViewModel: PokemonViewModel){
-    Column() {
-        Row() {
-            Column {
-                Button(onClick = {
-                    pokemonViewModel.getFavPokemon()
-                }) {
-                    Text(text = "Favourites")
-                }
-            }
-            Column {
-                Button(onClick = {
-                    pokemonViewModel.getOwnedPokemon()
-                }) {
-                    Text(text = "Owned")
-                }
-            }
+    Box(
+        contentAlignment = Alignment.Center, // Center aligns the content in the Box
+        modifier = Modifier.fillMaxSize() // Makes the Box fill the entire screen
+            .padding(0.dp,0.dp,0.dp,10.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp), // Add spacing between the buttons
+            verticalAlignment = Alignment.CenterVertically // Aligns items vertically to the center
+        ) {
+            // First Button
+            CustomButton(
+                text = "Favourites",
+                onClick = { pokemonViewModel.getFavPokemon() },
+                amount = 120,
+                amount2 = 60
+            )
+
+            // Second Button
+            CustomButton(
+                text = "Owned",
+                onClick = { pokemonViewModel.getOwnedPokemon() },
+                amount = 120,
+                amount2 = 60
+            )
         }
     }
 }
-
 // Composable function to display a list of Pokemon.
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -106,8 +109,11 @@ fun PokemonList(pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel,
         .padding(top = 20.dp)
         .fillMaxSize())
         {
-            stickyHeader {
-                ChoiceButton(pokemonViewModel = pokemonViewModel)
+            println("this is your fav value:$favorite")
+            if(favorite) {
+                stickyHeader {
+                    ChoiceButton(pokemonViewModel = pokemonViewModel)
+                }
             }
         // Iterating over each Pokemon in the pokemonList.
         items(pokemonList) { pokemon ->
@@ -141,8 +147,9 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .background(color = Color(255, 255, 255, 225))
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(10.dp))
+            .background(color = Color(255, 255, 255, 50))
+            .border(2.dp,color=Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
             .padding(horizontal = 8.dp, vertical = 8.dp),
         maxItemsInEachRow = 5 // Sets the max number of items in each row.
     ) {
@@ -172,7 +179,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
                     text = pokemon.name.replaceFirstChar { it.titlecase() },
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp),
-                    color=Color.Black,
+                    color=Color.White,
                 )
             }
         }
@@ -192,7 +199,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
                     Column {
                         matchingTypes.forEach { pokemonType ->
                             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                                Text(text = pokemonType.replaceFirstChar { it.uppercase() }, color=Color.Black)
+                                Text(text = pokemonType.replaceFirstChar { it.uppercase() }, color=Color.White)
                             }
                         }
                     }
