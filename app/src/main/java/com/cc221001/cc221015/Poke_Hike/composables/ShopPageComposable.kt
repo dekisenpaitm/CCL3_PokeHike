@@ -80,19 +80,6 @@ fun DisplayPokeballList(
 
     // Using a Column to layout elements vertically.
     Column {
-        // A Row for displaying the title, with dynamic text based on the 'favorite' flag.
-        Row(
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-
-            val text = "Shop"
-            Text(text = text, fontSize = 40.sp, color = Color.White)
-        }
-
         // A Row to display the list of Pokemon.
         Row(
             modifier = Modifier.clip(

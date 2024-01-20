@@ -72,8 +72,9 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
 fun ChoiceButton(pokemonViewModel: PokemonViewModel){
     Box(
         contentAlignment = Alignment.Center, // Center aligns the content in the Box
-        modifier = Modifier.fillMaxSize() // Makes the Box fill the entire screen
-            .padding(0.dp,0.dp,0.dp,10.dp)
+        modifier = Modifier
+            .fillMaxWidth() // Makes the Box fill the entire screen
+            .padding(0.dp, 0.dp, 0.dp, 10.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp), // Add spacing between the buttons
@@ -84,7 +85,7 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel){
                 text = "Favourites",
                 onClick = { pokemonViewModel.getFavPokemon() },
                 amount = 120,
-                amount2 = 60
+                amount2 = 50
             )
 
             // Second Button
@@ -92,7 +93,7 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel){
                 text = "Owned",
                 onClick = { pokemonViewModel.getOwnedPokemon() },
                 amount = 120,
-                amount2 = 60
+                amount2 = 50
             )
         }
     }
@@ -104,17 +105,16 @@ fun PokemonList(pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel,
 
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
-    LazyColumn (modifier= Modifier
-        .background(color = Color(0, 0, 0, 125))
-        .padding(top = 20.dp)
-        .fillMaxSize())
-        {
-            println("this is your fav value:$favorite")
-            if(favorite) {
-                stickyHeader {
-                    ChoiceButton(pokemonViewModel = pokemonViewModel)
-                }
-            }
+
+Column(modifier= Modifier
+    .background(color = Color(0, 0, 0, 125))
+    .padding(top = 20.dp)
+    .fillMaxSize()){
+    if(favorite) {
+        ChoiceButton(pokemonViewModel = pokemonViewModel)
+    }
+    LazyColumn ()
+    {
         // Iterating over each Pokemon in the pokemonList.
         items(pokemonList) { pokemon ->
             // PokemonItem Composable is called for each Pokemon in the list.
@@ -126,6 +126,8 @@ fun PokemonList(pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel,
             }
         }
     }
+}
+
 }
 
 // This function creates a scrollable list of Pokemon, leveraging LazyColumn for performance.
@@ -149,7 +151,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
             .height(80.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(color = Color(255, 255, 255, 50))
-            .border(2.dp,color=Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+            .border(2.dp, color = Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
             .padding(horizontal = 8.dp, vertical = 8.dp),
         maxItemsInEachRow = 5 // Sets the max number of items in each row.
     ) {

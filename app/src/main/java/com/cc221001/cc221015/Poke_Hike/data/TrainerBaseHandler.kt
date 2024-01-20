@@ -7,19 +7,19 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 
 // This class handles database operations for storing Pokemon trainers' data.
-class TrainerBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, null, 1) {
+class TrainerBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, null, 2) {
     companion object PokemonTrainerDatabase {
         private const val dbName = "PokemonTrainerDatabase"
         private const val tableName = "PokemonTrainer"
         private const val id = "_id"
         private const val name = "name"
-        private const val gender = "gender"
+        private const val hometown = "hometown"
         private const val sprite = "sprite"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         // Create the PokemonTrainer table when the database is first created.
-        db?.execSQL("CREATE TABLE IF NOT EXISTS $tableName ($id INTEGER PRIMARY KEY, $name VARCHAR(30), $gender VARCHAR(10), $sprite VARCHAR(256));")
+        db?.execSQL("CREATE TABLE IF NOT EXISTS $tableName ($id INTEGER PRIMARY KEY, $name VARCHAR(30), $hometown VARCHAR(256), $sprite VARCHAR(256));")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, p1: Int, p2: Int) {
@@ -33,7 +33,7 @@ class TrainerBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         val db = this.writableDatabase
         val values = ContentValues()
         values.put(name, pokemonTrainer.name)
-        values.put(gender, pokemonTrainer.gender)
+        values.put(hometown, pokemonTrainer.hometown)
         values.put(sprite, pokemonTrainer.sprite)
 
         db.insert(tableName, null, values)
@@ -45,7 +45,7 @@ class TrainerBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         val values = ContentValues()
         values.put(id, pokemonTrainer.id)
         values.put(name, pokemonTrainer.name)
-        values.put(gender, pokemonTrainer.gender)
+        values.put(hometown, pokemonTrainer.hometown)
         values.put(sprite, pokemonTrainer.sprite)
 
         db.update(tableName, values, "_id = ?", arrayOf(pokemonTrainer.id.toString()))
@@ -66,14 +66,14 @@ class TrainerBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         while (cursor.moveToNext()) {
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)
-            val genderID = cursor.getColumnIndex(gender)
+            val hometownID = cursor.getColumnIndex(hometown)
             val spriteID = cursor.getColumnIndex(sprite)
-            if (nameID >= 0 && genderID >= 0 && spriteID >= 0)
+            if (nameID >= 0 && hometownID >= 0 && spriteID >= 0)
                 allPokemonTrainers.add(
                     PokemonTrainer(
                         cursor.getInt(idID),
                         cursor.getString(nameID),
-                        cursor.getString(genderID),
+                        cursor.getString(hometownID),
                         cursor.getString(spriteID)
                     )
                 )
