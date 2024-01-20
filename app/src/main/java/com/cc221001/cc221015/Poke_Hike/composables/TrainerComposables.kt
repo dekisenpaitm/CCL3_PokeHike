@@ -9,18 +9,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -53,13 +57,13 @@ fun TrainerValues(mainViewModel: MainViewModel) {
     val sortedAttributes = pokemonTrainer.sortedBy { it.name.length }
 
     // LazyColumn is used for efficient, scrollable lists.
-    LazyColumn(
+    Column(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
         // Iterates over the sorted attributes to create list items.
-        items(sortedAttributes) { pokemonTrainerField ->
+        sortedAttributes.forEach { pokemonTrainerField ->
             // Ensures that the field is accessible.
             pokemonTrainerField.isAccessible
             // Filter out fields with specific names.
@@ -88,44 +92,35 @@ fun TrainerItem(trainerValue: String, mainViewModel: MainViewModel) {
     trainerProperty.isAccessible = true
 
     // FlowRow is used for arranging items in a row that can wrap onto multiple lines.
-    FlowRow(
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalArrangement = Arrangement.Center,
+    // Box for the label of the trainer property.
+    CustomContainerTransparent(w = 370, h = 20, p = 0 ) {
+            Text(text = trainerValue.uppercase() + ":", color = Color.White)
+    }
+    Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .background(color = Color(255, 255, 255, 125))
-            .border(color = Color.Black, width = 1.dp),
-        maxItemsInEachRow = 4 // Maximum items in each row.
+            .width(400.dp)
+            .height(60.dp)
+            .padding(10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+        color = Color(255, 255, 255, 50)
     ) {
-        // Box for the label of the trainer property.
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = trainerValue, // The name of the trainer property.
-                fontSize = 16.sp,
-                color = Color.Black
-            )
-        }
-        // Box for the value of the trainer property.
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "${trainerProperty.get(state.value.pokemonTrainers[0])}",
-                fontSize = 16.sp,
-                color = Color.Black
-            )
+        FlowRow(verticalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.Center,
+            ) {
+            // Box for the value of the trainer property.
+            Box(modifier=Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+                Text(
+                    modifier=Modifier.padding(horizontal = 10.dp),
+                    text = "${trainerProperty.get(state.value.pokemonTrainers[0])}",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }
+
 
 // This function utilizes reflection to dynamically access properties of the PokemonTrainer class.
 // It displays each property as a text label with its corresponding value in a flow layout.
@@ -140,14 +135,19 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
     val state = mainViewModel.mainViewState.collectAsState()
 
     // A Column layout to vertically arrange elements.
-    Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
+    Column(verticalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0, 0, 0, 125), RoundedCornerShape(10.dp))
+            .padding(0.dp, 10.dp, 0.dp, 0.dp)) {
         // A LazyColumn for efficiently displaying a scrollable list.
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .padding(10.dp)
         ) {
             // Displaying the trainer's image.
             item {
@@ -162,68 +162,59 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                     val imageUrl = "android.resource://${LocalContext.current.packageName}/$resourceId"
                     val painter = rememberAsyncImagePainter(model = imageUrl)
                     // Display the image.
-                    Image(
-                        painter = painter,
-                        contentDescription = "Pokemon Image",
-                        contentScale = ContentScale.FillBounds,
+                    Surface(
                         modifier = Modifier
-                            .size(150.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                            .padding(10.dp)
+                            .width(150.dp)
+                            .height(150.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+                        color = Color(255, 255, 255, 50)
+                    ) {
+                        Image(
+                            painter = painter,
+                            contentDescription = "Pokemon Image",
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .padding(10.dp)
+                        )
+                    }
+                }
+            }
+            item{
+                // Display trainer's attributes using TrainerValues composable.
+                TrainerValues(mainViewModel = mainViewModel)
+            }
+            item {
+                // Button to delete the trainer.
+                Column(
+                    modifier=Modifier.height(140.dp),
+                    verticalArrangement = Arrangement.SpaceEvenly) {
+                    CustomButton(
+                        text = "Update Trainer",
+                        onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]); pokemonViewModel.deleteAllFavedPokemon() },
+                        amount = 320,
+                        amount2 = 50
+                    )
+
+                    CustomButton(
+                        text = "Delete Trainer",
+                        onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]) },
+                        amount = 320,
+                        amount2 = 50
                     )
                 }
             }
-        }
-
-        // Display trainer's attributes using TrainerValues composable.
-        TrainerValues(mainViewModel = mainViewModel)
-
-        // LazyColumn for 'Update Trainer' button.
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.3f)
-        ) {
-            item {
-                // Button to update the trainer.
-                Button(
-                    onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]) },
-                    modifier = Modifier.padding(top = 20.dp)
-                ) {
-                    Text(text = "Update Trainer", fontSize = 20.sp)
-                }
-            }
-        }
-
-        // LazyColumn for 'Delete Trainer' button.
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.3f)
-        ) {
-            item {
-                // Button to delete the trainer.
-                Button(
-                    onClick = {
-                        mainViewModel.deletePokemonTrainer(state.value.pokemonTrainers[0])
-                        pokemonViewModel.deleteAllFavedPokemon()
-                    },
-                    modifier = Modifier.padding(top = 20.dp)
-                ) {
-                    Text(text = "deleteTrainer", fontSize = 20.sp)
+            item{
+                Column {
+                    editTrainerModel(mainViewModel)
                 }
             }
         }
     }
 
-    // Call to the editTrainerModel function, possibly for editing trainer details.
-    Column {
-        editTrainerModel(mainViewModel)
-    }
+    // Call to the editTrainerModel function, possibly for editing trainer detail
 }
 
 // This function is designed to display detailed information about a Pokemon Trainer,
@@ -241,7 +232,7 @@ fun editTrainerModel(mainViewModel: MainViewModel) {
         // Remember saveable states for the trainer's properties.
         var id by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.id) }
         var name by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.name) }
-        var gender by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.gender) }
+        var gender by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.hometown) }
         var sprite by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.sprite) }
 
         // AlertDialog to show the editing interface.

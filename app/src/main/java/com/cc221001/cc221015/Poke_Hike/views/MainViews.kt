@@ -81,12 +81,12 @@ sealed class Screen(val route: String) {
     // These objects extend the Screen class and provide specific routes for navigation.
     // The use of objects here ensures that only a single instance of each screen type exists.
 
-    object Home : Screen("home")   // Represents the first screen with route "first"
-    object Weather : Screen("weather") // Represents the second screen with route "second"
-    object Favourites : Screen("favourites")   // Represents the third screen with route "third"
-    object List : Screen("list") // Represents the fourth screen with route "fourth"
-    object Profile : Screen("profile") // Represents the fourth screen with route "fourth"
-    object Shop : Screen("shop") // Represents the fourth screen with route "fourth"
+    object Home : Screen("Home")   // Represents the first screen with route "first"
+    object Weather : Screen("Weather") // Represents the second screen with route "second"
+    object Favourites : Screen("Collection")   // Represents the third screen with route "third"
+    object List : Screen("Pokedex") // Represents the fourth screen with route "fourth"
+    object Profile : Screen("Profile") // Represents the fourth screen with route "fourth"
+    object Shop : Screen("Shop") // Represents the fourth screen with route "fourth"
 
 }
 
@@ -255,9 +255,9 @@ fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
                         ) {
                             Text(
                                 textAlign = TextAlign.Center,
-                                fontSize = 50.sp,
+                                fontSize = 40.sp,
                                 maxLines = 1,
-                                text = "Home",
+                                text = selectedScreen.route,
                                 color=Color.White
                             )
                         }
@@ -307,6 +307,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
     val context = LocalContext.current
     // BottomNavigation is a Material Design component that provides bottom navigation.
     BottomNavigation(
+        elevation=0.dp,
         backgroundColor = Color(0,0,0,125),
     ) {
         // NavigationBarItem for the 'Home' screen.
@@ -316,7 +317,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
-                    indicatorColor = Color(80,80,125)))
+                    indicatorColor = Color(106, 84, 141, 255)))
 
         // NavigationBarItem for the 'Weather' screen.
         NavigationBarItem(
@@ -327,7 +328,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
-                    indicatorColor = Color(80,80,125)))
+                    indicatorColor = Color(106, 84, 141, 255)))
 
         // NavigationBarItem for the 'Favourites' screen.
         NavigationBarItem(
@@ -337,7 +338,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             icon = { Icon(imageVector = Icons.Default.Favorite, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
-                    indicatorColor = Color(80,80,125)))
+                    indicatorColor = Color(106, 84, 141, 255)))
         // NavigationBarItem for the 'List' screen.
         NavigationBarItem(
             // Similar configuration as above for the 'Third' screen.
@@ -346,7 +347,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             icon = { Icon(imageVector = Icons.Default.List, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
-                    indicatorColor = Color(80,80,125)))
+                    indicatorColor = Color(106, 84, 141, 255)))
 
         NavigationBarItem(
             // Similar configuration as above for the 'Fourth' screen.
@@ -355,7 +356,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             icon = { Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
-                    indicatorColor = Color(80,80,125)))
+                    indicatorColor = Color(106, 84, 141, 255)))
     }
 }
 

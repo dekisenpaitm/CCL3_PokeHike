@@ -101,7 +101,6 @@ fun CustomContainerTransparent(w:Int, h:Int, p:Int, content: @Composable() (() -
                 .width(w.dp)
                 .height(h.dp)
                 .padding(p.dp)
-                .border(1.dp, Color.White),
         ) {
             if (content != null) {
                 content()
@@ -141,7 +140,7 @@ fun CustomHeadline(text:String){
 @Composable
 fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int) {
     Surface(
-        color = Color(255, 255, 255, 50),
+        color = Color(106, 84, 141, 255),
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .width(amount.dp)
