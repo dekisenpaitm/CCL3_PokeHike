@@ -21,6 +21,7 @@ fun CreatePokeballEntries(pokeballViewModel: PokeballViewModel){
     pokeballViewModel.createPokeball( "BlazeAshBall", "Ash", "Fire", "Ground", "Rock",10, "https://archives.bulbagarden.net/media/upload/2/20/Bag_Ultra_Ball_LA_Sprite.png")
     pokeballViewModel.createPokeball( "GustBall", "Squall", "Flying", "Electric", "Ice",10, "https://archives.bulbagarden.net/media/upload/c/cc/Bag_Feather_Ball_LA_Sprite.png")
     pokeballViewModel.createPokeball( "WhirlwindBall", "Tornado", "Flying", "Dragon", "Fighting",10, "https://archives.bulbagarden.net/media/upload/6/65/Dream_Beast_Ball_Sprite.png")
+    pokeballViewModel.createPokeball( "PokeBall", "All", "All", "All", "All",10, "https://archives.bulbagarden.net/media/upload/0/00/Bag_Pok%C3%A9_Ball_SV_Sprite.png")
 
 }
 

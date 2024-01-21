@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -151,6 +152,7 @@ fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int) {
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
+                style= MaterialTheme.typography.bodyMedium,
                 text = text,
                 modifier = Modifier.padding(8.dp),
                 color = Color.White

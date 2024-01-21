@@ -205,24 +205,32 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         return allPokemons.toList()
     }
     fun getRandomNewPokemon(type1: String = "", type2: String = "", type3: String = ""): Pokemon? {
-        val pokemonsOfTypeOne = if (type1.isNotEmpty()) getPokemonsOfType(type1) else emptyList()
-        val pokemonsOfTypeTwo = if (type2.isNotEmpty()) getPokemonsOfType(type2) else emptyList()
-        val pokemonsOfTypeThree = if (type3.isNotEmpty()) getPokemonsOfType(type3) else emptyList()
 
-        val combinedPokemonList = pokemonsOfTypeOne + pokemonsOfTypeTwo + pokemonsOfTypeThree
+        var randomPokemon: Pokemon?
 
-        if (combinedPokemonList.isEmpty()) {
-            // If no valid types were provided, return null or handle it accordingly
-            println("No valid types provided. Unable to get a random Pokemon.")
-            return null
+        if(type1=="All"){
+            randomPokemon = getPokemons().random()
+        } else {
+            val pokemonsOfTypeOne = if (type1.isNotEmpty()) getPokemonsOfType(type1) else emptyList()
+            val pokemonsOfTypeTwo = if (type2.isNotEmpty()) getPokemonsOfType(type2) else emptyList()
+            val pokemonsOfTypeThree = if (type3.isNotEmpty()) getPokemonsOfType(type3) else emptyList()
+
+            val combinedPokemonList = pokemonsOfTypeOne + pokemonsOfTypeTwo + pokemonsOfTypeThree
+
+            if (combinedPokemonList.isEmpty()) {
+                // If no valid types were provided, return null or handle it accordingly
+                println("No valid types provided. Unable to get a random Pokemon.")
+                return null
+            }
+
+            randomPokemon = combinedPokemonList.random()
+            if(randomPokemon != null) {
+                //ACTIVATE TO TAG POKEMONS AS OWNED!
+                randomPokemon=tagPokemonAsOwned(randomPokemon)
+            }
+            println("thisisthetaggedpokemon $randomPokemon")
+
         }
-
-        var randomPokemon = combinedPokemonList.random()
-        if(randomPokemon != null) {
-            //ACTIVATE TO TAG POKEMONS AS OWNED!
-            randomPokemon=tagPokemonAsOwned(randomPokemon)
-        }
-        println("thisisthetaggedpokemon $randomPokemon")
         return randomPokemon
     }
 

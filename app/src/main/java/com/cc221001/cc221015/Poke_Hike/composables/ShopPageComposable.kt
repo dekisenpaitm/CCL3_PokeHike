@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -169,96 +172,78 @@ fun PokeballsItem(
             .height(5.dp)
             .fillMaxWidth()
     )
-
-    // FlowRow is used to arrange items in a horizontal flow that wraps.
-    FlowRow(
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .background(color = Color(255, 255, 255, 225))
-            .clip(RoundedCornerShape(20.dp))
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-        maxItemsInEachRow = 5 // Sets the max number of items in each row.
-    ) {
-        // Modifier for individual items in the FlowRow.
-        val itemModifier = Modifier.clip(RoundedCornerShape(8.dp))
-
-        // Box for displaying the Pokemon image.
-        Box(contentAlignment = Alignment.Center) {
-            if (pokeball != null) {
-                AsyncImage(
-                    model = pokeball.imageUrl,
-                    contentDescription = "Pokemon Image",
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                )
-            }
-        }
-
-        // Box for displaying the Pokemon's name.
+    Row(modifier = Modifier.fillMaxWidth()) {
+        // Box for Image, Text, and Price
         Box(
-            modifier = itemModifier
-                .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.Center
+            modifier = Modifier
+                .weight(3f)
+                .height(80.dp)
+                .background(Color(255, 255, 255, 50), RoundedCornerShape(10.dp))
+                .border(2.dp,Color(255,255,255,75), RoundedCornerShape(10.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            if (pokeball != null) {
-                Text(
-                    text = pokeball.name.replaceFirstChar { it.titlecase() },
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-            }
-        }
-
-        // Box for displaying the Pokemon's types.
-        Box(
-            modifier = itemModifier
-                .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.Center
-        ) {
-            if (pokeball != null) {
-                Text(
-                    text = pokeball.type0.replaceFirstChar { it.titlecase() },
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-            }
-        }
-
-        // Box for displaying the Pokemon's types.
-        Box(
-            modifier = itemModifier
-                .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.Center
-        ) {
-            if (pokeball != null) {
-                Text(
-                    text = pokeball.price.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-            }
-        }
-        // Box for the Buy button.
-        Box(
-            modifier = itemModifier
-                .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.Center
-        ) {
-            // Add a clickable Buy button here
-            Button(
-                onClick = {
-                    // Call the onBuyClick callback when Buy button is clicked
-                    showDialog = true
-                }, modifier = Modifier.padding(top = 8.dp)
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Text(text = "Buy", fontWeight = FontWeight.Bold)
+                if (pokeball != null) {
+                    Box(modifier=Modifier.weight(1f).fillMaxHeight(),
+                        contentAlignment = Alignment.Center) {
+                        AsyncImage(
+                            model = pokeball.imageUrl,
+                            contentDescription = "Pokemon Image",
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(MaterialTheme.shapes.small)
+                        )
+                    }
+                    Box(modifier=Modifier.weight(1f).fillMaxHeight(),
+                        contentAlignment = Alignment.Center) {
+                        Text(
+                            text = pokeball.name.replaceFirstChar { it.titlecase() },
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                    Box(modifier=Modifier.weight(1f).fillMaxHeight(),
+                        contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "$ ${pokeball.price},-",
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
             }
         }
+
+        Spacer(
+            modifier = Modifier
+                .width(8.dp)
+                .weight(0.1f)
+        )
+
+        // Button
+        Box(
+            modifier = Modifier
+                .weight(0.9f)
+                .fillMaxHeight(),
+            contentAlignment = Alignment.Center
+        ) {
+            CustomButton(
+                text = "Buy",
+                onClick = {
+                    showDialog = true
+                },
+                amount = 100,
+                amount2 = 80
+            )
+        }
+    }
+
+
         // Show the AlertDialog when showDialog is true
         if (showDialog) {
             AlertDialog(onDismissRequest = {
@@ -272,7 +257,7 @@ fun PokeballsItem(
                 Button(onClick = {
                     // Call the onBuyClick callback when confirming the purchase
                     if (pokeball != null) {
-                        if(currentCoins.pokeCoin.amount >= pokeball.price) {
+                        if (currentCoins.pokeCoin.amount >= pokeball.price) {
                             pokeCoinViewModel.usePokeCoins(currentCoins.pokeCoin, pokeball.price)
                             onBuyClick(pokeball)
                             showDialog = false
@@ -293,9 +278,8 @@ fun PokeballsItem(
                 }
             })
         }
-    }
 
-}
+    }
 
 @Composable
 fun DisplayPokemonMessage(

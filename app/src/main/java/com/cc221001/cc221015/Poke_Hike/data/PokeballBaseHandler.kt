@@ -115,7 +115,7 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
         var specialPokeball = mutableListOf<Pokeball>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $type0= '$weather'", null)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $type0= '$weather' OR $type0='All'", null)
         while (cursor.moveToNext()) {
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)
