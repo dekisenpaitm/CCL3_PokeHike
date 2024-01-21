@@ -152,7 +152,6 @@ fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int) {
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
-                style= MaterialTheme.typography.bodyMedium,
                 text = text,
                 modifier = Modifier.padding(8.dp),
                 color = Color.White

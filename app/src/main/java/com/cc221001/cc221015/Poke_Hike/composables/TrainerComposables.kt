@@ -200,7 +200,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
 
                     CustomButton(
                         text = "Delete Trainer",
-                        onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]) },
+                        onClick = { mainViewModel.deletePokemonTrainer(state.value.pokemonTrainers[0]) },
                         amount = 320,
                         amount2 = 50
                     )
