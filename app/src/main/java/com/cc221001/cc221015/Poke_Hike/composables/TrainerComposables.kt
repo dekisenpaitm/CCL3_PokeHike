@@ -204,7 +204,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                         onClick = { mainViewModel.deletePokemonTrainer(state.value.pokemonTrainers[0]) },
                         amount = 320,
                         amount2 = 50,
-                        true
+                        basic = false
                     )
                 }
             }

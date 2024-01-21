@@ -141,7 +141,7 @@ fun CustomHeadline(text:String){
 @Composable
 fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int, basic:Boolean) {
 
-    val newColor= if(basic) Color(106, 84, 141, 255) else Color(106, 84, 141, 255)
+    val newColor = if(basic) Color(106, 84, 141, 255) else Color(58, 42, 75, 255)
     Surface(
         color = newColor,
         shape = RoundedCornerShape(10.dp),

@@ -1,9 +1,6 @@
 package com.cc221001.cc221015.Poke_Hike.views
 
-import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.ContentAlpha
@@ -23,25 +19,20 @@ import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
-import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,6 +54,7 @@ import com.cc221001.cc221015.Poke_Hike.composables.DisplayTrainerProfile
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayWeather
 import com.cc221001.cc221015.Poke_Hike.composables.ErrorScreen
 import com.cc221001.cc221015.Poke_Hike.composables.MyPokemonList
+import com.cc221001.cc221015.Poke_Hike.composables.background
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
@@ -71,7 +63,6 @@ import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
-import kotlin.math.round
 
 // https://kotlinlang.org/docs/sealed-classes.html
 // Define a sealed class named 'Screen' to represent different screens in the app.
@@ -102,7 +93,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
 
     // Collect the current state of the main view from the MainViewModel.
     val state = mainViewModel.mainViewState.collectAsState()
-
+    val weather by weatherViewModel.weather.collectAsState(null)
     // Create or remember a NavController for navigation between screens.
     val navController = rememberNavController()
 
@@ -114,11 +105,10 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
         containerColor = Color.White,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.clear),
+            painter = painterResource(id = weather?.background(weather!!.weather) ?: R.drawable.clear),
             contentDescription = "Login_Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         )
         // NavHost manages composable destinations for navigation.
         NavHost(
@@ -294,7 +284,7 @@ fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
                         onClick = { navController.navigate(Screen.Profile.route) },
                         enabled = true,
                     ) {
-                        Icon(imageVector = Icons.Default.AccountBox, contentDescription = "", modifier=Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)), tint = Color.White)
+                        Icon(imageVector = Icons.Default.AccountBox, contentDescription = "", modifier=Modifier.size(40.dp).padding(bottom = 6.dp).clip(RoundedCornerShape(10.dp)), tint = Color.White)
                     }
                 }
             }

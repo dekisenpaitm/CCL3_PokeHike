@@ -1,10 +1,8 @@
 package com.cc221001.cc221015.Poke_Hike.composables
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,11 +28,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,10 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,8 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
@@ -69,7 +58,6 @@ import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 import okio.AsyncTimeout.Companion.condition
-import java.util.Properties
 
 @Composable
 fun GetWeatherResponse(weatherViewModel: WeatherViewModel): CurrentWeather? {
@@ -78,7 +66,6 @@ fun GetWeatherResponse(weatherViewModel: WeatherViewModel): CurrentWeather? {
     return weather
 }
 
-@SuppressLint("SuspiciousIndentation")
 @Composable
 fun DisplayPokeballList(
     pokemonViewModel: PokemonViewModel,
@@ -88,11 +75,14 @@ fun DisplayPokeballList(
 ) {
     // Collecting the list of Pokemons from the ViewModel.
     val weather = GetWeatherResponse(weatherViewModel = weatherViewModel)
+
+    // Check if weather data is still loading
+
+
         Column(modifier = Modifier
             .background(color = Color(0, 0, 0, 125))
             .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
-            .padding(20.dp)
-            .fillMaxSize()) {
+            .padding(20.dp)) {
 
             if (weather == null) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -110,31 +100,29 @@ fun DisplayPokeballList(
                         .clip(RoundedCornerShape(10.dp))
                         .padding(vertical = 20.dp)
                 ) {
-                Image(
-                    painter = painterResource(id = weather.background()),
-                    contentDescription = "Background",
-                    modifier = Modifier
-                        .matchParentSize()
-                        .clip(RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Crop
-                )
-
-                Column(
+                    Image(
+                        painter = painterResource(id = weather.smallbackground()),
+                        contentDescription = "Background",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp)),
+                        contentScale = ContentScale.FillWidth
+                    )
+                    Column(
                         Modifier
+                            .padding(top = 6.dp, bottom = 6.dp)
                             .align(Alignment.TopCenter),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            modifier=Modifier.padding(4.dp),
-                            text="Currently it's ${condition}!\n\n" +
-                                    "The ${pokeball.name} is now available.\n\n" +
-                                    "${pokeball.name} contains: ${pokeball.type1}, ${pokeball.type2} & ${pokeball.type3} types.",
+                            "Now is ${condition}!\n" + "You can get a ${pokeball.name}.\n" +
+                                    "${pokeball.name} has pokemons of ${pokeball.type1}, ${pokeball.type2} and ${pokeball.type3} types.\n" +
+                                    "Normal PokeBall has pokemons of all types.",
                             color = Color.White,
                             textAlign = TextAlign.Center
                         )
                     }
                 }
-
             }
             CustomSplitter(h = 2)
             // A Row to display the list of Pokemon.
@@ -160,8 +148,6 @@ fun PokeballList(
 ) {
     // State to track whether a Pokemon has been bought
     var pokemonBought by remember { mutableStateOf(false) }
-    val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
-    var showDialog by remember { mutableStateOf(false) }
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
     LazyColumn(
@@ -177,7 +163,6 @@ fun PokeballList(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
                     .fillMaxSize()
-                    .padding(vertical = 4.dp)
             ) {
                 PokeballsItem(pokeCoinViewModel = pokeCoinViewModel,
                     pokemonViewModel = pokemonViewModel,
@@ -217,6 +202,8 @@ fun PokeballsItem(
     // Declare a state variable to track if the dialog is shown
     var showDialog by remember { mutableStateOf(false) }
     val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
+    //val pokemonViewModel: PokemonViewModel = viewModel()
+
     // Spacer to add some space before the item starts.
     Spacer(
         modifier = Modifier
@@ -306,125 +293,38 @@ fun PokeballsItem(
 
 
     // Show the AlertDialog when showDialog is true
-    if (showDialog && currentCoins.pokeCoin.amount >= pokeball!!.price) {
-        AlertDialog(
-            containerColor = Color(0,0,0,215),
-            onDismissRequest = {
-                // Dismiss the dialog when clicking outside of it
+    if (showDialog) {
+        AlertDialog(onDismissRequest = {
+            // Dismiss the dialog when clicking outside of it
+            showDialog = false
+        }, title = {
+            Text(text = "Buy ${pokeball?.name}?")
+        }, text = {
+            Text(text = "Are you sure you want to buy ${pokeball?.name}?")
+        }, confirmButton = {
+            Button(onClick = {
+                // Call the onBuyClick callback when confirming the purchase
+                if (pokeball != null) {
+                    if (currentCoins.pokeCoin.amount >= pokeball.price) {
+                        pokeCoinViewModel.usePokeCoins(currentCoins.pokeCoin, pokeball.price)
+                        onBuyClick(pokeball)
+                        showDialog = false
+                    }
+                }
+
+            }) {
+                Icon(imageVector = Icons.Default.Check, contentDescription = null)
+                Text(text = "Yes", fontWeight = FontWeight.Bold)
+            }
+        }, dismissButton = {
+            Button(onClick = {
+                // Dismiss the dialog when canceling the purchase
                 showDialog = false
-            }, title = {
-                Text(text = "Buy ${pokeball?.name}?", color= Color.White)
-            }, text = {
-                Text(text = "Are you sure you want to buy ${pokeball?.name}?", color= Color.White)
-            }, confirmButton = {
-                Surface(
-                    color = Color(106, 84, 141, 255), // Set the background color of the surface
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(50.dp)
-                        .clickable(onClick = {
-                            if (pokeball != null) {
-                                if (currentCoins.pokeCoin.amount >= pokeball.price) {
-                                    pokeCoinViewModel.usePokeCoins(
-                                        currentCoins.pokeCoin,
-                                        pokeball.price
-                                    )
-                                    onBuyClick(pokeball)
-                                    showDialog = false
-                                }
-                            }
-                        }) // Makes the surface clickable
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(4.dp), // Padding inside the Row
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            tint = Color.White // Set icon color
-                        )
-                        Spacer(Modifier.width(4.dp)) // Spacer for the gap
-                        Text(
-                            text = "Yes",
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }, dismissButton = {
-                // Customizing the confirm button
-                Surface(
-                    color = Color(106, 84, 141, 255), // Set the background color of the surface
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(50.dp)
-                        .clickable(onClick = { showDialog = false }) // Makes the surface clickable
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(4.dp), // Padding inside the Row
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = null,
-                            tint = Color.White // Set icon color
-                        )
-                        Spacer(Modifier.width(4.dp)) // Spacer for the gap
-                        Text(
-                            text = "No",
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            })
-    } else if(showDialog && currentCoins.pokeCoin.amount < pokeball!!.price) {
-        AlertDialog(
-            containerColor = Color(0,0,0,215),
-            onDismissRequest = {
-                // Dismiss the dialog when clicking outside of it
-                showDialog = false
-            }, title = {
-                Text(text = "Oops!", color= Color.White)
-            }, text = {
-                Text(text = "Looks like you're out of coins!", color= Color.White)
-            }, confirmButton = {
-                Surface(
-                    color = Color(106, 84, 141, 255), // Set the background color of the surface
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(50.dp)
-                        .clickable(onClick = {showDialog = false}) // Makes the surface clickable
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(4.dp), // Padding inside the Row
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            tint = Color.White // Set icon color
-                        )
-                        Spacer(Modifier.width(4.dp)) // Spacer for the gap
-                        Text(
-                            text = "Yes",
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            })
+            }) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                Text(text = "No", color = Color.White)
+            }
+        })
     }
 
 }
@@ -435,75 +335,32 @@ fun DisplayPokemonMessage(
 ) {
     val randomPokemon by pokemonViewModel.pokemonViewState.collectAsState()
 
-    if (randomPokemon.pokemon?.name == "") {
-        AlertDialog(
-            containerColor = Color(0, 0, 0, 215),
-            onDismissRequest = onDismiss,
-            title = {
-                Text(
-                    text = "CONGRATULATION",
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                )
-            },
-            text = {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Display the Pokemon image
-                    item {
-                        AsyncImage(
-                            model = randomPokemon.pokemon?.imageUrl,
-                            contentDescription = "Random Pokemon Image",
-                            contentScale = ContentScale.FillHeight,
-                            modifier = Modifier
-                                .size(200.dp)
-                                .clip(MaterialTheme.shapes.medium)
-                                .padding(20.dp)
-                        )
-                    }
-                    item {
-                        // Display a message to the user
-                        Text(
-                            text = "You got ${randomPokemon.pokemon?.name?.replaceFirstChar { it.uppercaseChar() }}!",
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                // Customizing the confirm button
-                Surface(
-                    color = Color(106, 84, 141, 255), // Set the background color of the surface
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(50.dp)
-                        .clickable(onClick = onDismiss) // Makes the surface clickable
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))// Optional if you want extra clipping, but shape already does this
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "OK",
-                            textAlign = TextAlign.Center,
-                            color = Color.White,
-                            modifier = Modifier
-                                .padding(
-                                    vertical = 8.dp,
-                                    horizontal = 16.dp
-                                ) // Add padding for better touch area and aesthetics
-                                .fillMaxWidth() // Optional, for making the text take up the full width of the surface
-                        )
-                    }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth() // Make sure the AlertDialog itself fills the width
-                .wrapContentHeight(Alignment.CenterVertically) // Vertically center the AlertDialog
+    if (randomPokemon != null) {
+        AlertDialog(onDismissRequest = onDismiss, title = {
+            // Display the Pokemon image.
+            AsyncImage(
+                model = randomPokemon.pokemon?.imageUrl,
+                contentDescription = "Random Pokemon Image",
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(MaterialTheme.shapes.medium)
+            )
+        }, text = {
+            // Display a message to the user.
+            Text(
+                text = "Congratulations!\nYou have got a ${randomPokemon.pokemon?.name?.replaceFirstChar { it.uppercaseChar() }}!",
+                color = Color.Black,
+                textAlign = TextAlign.Center
+            )
+        }, confirmButton = {
+            // You can customize the confirm button if needed.
+            Button(onClick = onDismiss) {
+                Text(text = "OK")
+            }
+        }, modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
         )
     }
 }
