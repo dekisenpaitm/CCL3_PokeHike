@@ -99,10 +99,10 @@ fun TrainerItem(trainerValue: String, mainViewModel: MainViewModel) {
     Surface(
         modifier = Modifier
             .width(400.dp)
+            .padding(vertical = 4.dp)
             .height(60.dp)
-            .padding(10.dp)
             .clip(RoundedCornerShape(10.dp))
-            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(20.dp)),
+            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
         color = Color(255, 255, 255, 50)
     ) {
         FlowRow(verticalArrangement = Arrangement.Center,
@@ -147,7 +147,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(10.dp)
+                .padding(20.dp,20.dp,20.dp,0.dp)
         ) {
             // Displaying the trainer's image.
             item {

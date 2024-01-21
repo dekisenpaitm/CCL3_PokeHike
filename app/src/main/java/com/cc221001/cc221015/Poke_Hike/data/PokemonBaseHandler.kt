@@ -107,6 +107,37 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
     }
 
     // Retrieve favorite Pokemons from the database.
+    fun getOwnedPokemons(): List<Pokemon> {
+        var allPokemons = mutableListOf<Pokemon>()
+
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='true'", null)
+        while (cursor.moveToNext()) {
+            val idID = cursor.getColumnIndex(id)
+            val nameID = cursor.getColumnIndex(name)
+            val type0ID = cursor.getColumnIndex(type0)
+            val type1ID = cursor.getColumnIndex(type1)
+            val likedID = cursor.getColumnIndex(liked)
+            val ownedID = cursor.getColumnIndex(owned)
+            val imageUrlID = cursor.getColumnIndex(imageUrl)
+            if (nameID >= 0)
+                allPokemons.add(
+                    Pokemon(
+                        cursor.getInt(idID),
+                        cursor.getString(nameID),
+                        cursor.getString(type0ID),
+                        cursor.getString(type1ID),
+                        cursor.getString(imageUrlID),
+                        cursor.getString(likedID),
+                        cursor.getString(ownedID)
+                    )
+                )
+        }
+
+        return allPokemons.toList()
+    }
+
+    // Retrieve favorite Pokemons from the database.
     fun getFavPokemons(): List<Pokemon> {
         var allPokemons = mutableListOf<Pokemon>()
 
@@ -137,11 +168,11 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         return allPokemons.toList()
     }
 
-    fun getOwnedPokemons(): List<Pokemon> {
+    fun getNotOwnedPokemons(): List<Pokemon> {
         var allPokemons = mutableListOf<Pokemon>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='true'", null)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false'", null)
         while (cursor.moveToNext()) {
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)
@@ -174,7 +205,35 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
             unlikePokemon(pokemon)
         }
     }
+    fun getPokemonsOfMultipleTypes(type1:String,type2:String,type3:String):List<Pokemon?> {
+        println("pokemonOfTypeCalled")
+        var allPokemons = mutableListOf<Pokemon>()
 
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND $type0 LIKE '%$type1%' OR '%$type2%' OR '%$type3%';", null)
+        while (cursor.moveToNext()) {
+            val idID = cursor.getColumnIndex(id)
+            val nameID = cursor.getColumnIndex(name)
+            val type0ID = cursor.getColumnIndex(type0)
+            val type1ID = cursor.getColumnIndex(type1)
+            val likedID = cursor.getColumnIndex(liked)
+            val ownedID = cursor.getColumnIndex(owned)
+            val imageUrlID = cursor.getColumnIndex(imageUrl)
+            if (nameID >= 0)
+                allPokemons.add(
+                    Pokemon(
+                        cursor.getInt(idID),
+                        cursor.getString(nameID),
+                        cursor.getString(type0ID),
+                        cursor.getString(type1ID),
+                        cursor.getString(imageUrlID),
+                        cursor.getString(likedID),
+                        cursor.getString(ownedID)
+                    )
+                )
+        }
+        return allPokemons.toList()
+    }
     fun getPokemonsOfType(type:String):List<Pokemon?> {
         println("pokemonOfTypeCalled")
         var allPokemons = mutableListOf<Pokemon>()
@@ -205,11 +264,15 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         return allPokemons.toList()
     }
     fun getRandomNewPokemon(type1: String = "", type2: String = "", type3: String = ""): Pokemon? {
-
         var randomPokemon: Pokemon?
-
         if(type1=="All"){
-            randomPokemon = getPokemons().random()
+            randomPokemon = getNotOwnedPokemons().random()
+
+            if(randomPokemon.name != "") {
+                //ACTIVATE TO TAG POKEMONS AS OWNED!
+                randomPokemon=tagPokemonAsOwned(randomPokemon)
+            }
+            println("thisisthetaggedpokemon $randomPokemon")
         } else {
             val pokemonsOfTypeOne = if (type1.isNotEmpty()) getPokemonsOfType(type1) else emptyList()
             val pokemonsOfTypeTwo = if (type2.isNotEmpty()) getPokemonsOfType(type2) else emptyList()

@@ -40,6 +40,11 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 		}
 	}
 
+	fun getPokemonOfType(type1:String, type2: String,type3: String) {
+		_pokemonViewState.update {
+			it.copy(pokemons = db.getPokemonsOfMultipleTypes(type1, type2, type3))}
+	}
+
 	// Select a screen in the UI.
 	fun selectScreen(screen: Screen) {
 		_pokemonViewState.update { it.copy(selectedScreen = screen) }
@@ -109,9 +114,4 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 			}
 		}
 	}
-
-
-
-
-
 }
