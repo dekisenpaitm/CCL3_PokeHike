@@ -1,5 +1,6 @@
 package com.cc221001.cc221015.Poke_Hike.composables
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -66,6 +67,7 @@ fun GetWeatherResponse(weatherViewModel: WeatherViewModel): CurrentWeather? {
     return weather
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun DisplayPokeballList(
     pokemonViewModel: PokemonViewModel,
@@ -101,7 +103,7 @@ fun DisplayPokeballList(
                         .padding(vertical = 20.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = weather.background()),
+                        painter = painterResource(id = weather.smallbackground()),
                         contentDescription = "Background",
                         modifier = Modifier
                             .fillMaxWidth()

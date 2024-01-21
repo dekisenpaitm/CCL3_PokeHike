@@ -12,12 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,11 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.service.SimpleForecast
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
-import com.cc221001.cc221015.Poke_Hike.service.dto.ForecastWeather
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.math.roundToInt
 
 @Composable
@@ -77,7 +70,7 @@ fun WeatherSummary(weather: CurrentWeather) {
         .clip(RoundedCornerShape(10.dp))
     ){
         Image(
-            painter = painterResource(id = weather.background()),
+            painter = painterResource(id = weather.smallbackground()),
             contentDescription = "Background",
             modifier = Modifier
                 .fillMaxWidth()
@@ -160,12 +153,46 @@ fun FiveDayForecast(forecast: List<SimpleForecast>) {
 }
 
 @DrawableRes
-fun CurrentWeather.background(): Int {
+fun CurrentWeather.smallbackground(): Int {
     val conditions = weather.first().main
     return when {
-        conditions.contains("cloud", ignoreCase = true) -> R.drawable.clear_small
-        conditions.contains("rain", ignoreCase = true) -> R.drawable.clear_small
+        conditions.contains("cloud", ignoreCase = true) -> R.drawable.cloudy_small
+        conditions.contains("thunder", ignoreCase = true) -> R.drawable.thunderstorm_small
+        conditions.contains("drizzle", ignoreCase = true) -> R.drawable.rain_small
+        conditions.contains("rain", ignoreCase = true) -> R.drawable.rain_small
+        conditions.contains("snow", ignoreCase = true) -> R.drawable.snow_small
+        conditions.contains("mist", ignoreCase = true) -> R.drawable.fog_small
+        conditions.contains("smoke", ignoreCase = true) -> R.drawable.fog_small
+        conditions.contains("haze", ignoreCase = true) -> R.drawable.fog_small
+        conditions.contains("dust", ignoreCase = true) -> R.drawable.fog_small
+        conditions.contains("fog", ignoreCase = true) -> R.drawable.fog_small
+        conditions.contains("sand", ignoreCase = true) -> R.drawable.fog_small
+        conditions.contains("ash", ignoreCase = true) -> R.drawable.fog_small
+        conditions.contains("squal", ignoreCase = true) -> R.drawable.wimdy_small
+        conditions.contains("tornado", ignoreCase = true) -> R.drawable.wimdy_small
         else -> R.drawable.clear_small
+    }
+}
+
+@DrawableRes
+fun CurrentWeather.background(weather: List<CurrentWeather.Weather>): Int {
+    val conditions = weather.first().main
+    return when {
+        conditions.contains("cloud", ignoreCase = true) -> R.drawable.cloudy
+        conditions.contains("thunder", ignoreCase = true) -> R.drawable.thunderstorm
+        conditions.contains("drizzle", ignoreCase = true) -> R.drawable.rain
+        conditions.contains("rain", ignoreCase = true) -> R.drawable.rain
+        conditions.contains("snow", ignoreCase = true) -> R.drawable.snow
+        conditions.contains("mist", ignoreCase = true) -> R.drawable.fog
+        conditions.contains("smoke", ignoreCase = true) -> R.drawable.fog
+        conditions.contains("haze", ignoreCase = true) -> R.drawable.fog
+        conditions.contains("dust", ignoreCase = true) -> R.drawable.fog
+        conditions.contains("fog", ignoreCase = true) -> R.drawable.fog
+        conditions.contains("sand", ignoreCase = true) -> R.drawable.fog
+        conditions.contains("ash", ignoreCase = true) -> R.drawable.fog
+        conditions.contains("squal", ignoreCase = true) -> R.drawable.wimdy
+        conditions.contains("tornado", ignoreCase = true) -> R.drawable.wimdy
+        else -> R.drawable.clear
     }
 }
 
