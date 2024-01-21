@@ -114,7 +114,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
         containerColor = Color.White,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.hills_background),
+            painter = painterResource(id = R.drawable.clear),
             contentDescription = "Login_Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -214,7 +214,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
 fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
     TopAppBar(
         modifier = Modifier.fillMaxWidth()
-            .height(150.dp),
+            .height(124.dp),
         backgroundColor = Color.Transparent,
         elevation = 0.dp,
     ) {
@@ -255,7 +255,7 @@ fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
                         ) {
                             Text(
                                 textAlign = TextAlign.Center,
-                                fontSize = 40.sp,
+                                fontSize = 30.sp,
                                 maxLines = 1,
                                 text = selectedScreen.route,
                                 color=Color.White

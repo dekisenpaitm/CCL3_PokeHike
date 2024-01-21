@@ -6,6 +6,7 @@ import android.content.Context
 import android.location.Location
 import android.os.Looper
 import androidx.annotation.RequiresPermission
+import androidx.compose.runtime.Composable
 import com.cc221001.cc221015.Poke_Hike.BuildConfig
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
 import com.cc221001.cc221015.Poke_Hike.service.dto.ForecastWeather
@@ -19,12 +20,16 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class SimpleForecast(
-    val date: Date, val condition: String, val temperature: Double
+    val dayName: String,
+    val condition: String,
+    val temperature: Double
 )
 
 class WeatherRepository @Inject constructor(
@@ -47,14 +52,19 @@ class WeatherRepository @Inject constructor(
         }
 
         return group.mapValues { (_, forecastList) ->
-            forecastList[forecastList.size-1]
-        }.map { (_, forecast) ->
+            forecastList[forecastList.size - 1]
+        }.map { (day, forecast) ->
             SimpleForecast(
-                Date(forecast.dt * 1000L), forecast.weather.first().main, forecast.main.temp
+                forecast.dt.dayName(),
+                forecast.weather.first().main,
+                forecast.main.temp
             )
         }
     }
 
+    private fun Long.dayName(): String {
+        return SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(this * 1_000))
+    }
 
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     private fun locationFlow() = channelFlow<Location> {

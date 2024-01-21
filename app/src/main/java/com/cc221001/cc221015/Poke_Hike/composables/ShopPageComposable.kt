@@ -72,32 +72,51 @@ fun DisplayPokeballList(
 ) {
     // Collecting the list of Pokemons from the ViewModel.
     val weather = GetWeatherResponse(weatherViewModel = weatherViewModel)
-    val condition = weather?.weather?.first()?.main
 
-    println(condition)
+    // Check if weather data is still loading
+    if (weather == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Retrieving the latest weather data...", color = Color.White)
+        }
+    } else {
+        val condition = weather.weather.firstOrNull()?.main
+        pokeballViewModel.getSpecialPokeball(condition.toString())
+        val pokeballList = pokeballViewModel.pokemonViewState.collectAsState().value.pokeballs
 
-    pokeballViewModel.getSpecialPokeball(condition.toString())
+        Column {
+            // Displaying a conditional message Box based on weather condition
+            val specialPokeball = pokeballList.firstOrNull()
+            specialPokeball?.let { pokeball ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "Now is ${condition}!\n" + "You can get a ${pokeball.name}.\n" +
+                                "${pokeball.name} has pokemons of ${pokeball.type1}, ${pokeball.type2} and ${pokeball.type3} types.\n" +
+                        "Normal PokeBall has pokemons of all types.",
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
 
-    val pokeballList = pokeballViewModel.pokemonViewState.collectAsState().value.pokeballs
-
-
-    // Using a Column to layout elements vertically.
-    Column {
-        // A Row to display the list of Pokemon.
-        Row(
-            modifier = Modifier.clip(
-                RoundedCornerShape(
-                    topStart = 20.dp, topEnd = 20.dp, bottomEnd = 0.dp, bottomStart = 0.dp
+            // A Row to display the list of Pokemon.
+            Row(
+                modifier = Modifier.clip(
+                    RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
-            )
-        ) {
-            // Calling PokeballList Composable to display the actual list.
-            PokeballList(
-                pokemonViewModel = pokemonViewModel,
-                pokeballs = pokeballList,
-                pokeballViewModel = pokeballViewModel,
-                pokeCoinViewModel = pokeCoinViewModel
-            )
+            ) {
+                // Calling PokeballList Composable to display the actual list.
+                PokeballList(
+                    pokemonViewModel = pokemonViewModel,
+                    pokeballs = pokeballList,
+                    pokeballViewModel = pokeballViewModel,
+                    pokeCoinViewModel = pokeCoinViewModel
+                )
+            }
         }
     }
 }
@@ -128,8 +147,7 @@ fun PokeballList(
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
             ) {
-                PokeballsItem(
-                    pokeCoinViewModel=pokeCoinViewModel,
+                PokeballsItem(pokeCoinViewModel = pokeCoinViewModel,
                     pokemonViewModel = pokemonViewModel,
                     pokeball = pokeball,
                     onBuyClick = {
@@ -159,7 +177,10 @@ fun PokeballList(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PokeballsItem(
-    pokeCoinViewModel: PokeCoinViewModel,pokemonViewModel: PokemonViewModel, pokeball: Pokeball?, onBuyClick: (Pokeball) -> Unit
+    pokeCoinViewModel: PokeCoinViewModel,
+    pokemonViewModel: PokemonViewModel,
+    pokeball: Pokeball?,
+    onBuyClick: (Pokeball) -> Unit
 ) {
     // Declare a state variable to track if the dialog is shown
     var showDialog by remember { mutableStateOf(false) }
@@ -179,7 +200,7 @@ fun PokeballsItem(
                 .weight(3f)
                 .height(80.dp)
                 .background(Color(255, 255, 255, 50), RoundedCornerShape(10.dp))
-                .border(2.dp,Color(255,255,255,75), RoundedCornerShape(10.dp)),
+                .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -188,8 +209,12 @@ fun PokeballsItem(
                 modifier = Modifier.fillMaxSize()
             ) {
                 if (pokeball != null) {
-                    Box(modifier=Modifier.weight(1f).fillMaxHeight(),
-                        contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         AsyncImage(
                             model = pokeball.imageUrl,
                             contentDescription = "Pokemon Image",
@@ -199,16 +224,24 @@ fun PokeballsItem(
                                 .clip(MaterialTheme.shapes.small)
                         )
                     }
-                    Box(modifier=Modifier.weight(1f).fillMaxHeight(),
-                        contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
                             text = pokeball.name.replaceFirstChar { it.titlecase() },
                             color = Color.White,
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
-                    Box(modifier=Modifier.weight(1f).fillMaxHeight(),
-                        contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
                             text = "$ ${pokeball.price},-",
                             color = Color.White,
@@ -229,57 +262,53 @@ fun PokeballsItem(
         Box(
             modifier = Modifier
                 .weight(0.9f)
-                .fillMaxHeight(),
-            contentAlignment = Alignment.Center
+                .fillMaxHeight(), contentAlignment = Alignment.Center
         ) {
             CustomButton(
-                text = "Buy",
-                onClick = {
+                text = "Buy", onClick = {
                     showDialog = true
-                },
-                amount = 100,
-                amount2 = 80
+                }, amount = 100, amount2 = 80
             )
         }
     }
 
 
-        // Show the AlertDialog when showDialog is true
-        if (showDialog) {
-            AlertDialog(onDismissRequest = {
-                // Dismiss the dialog when clicking outside of it
-                showDialog = false
-            }, title = {
-                Text(text = "Buy ${pokeball?.name}?")
-            }, text = {
-                Text(text = "Are you sure you want to buy ${pokeball?.name}?")
-            }, confirmButton = {
-                Button(onClick = {
-                    // Call the onBuyClick callback when confirming the purchase
-                    if (pokeball != null) {
-                        if (currentCoins.pokeCoin.amount >= pokeball.price) {
-                            pokeCoinViewModel.usePokeCoins(currentCoins.pokeCoin, pokeball.price)
-                            onBuyClick(pokeball)
-                            showDialog = false
-                        }
+    // Show the AlertDialog when showDialog is true
+    if (showDialog) {
+        AlertDialog(onDismissRequest = {
+            // Dismiss the dialog when clicking outside of it
+            showDialog = false
+        }, title = {
+            Text(text = "Buy ${pokeball?.name}?")
+        }, text = {
+            Text(text = "Are you sure you want to buy ${pokeball?.name}?")
+        }, confirmButton = {
+            Button(onClick = {
+                // Call the onBuyClick callback when confirming the purchase
+                if (pokeball != null) {
+                    if (currentCoins.pokeCoin.amount >= pokeball.price) {
+                        pokeCoinViewModel.usePokeCoins(currentCoins.pokeCoin, pokeball.price)
+                        onBuyClick(pokeball)
+                        showDialog = false
                     }
-
-                }) {
-                    Icon(imageVector = Icons.Default.Check, contentDescription = null)
-                    Text(text = "Yes", fontWeight = FontWeight.Bold)
                 }
-            }, dismissButton = {
-                Button(onClick = {
-                    // Dismiss the dialog when canceling the purchase
-                    showDialog = false
-                }) {
-                    Icon(imageVector = Icons.Default.Close, contentDescription = null)
-                    Text(text = "No", color = Color.White)
-                }
-            })
-        }
 
+            }) {
+                Icon(imageVector = Icons.Default.Check, contentDescription = null)
+                Text(text = "Yes", fontWeight = FontWeight.Bold)
+            }
+        }, dismissButton = {
+            Button(onClick = {
+                // Dismiss the dialog when canceling the purchase
+                showDialog = false
+            }) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                Text(text = "No", color = Color.White)
+            }
+        })
     }
+
+}
 
 @Composable
 fun DisplayPokemonMessage(

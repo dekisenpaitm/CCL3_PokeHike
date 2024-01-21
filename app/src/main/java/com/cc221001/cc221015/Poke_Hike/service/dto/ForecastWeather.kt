@@ -44,7 +44,7 @@ data class ForecastWeather(
         @SerializedName("clouds")
         val clouds: Clouds,
         @SerializedName("dt")
-        val dt: Int,
+        val dt: Long,
         @SerializedName("dt_txt")
         val dtTxt: String,
         @SerializedName("main")
