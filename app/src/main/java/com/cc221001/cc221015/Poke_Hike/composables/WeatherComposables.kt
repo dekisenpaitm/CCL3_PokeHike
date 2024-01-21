@@ -48,18 +48,24 @@ fun DisplayWeather(weatherViewModel: WeatherViewModel) {
     println("Current Weather: $weather")
     println("Forecast: $forecast")
 
-    Column(Modifier.fillMaxSize()
-        .background(Color(0,0,0,125), RoundedCornerShape(10.dp))) {
-        if (weather == null) {
-            // Show loading message
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Retrieving the latest weather data...", color = Color.White)
+    Column(
+        Modifier.fillMaxSize()
+            .background(Color(0, 0, 0, 125), RoundedCornerShape(10.dp))
+    ) {
+
+        Column( Modifier.fillMaxSize()
+            .padding(20.dp)) {
+            if (weather == null) {
+                // Show loading message
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Retrieving the latest weather data...", color = Color.White)
+                }
+            } else {
+                // Display weather data
+                WeatherSummary(weather = weather!!)
+                TemperatureSummary(weather!!)
+                FiveDayForecast(forecast)
             }
-        } else {
-            // Display weather data
-            WeatherSummary(weather = weather!!)
-            TemperatureSummary(weather!!)
-            FiveDayForecast(forecast)
         }
     }
 }
@@ -67,8 +73,8 @@ fun DisplayWeather(weatherViewModel: WeatherViewModel) {
 @Composable
 fun WeatherSummary(weather: CurrentWeather) {
     Box ( modifier = Modifier
+        .fillMaxWidth()
         .clip(RoundedCornerShape(10.dp))
-        .padding(8.dp,20.dp,8.dp,0.dp)
     ){
         Image(
             painter = painterResource(id = weather.background()),
@@ -80,17 +86,16 @@ fun WeatherSummary(weather: CurrentWeather) {
         )
         Column(
             Modifier
-                .padding(top = 6.dp, bottom = 6.dp)
                 .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = formatTemperature(weather.main.temp), fontSize = 48.sp, color = Color.White)
+            Text(text = formatTemperature(weather.main.temp), fontSize = 46.sp, color = Color.White)
             Text(
                 text = weather?.weather?.first()?.main.toString(),
-                fontSize = 28.sp,
+                fontSize = 26.sp,
                 color = Color.White
             )
-            Text(text = weather?.name.toString(), fontSize = 18.sp, color = Color.White)
+            Text(text = weather?.name.toString(), fontSize = 16.sp, color = Color.White)
         }
     }
 }
@@ -100,7 +105,7 @@ fun TemperatureSummary(weather: CurrentWeather) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -128,14 +133,13 @@ fun TemperatureSummary(weather: CurrentWeather) {
 fun FiveDayForecast(forecast: List<SimpleForecast>) {
     LazyColumn(
         modifier = Modifier
-            .background(color = Color(0, 0, 0, 125))
             .fillMaxSize()
     ) {
         items(forecast) { dayForecast ->
             Box(
                 modifier = Modifier
                     .fillMaxWidth() // Changed from weight(3.dp) to fillMaxWidth()
-                    .padding(3.dp) // This adds padding around each Box, creating space between items
+                    .padding(vertical = 4.dp)
                     .height(65.dp)
                     .background(Color(255, 255, 255, 50), RoundedCornerShape(10.dp))
                     .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),

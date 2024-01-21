@@ -294,7 +294,7 @@ fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
                         onClick = { navController.navigate(Screen.Profile.route) },
                         enabled = true,
                     ) {
-                        Icon(imageVector = Icons.Default.AccountBox, contentDescription = "", modifier=Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)), tint = Color.White)
+                        Icon(imageVector = Icons.Default.AccountBox, contentDescription = "", modifier=Modifier.size(40.dp).padding(bottom = 6.dp).clip(RoundedCornerShape(10.dp)), tint = Color.White)
                     }
                 }
             }
