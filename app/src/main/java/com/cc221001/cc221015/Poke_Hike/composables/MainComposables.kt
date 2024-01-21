@@ -69,7 +69,7 @@ fun ContentList() {
     ){
         item{
             CustomContainer(200, 200, 20, null)
-            CustomSplitter(w = 500, h = 2, p = 20 )
+            CustomSplitter(h = 2)
             CustomContainerTransparent(w = 500, h = 300, p = 20, null)
             Box(modifier=Modifier.fillMaxWidth(),
                 contentAlignment = Center) {
@@ -77,7 +77,8 @@ fun ContentList() {
                     text = "Create Trainer",
                     onClick = { /*TODO*/ },
                     amount = 340,
-                    amount2 = 60
+                    amount2 = 60,
+                    true
                 )
             }
         }
@@ -85,11 +86,10 @@ fun ContentList() {
 }
 
 @Composable
-fun CustomSplitter(w:Int,h:Int,p:Int){
+fun CustomSplitter(h:Int){
     Surface(modifier = Modifier
-        .width(w.dp)
-        .height(h.dp)
-        .padding(horizontal = p.dp),
+        .fillMaxWidth()
+        .height(h.dp),
         color =Color(255, 255, 255, 50)){}
 }
 @Composable
@@ -139,9 +139,11 @@ fun CustomHeadline(text:String){
     }
 }
 @Composable
-fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int) {
+fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int, basic:Boolean) {
+
+    val newColor= if(basic) Color(106, 84, 141, 255) else Color(106, 84, 141, 255)
     Surface(
-        color = Color(106, 84, 141, 255),
+        color = newColor,
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .width(amount.dp)

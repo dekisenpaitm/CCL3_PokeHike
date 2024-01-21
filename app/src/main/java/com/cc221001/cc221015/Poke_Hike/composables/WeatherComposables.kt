@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -47,7 +48,8 @@ fun DisplayWeather(weatherViewModel: WeatherViewModel) {
     println("Current Weather: $weather")
     println("Forecast: $forecast")
 
-    Column(Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize()
+        .background(Color(0,0,0,125), RoundedCornerShape(10.dp))) {
         if (weather == null) {
             // Show loading message
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -66,7 +68,7 @@ fun DisplayWeather(weatherViewModel: WeatherViewModel) {
 fun WeatherSummary(weather: CurrentWeather) {
     Box ( modifier = Modifier
         .clip(RoundedCornerShape(10.dp))
-        .padding(horizontal = 3.dp)
+        .padding(8.dp,20.dp,8.dp,0.dp)
     ){
         Image(
             painter = painterResource(id = weather.background()),
@@ -154,11 +156,11 @@ fun FiveDayForecast(forecast: List<SimpleForecast>) {
 }
 
 @DrawableRes
-private fun CurrentWeather.background(): Int {
+fun CurrentWeather.background(): Int {
     val conditions = weather.first().main
     return when {
-        conditions.contains("cloud", ignoreCase = true) -> R.drawable.background_cloudy
-        conditions.contains("rain", ignoreCase = true) -> R.drawable.background_rainy
+        conditions.contains("cloud", ignoreCase = true) -> R.drawable.clear_small
+        conditions.contains("rain", ignoreCase = true) -> R.drawable.clear_small
         else -> R.drawable.clear_small
     }
 }

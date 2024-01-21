@@ -105,7 +105,7 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                     .width(180.dp)
                     .height(180.dp)
                     .padding(0.dp,20.dp,0.dp,0.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(20.dp,20.dp,0.dp,0.dp))
                     .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
                 color = Color(255, 255, 255, 50)
             ) {
@@ -189,7 +189,8 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                         255,
                         255,
                         75
-                    )
+                    ),
+                    textColor = Color.White
                 ),
                 modifier = Modifier
                     .padding(top = 20.dp)
@@ -209,7 +210,8 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                         255,
                         255,
                         75
-                    )
+                    ),
+                    textColor = Color.White
                 ),
                 modifier = Modifier
                     .padding(top = 20.dp)
@@ -221,7 +223,7 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                 CustomButton(text = "Create Trainer", onClick = {
                     mainViewModel.save(PokemonTrainer(null, name, gender, trainerName))
                     mainViewModel.getPokemonTrainer(); pokemonViewModel.loadPokemons()
-                }, amount = 300, amount2 = 50)
+                }, amount = 300, amount2 = 50, true)
             }
         }
     }

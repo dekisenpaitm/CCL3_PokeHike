@@ -85,7 +85,8 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel){
                 text = "Favourites",
                 onClick = { pokemonViewModel.getFavPokemon() },
                 amount = 120,
-                amount2 = 50
+                amount2 = 50,
+                true
             )
 
             // Second Button
@@ -93,7 +94,8 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel){
                 text = "Owned",
                 onClick = { pokemonViewModel.getOwnedPokemon() },
                 amount = 120,
-                amount2 = 50
+                amount2 = 50,
+                true
             )
         }
     }

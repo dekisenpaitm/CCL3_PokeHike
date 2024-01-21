@@ -1,5 +1,6 @@
 package com.cc221001.cc221015.Poke_Hike.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -41,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -74,41 +77,56 @@ fun DisplayPokeballList(
     val weather = GetWeatherResponse(weatherViewModel = weatherViewModel)
 
     // Check if weather data is still loading
-    if (weather == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Retrieving the latest weather data...", color = Color.White)
-        }
-    } else {
-        val condition = weather.weather.firstOrNull()?.main
-        pokeballViewModel.getSpecialPokeball(condition.toString())
-        val pokeballList = pokeballViewModel.pokemonViewState.collectAsState().value.pokeballs
 
-        Column {
-            // Displaying a conditional message Box based on weather condition
+
+        Column(modifier = Modifier
+            .background(color = Color(0, 0, 0, 125))
+            .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
+            .padding(20.dp)) {
+
+            if (weather == null) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Retrieving the latest weather data...", color = Color.White)
+                }
+            } else {
+                val condition = weather.weather.firstOrNull()?.main
+                pokeballViewModel.getSpecialPokeball(condition.toString())
+                val pokeballList = pokeballViewModel.pokemonViewState.collectAsState().value.pokeballs
+
             val specialPokeball = pokeballList.firstOrNull()
             specialPokeball?.let { pokeball ->
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                        .clip(RoundedCornerShape(10.dp))
+                        .padding(vertical = 20.dp)
                 ) {
-                    Text(
-                        "Now is ${condition}!\n" + "You can get a ${pokeball.name}.\n" +
-                                "${pokeball.name} has pokemons of ${pokeball.type1}, ${pokeball.type2} and ${pokeball.type3} types.\n" +
-                        "Normal PokeBall has pokemons of all types.",
-                        color = Color.White,
-                        textAlign = TextAlign.Center
+                    Image(
+                        painter = painterResource(id = weather.background()),
+                        contentDescription = "Background",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp)),
+                        contentScale = ContentScale.FillWidth
                     )
+                    Column(
+                        Modifier
+                            .padding(top = 6.dp, bottom = 6.dp)
+                            .align(Alignment.TopCenter),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "Now is ${condition}!\n" + "You can get a ${pokeball.name}.\n" +
+                                    "${pokeball.name} has pokemons of ${pokeball.type1}, ${pokeball.type2} and ${pokeball.type3} types.\n" +
+                                    "Normal PokeBall has pokemons of all types.",
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
-
+            CustomSplitter(h = 2)
             // A Row to display the list of Pokemon.
-            Row(
-                modifier = Modifier.clip(
-                    RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-                )
-            ) {
+            Row() {
                 // Calling PokeballList Composable to display the actual list.
                 PokeballList(
                     pokemonViewModel = pokemonViewModel,
@@ -134,9 +152,8 @@ fun PokeballList(
     // It only renders the items that are currently visible on screen.
     LazyColumn(
         modifier = Modifier
-            .background(color = Color(0, 0, 0, 125))
-            .padding(top = 20.dp)
-            .fillMaxSize()
+            .padding(top = 20.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         // Iterating over each Pokemon in the pokemonList.
         items(pokeballs) { pokeball ->
@@ -144,8 +161,8 @@ fun PokeballList(
             // It displays individual Pokemon details.
             Box(
                 modifier = Modifier
-                    .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
+                    .fillMaxSize()
             ) {
                 PokeballsItem(pokeCoinViewModel = pokeCoinViewModel,
                     pokemonViewModel = pokemonViewModel,
@@ -159,9 +176,9 @@ fun PokeballList(
                             pokemonBought = true
                         }
                     })
+                }
             }
         }
-    }
     // Display the Pokemon message conditionally outside LazyColumn
     if (pokemonBought) {
         val randomPokemon by pokemonViewModel.pokemonViewState.collectAsState()
@@ -267,7 +284,9 @@ fun PokeballsItem(
             CustomButton(
                 text = "Buy", onClick = {
                     showDialog = true
-                }, amount = 100, amount2 = 80
+                }, amount = 100,
+                amount2 = 80,
+                true
             )
         }
     }

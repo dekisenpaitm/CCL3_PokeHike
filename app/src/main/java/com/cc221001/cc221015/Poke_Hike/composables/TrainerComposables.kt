@@ -102,7 +102,7 @@ fun TrainerItem(trainerValue: String, mainViewModel: MainViewModel) {
             .height(60.dp)
             .padding(10.dp)
             .clip(RoundedCornerShape(10.dp))
-            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(20.dp)),
         color = Color(255, 255, 255, 50)
     ) {
         FlowRow(verticalArrangement = Arrangement.Center,
@@ -195,14 +195,16 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                         text = "Update Trainer",
                         onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]); pokemonViewModel.deleteAllFavedPokemon() },
                         amount = 320,
-                        amount2 = 50
+                        amount2 = 50,
+                        true
                     )
 
                     CustomButton(
                         text = "Delete Trainer",
                         onClick = { mainViewModel.deletePokemonTrainer(state.value.pokemonTrainers[0]) },
                         amount = 320,
-                        amount2 = 50
+                        amount2 = 50,
+                        true
                     )
                 }
             }
