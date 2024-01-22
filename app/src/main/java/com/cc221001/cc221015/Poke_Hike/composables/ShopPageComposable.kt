@@ -350,7 +350,7 @@ fun PokeballsItem(
             if(pokeball?.type1 != "All") {
                 pokemonViewModel.getAvailablePokemon(pokeball!!.type1,pokeball.type2,pokeball.type3)
                 if(currentAvailablePokemon.notAvailableTypePokemon.isEmpty()){
-                    CustomButton(
+                    CustomButtonGray(
                         text = "N/A", onClick = {
                         }, amount = 100,
                         amount2 = 80,
@@ -368,7 +368,7 @@ fun PokeballsItem(
             } else {
                 pokemonViewModel.getNotOwnedPokemon()
                 if(currentAvailablePokemon.notAvailableAllPokemon.isEmpty()){
-                    CustomButton(
+                    CustomButtonGray(
                         text = "N/A", onClick = {
                         }, amount = 100,
                         amount2 = 80,

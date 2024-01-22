@@ -161,3 +161,24 @@ fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int, bas
         }
     }
 }
+
+@Composable
+fun CustomButtonGray(text: String, onClick: () -> Unit, amount:Int, amount2:Int, basic:Boolean) {
+    Surface(
+        color = Color.Gray,
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .width(amount.dp)
+            .height(amount2.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = text,
+                modifier = Modifier.padding(8.dp),
+                color = Color.White
+            )
+        }
+    }
+}
