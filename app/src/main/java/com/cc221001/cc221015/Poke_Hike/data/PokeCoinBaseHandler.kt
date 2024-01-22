@@ -39,7 +39,7 @@ class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, nu
 
             db?.insert(tableName, null, values)
         } else {
-            println("pokeCoin is already created!")
+            //println("pokeCoin is already created!")
         }
     }
 

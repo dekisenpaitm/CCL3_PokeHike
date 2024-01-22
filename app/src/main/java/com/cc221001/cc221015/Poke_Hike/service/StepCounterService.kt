@@ -54,10 +54,9 @@ class StepCounterService : Service(), SensorEventListener {
             val difference = newStepCount - previousStepCount!!
             //CoinStashRepository.plusCoinStash(difference)
             pokeCoinBaseHandler.updatePokeCoin(pokeCoinBaseHandler.getPokeCoinById(1),pokeCoinBaseHandler.getPokeCoinById(1).amount + difference)
-            println("this is your stash: ${pokeCoinBaseHandler.getPokeCoinById(1)}")
             StepCounterRepository.updateStepCount(newStepCount)
             stepCounterBaseHandler.updateCurrentSteps(0,newStepCount)
-            println(stepCounterBaseHandler.retrieveSteps(0))
+            //println(stepCounterBaseHandler.retrieveSteps(0))
         }
     }
 

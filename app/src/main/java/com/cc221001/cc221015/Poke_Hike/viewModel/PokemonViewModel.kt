@@ -32,17 +32,21 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	fun getOwnedPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getOwnedPokemons()) }
 	}
+
+	fun getNotOwnedPokemon(){
+		_pokemonViewState.update { it.copy(availableAllPokemon = db.getNotOwnedPokemons(),
+			notAvailableAllPokemon = db.getPokemons())}
+	}
 	//Fetches a certain type of Pokemon & checks if the Pokemon are already owned
 	fun getRandomPokemon(type1:String, type2:String, type3:String) {
 		_pokemonViewState.update { it.copy(pokemon = db.getRandomNewPokemon(type1, type2, type3)) }
-		_pokemonViewState.update {
-			it.copy(pokemons = db.getPokemons())
-		}
+		_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
 	}
 
-	fun getPokemonOfType(type1:String, type2: String,type3: String) {
+	fun getAvailablePokemon(type1:String, type2: String,type3: String) {
 		_pokemonViewState.update {
-			it.copy(pokemons = db.getPokemonsOfMultipleTypes(type1, type2, type3))}
+			it.copy(availableTypePokemon = db.getPokemonsOfMultipleTypes(type1, type2, type3, "false"),
+				notAvailableTypePokemon = db.getPokemonsOfMultipleTypes(type1, type2, type3, "true"))}
 	}
 
 	// Select a screen in the UI.
@@ -81,7 +85,7 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 		GlobalScope.launch(Dispatchers.IO) {
 			val pokemonsApiResult = PokemonRepository.listPokemons()
 			if (pokemonsApiResult != null) {
-				println(pokemonsApiResult.results)
+				//println(pokemonsApiResult.results)
 			}
 
 			pokemonsApiResult?.results?.let { results ->
@@ -93,7 +97,7 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 					val pokemonApiResult = PokemonRepository.getPokemon(number)
 
 					pokemonApiResult?.let {
-						println("This is types: $pokemonApiResult")
+						//println("This is types: $pokemonApiResult")
 						val pokemon = Pokemon(
 							pokemonApiResult.id,
 							pokemonApiResult.name,

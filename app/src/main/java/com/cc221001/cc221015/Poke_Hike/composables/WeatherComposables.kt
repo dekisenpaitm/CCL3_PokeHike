@@ -38,8 +38,8 @@ import kotlin.math.roundToInt
 fun DisplayWeather(weatherViewModel: WeatherViewModel) {
     val weather by weatherViewModel.weather.collectAsState(null)
     val forecast by weatherViewModel.forecast.collectAsState(emptyList())
-    println("Current Weather: $weather")
-    println("Forecast: $forecast")
+    //println("Current Weather: $weather")
+    //println("Forecast: $forecast")
 
     Column(
         Modifier.fillMaxSize()

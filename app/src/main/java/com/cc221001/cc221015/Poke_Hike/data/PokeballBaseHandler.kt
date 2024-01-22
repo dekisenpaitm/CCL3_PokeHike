@@ -58,7 +58,7 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
             // Ensure db is not null before calling insert
             db?.insert(tableName, null, values)
         } else {
-            println("Pokeball is already created!")
+            //println("Pokeball is already created!")
         }
     }
 

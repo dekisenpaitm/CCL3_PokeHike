@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
     private val db = TrainerBaseHandler(this)
     private val mainViewModel = MainViewModel(db)
 
+    // UI logic based on connectivity status
     // Database handler for Pokemon entities && ViewModel for the Pokemon-related view.
     private val pdb = PokemonBaseHandler(this)
     private val pokemonViewModel = PokemonViewModel(pdb)
@@ -56,6 +57,8 @@ class MainActivity : ComponentActivity() {
 
     // ViewModel for the Weather-related view.
     private val weatherViewModel: WeatherViewModel by viewModels()
+
+    //Service to check if there's internet available
 
     // Creating a property to hold the ActivityResultLauncher for requesting a permission.
     private val requestPermission =
@@ -86,7 +89,7 @@ class MainActivity : ComponentActivity() {
             requestPermissionStepCounter.launch(Manifest.permission.ACTIVITY_RECOGNITION)
         } else {
             // Permission is already granted, start the service
-            println("StepCounter Started")
+            //println("StepCounter Started")
             startForegroundService(Intent(this, StepCounterService::class.java))
         }
 
@@ -99,7 +102,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Initialize and fetch Pokemon trainers from the database.
                     CreatePokeballEntries(pokeballViewModel)
                     CreateTrainerStash(pokeCoinViewModel)
                     scdb.insertSteps(StepCounter(0,0))

@@ -102,7 +102,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                 )
         }
 
-        println("those are all your pokemon: $allPokemons")
+        //println("those are all your pokemon: $allPokemons")
         return allPokemons.toList()
     }
 
@@ -205,12 +205,14 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
             unlikePokemon(pokemon)
         }
     }
-    fun getPokemonsOfMultipleTypes(type1:String,type2:String,type3:String):List<Pokemon?> {
-        println("pokemonOfTypeCalled")
+    fun getPokemonsOfMultipleTypes(type_1:String,type_2:String,type_3:String,string:String):List<Pokemon?> {
+        //println("pokemonOfTypeCalled")
         var allPokemons = mutableListOf<Pokemon>()
-
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND $type0 LIKE '%$type1%' OR '%$type2%' OR '%$type3%';", null)
+        var cursor = db.rawQuery("SELECT * FROM $tableName WHERE ($type0 LIKE '%$type_1%' OR $type0 LIKE '%$type_2%' OR $type0 LIKE '%$type_3%' OR $type1 LIKE '%$type_1%' OR $type1 LIKE '%$type_2%' OR $type1 LIKE '%$type_3%');", null)
+        if(string == "true"){
+            cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND ($type0 LIKE '%$type_1%' OR $type0 LIKE '%$type_2%' OR $type0 LIKE '%$type_3%' OR $type1 LIKE '%$type_1%' OR $type1 LIKE '%$type_2%' OR $type1 LIKE '%$type_3%');", null)
+        }
         while (cursor.moveToNext()) {
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)
@@ -235,11 +237,11 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         return allPokemons.toList()
     }
     fun getPokemonsOfType(type:String):List<Pokemon?> {
-        println("pokemonOfTypeCalled")
+        //println("pokemonOfTypeCalled")
         var allPokemons = mutableListOf<Pokemon>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND $type0 LIKE '%$type%';", null)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND $type0 LIKE '%$type%' OR $type1 LIKE '%$type';", null)
         while (cursor.moveToNext()) {
             val idID = cursor.getColumnIndex(id)
             val nameID = cursor.getColumnIndex(name)
@@ -272,7 +274,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                 //ACTIVATE TO TAG POKEMONS AS OWNED!
                 randomPokemon=tagPokemonAsOwned(randomPokemon)
             }
-            println("thisisthetaggedpokemon $randomPokemon")
+            //println("thisisthetaggedpokemon $randomPokemon")
         } else {
             val pokemonsOfTypeOne = if (type1.isNotEmpty()) getPokemonsOfType(type1) else emptyList()
             val pokemonsOfTypeTwo = if (type2.isNotEmpty()) getPokemonsOfType(type2) else emptyList()
@@ -282,7 +284,7 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
 
             if (combinedPokemonList.isEmpty()) {
                 // If no valid types were provided, return null or handle it accordingly
-                println("No valid types provided. Unable to get a random Pokemon.")
+                //println("No valid types provided. Unable to get a random Pokemon.")
                 return null
             }
 
@@ -291,14 +293,14 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                 //ACTIVATE TO TAG POKEMONS AS OWNED!
                 randomPokemon=tagPokemonAsOwned(randomPokemon)
             }
-            println("thisisthetaggedpokemon $randomPokemon")
+            //println("thisisthetaggedpokemon $randomPokemon")
 
         }
         return randomPokemon
     }
 
     fun tagPokemonAsOwned(randomPokemon:Pokemon):Pokemon{
-        println(randomPokemon)
+        //println(randomPokemon)
         val db = this.writableDatabase
         val values = ContentValues()
         values.put(owned, "true")

@@ -49,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.HorizontalAlignmentLine
@@ -71,11 +72,11 @@ import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 import okio.AsyncTimeout.Companion.condition
 import java.util.Properties
 import java.util.concurrent.locks.Condition
+import java.util.logging.Filter
 
 @Composable
 fun GetWeatherResponse(weatherViewModel: WeatherViewModel): CurrentWeather? {
     val weather by weatherViewModel.weather.collectAsState(null)
-
     return weather
 }
 
@@ -136,9 +137,9 @@ fun WeatherBox(weather:CurrentWeather, pokeballList:List<Pokeball?>, condition: 
                 painter = painterResource(id = weather.smallbackground()),
                 contentDescription = "Background",
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .matchParentSize()
                     .clip(RoundedCornerShape(10.dp)),
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.FillBounds
             )
             Column(
                 Modifier
@@ -166,12 +167,6 @@ fun PokeballList(
     pokeballViewModel: PokeballViewModel,
     pokeCoinViewModel: PokeCoinViewModel
 ) {
-    // State to track whether a Pokemon has been bought
-    var pokemonBought by remember { mutableStateOf(false) }
-    val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
-    var showDialog by remember { mutableStateOf(false) }
-    // LazyColumn is used for efficiently displaying a list that can be scrolled.
-    // It only renders the items that are currently visible on screen.
     LazyColumn(
         modifier = Modifier
             .padding(top = 20.dp),
@@ -206,7 +201,9 @@ fun PokeballsItem(
     var showDialog by remember { mutableStateOf(false) }
     var pokemonBought by remember { mutableStateOf(false) }
     val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
+    val currentAvailablePokemon by pokemonViewModel.pokemonViewState.collectAsState()
     // Spacer to add some space before the item starts.
+    //println(currentAvailablePokemon.availableTypePokemon)
     Spacer(
         modifier = Modifier
             .height(5.dp)
@@ -234,14 +231,52 @@ fun PokeballsItem(
                             .fillMaxHeight(),
                         contentAlignment = Alignment.Center
                     ) {
-                        AsyncImage(
-                            model = pokeball.imageUrl,
-                            contentDescription = "Pokemon Image",
-                            contentScale = ContentScale.FillHeight,
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(MaterialTheme.shapes.small)
-                        )
+                        if(pokeball?.type1 != "All") {
+                            pokemonViewModel.getAvailablePokemon(pokeball!!.type1,pokeball.type2,pokeball.type3)
+                            if(currentAvailablePokemon.notAvailableTypePokemon.isEmpty()){
+                                AsyncImage(
+                                    model = pokeball.imageUrl,
+                                    contentDescription = "Pokemon Image",
+                                    colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
+                                    contentScale = ContentScale.FillHeight,
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clip(MaterialTheme.shapes.small)
+                                )
+                            } else {
+                                AsyncImage(
+                                    model = pokeball.imageUrl,
+                                    contentDescription = "Pokemon Image",
+                                    contentScale = ContentScale.FillHeight,
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clip(MaterialTheme.shapes.small)
+                                )
+                            }
+                        } else {
+                            pokemonViewModel.getNotOwnedPokemon()
+                            if(currentAvailablePokemon.notAvailableAllPokemon.isEmpty()){
+                                AsyncImage(
+                                    model = pokeball.imageUrl,
+                                    contentDescription = "Pokemon Image",
+                                    colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
+                                    contentScale = ContentScale.FillHeight,
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clip(MaterialTheme.shapes.small)
+                                )
+                            } else {
+                                AsyncImage(
+                                    model = pokeball.imageUrl,
+                                    contentDescription = "Pokemon Image",
+                                    contentScale = ContentScale.FillHeight,
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clip(MaterialTheme.shapes.small)
+                                )
+                            }
+                        }
+
                     }
                     Box(
                         modifier = Modifier
@@ -267,6 +302,35 @@ fun PokeballsItem(
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
+                    if(pokeball?.type1 != "All") {
+                        pokemonViewModel.getAvailablePokemon(pokeball!!.type1,pokeball.type2,pokeball.type3)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "${currentAvailablePokemon.notAvailableTypePokemon.size}/${currentAvailablePokemon.availableTypePokemon.size}",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    } else {
+                        pokemonViewModel.getNotOwnedPokemon()
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "${currentAvailablePokemon.availableAllPokemon.size}/${currentAvailablePokemon.notAvailableAllPokemon.size}",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -283,13 +347,43 @@ fun PokeballsItem(
                 .weight(0.9f)
                 .fillMaxHeight(), contentAlignment = Alignment.Center
         ) {
-            CustomButton(
-                text = "Buy", onClick = {
-                    showDialog = true
-                }, amount = 100,
-                amount2 = 80,
-                true
-            )
+            if(pokeball?.type1 != "All") {
+                pokemonViewModel.getAvailablePokemon(pokeball!!.type1,pokeball.type2,pokeball.type3)
+                if(currentAvailablePokemon.notAvailableTypePokemon.isEmpty()){
+                    CustomButton(
+                        text = "N/A", onClick = {
+                        }, amount = 100,
+                        amount2 = 80,
+                        true
+                    )
+                } else {
+                    CustomButton(
+                        text = "Buy", onClick = {
+                            showDialog = true
+                        }, amount = 100,
+                        amount2 = 80,
+                        true
+                    )
+                }
+            } else {
+                pokemonViewModel.getNotOwnedPokemon()
+                if(currentAvailablePokemon.notAvailableAllPokemon.isEmpty()){
+                    CustomButton(
+                        text = "N/A", onClick = {
+                        }, amount = 100,
+                        amount2 = 80,
+                        true
+                    )
+                } else {
+                    CustomButton(
+                        text = "Buy", onClick = {
+                            showDialog = true
+                        }, amount = 100,
+                        amount2 = 80,
+                        true
+                    )
+                }
+            }
         }
     }
     // Show the AlertDialog when showDialog is true

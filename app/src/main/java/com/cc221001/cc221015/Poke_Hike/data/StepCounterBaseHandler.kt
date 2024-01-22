@@ -15,7 +15,7 @@ class StepCounterBaseHandler(context: Context) : SQLiteOpenHelper(context, dbNam
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        println("I've been called")
+        //println("I've been called")
         // Create the Pokemon table when the database is first created.
         db?.execSQL(
             "CREATE TABLE IF NOT EXISTS $tableName (" +
@@ -58,7 +58,7 @@ class StepCounterBaseHandler(context: Context) : SQLiteOpenHelper(context, dbNam
     }
 
     fun updateCurrentSteps(stepsId: Int, steps: Int) {
-        println("function get called $stepsId and $steps")
+        //println("function get called $stepsId and $steps")
         val db = this.writableDatabase
         val values = ContentValues()
         values.put(stepCountColumn, steps)
@@ -82,7 +82,7 @@ class StepCounterBaseHandler(context: Context) : SQLiteOpenHelper(context, dbNam
         }
         cursor.close()
         db.close()
-        println("this is your stepCoutner:$stepCounter")
+        //println("this is your stepCoutner:$stepCounter")
         return stepCounter
     }
 

@@ -76,6 +76,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
+
     //Set up Google Play services
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 

@@ -6,6 +6,10 @@ import com.cc221001.cc221015.Poke_Hike.views.Screen
 // Represents the state of the Pokemon-related view in the application.
 data class PokemonViewState(
     val pokemons: List<Pokemon?> = emptyList(),  // List of Pokemon entities in the view.
+    val availableTypePokemon: List<Pokemon?> = emptyList(),
+    val availableAllPokemon: List<Pokemon?> = emptyList(),
+    val notAvailableTypePokemon: List<Pokemon?> = emptyList(),
+    val notAvailableAllPokemon:List<Pokemon?> = emptyList(),
     val pokemon: Pokemon? = Pokemon(0,"", "","","","", ""),
     val editPokemon: Pokemon = Pokemon(0,"", "","","","", ""),
     val selectedScreen: Screen = Screen.List,  // The selected screen/tab in the UI.

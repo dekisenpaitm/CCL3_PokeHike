@@ -17,7 +17,7 @@ class StepCounterViewModel(private val db:StepCounterBaseHandler, private val pc
         // Observe the repository's LiveData and update the ViewModel's LiveData
         StepCounterRepository.stepCountLiveData.observeForever { newStepCount ->
             _stepCountLiveData.value = newStepCount
-            println("This is stepcount in ViewModel: $newStepCount")
+            //println("This is stepcount in ViewModel: $newStepCount")
         }
     }
     override fun onSensorChanged(event: SensorEvent?) {

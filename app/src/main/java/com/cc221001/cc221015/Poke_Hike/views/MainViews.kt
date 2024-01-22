@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -89,12 +90,9 @@ sealed class Screen(val route: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 // MainView is a Composable function that creates the main view of your app.
 @Composable
-fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel, pokeCoinViewModel: PokeCoinViewModel) {
-
-    // Collect the current state of the main view from the MainViewModel.
+fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel, pokeCoinViewModel: PokeCoinViewModel,) {
     val state = mainViewModel.mainViewState.collectAsState()
     val weather by weatherViewModel.weather.collectAsState(null)
-    // Create or remember a NavController for navigation between screens.
     val navController = rememberNavController()
 
     // Scaffold is a material design container that includes standard layout structures.
@@ -203,7 +201,8 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
 @Composable
 fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
     TopAppBar(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(124.dp),
         backgroundColor = Color.Transparent,
         elevation = 0.dp,
@@ -277,14 +276,17 @@ fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically)
-                        .padding(0.dp,8.dp,0.dp,0.dp),
+                        .padding(0.dp, 8.dp, 0.dp, 0.dp),
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     IconButton(
                         onClick = { navController.navigate(Screen.Profile.route) },
                         enabled = true,
                     ) {
-                        Icon(imageVector = Icons.Default.AccountBox, contentDescription = "", modifier=Modifier.size(40.dp).padding(bottom = 6.dp).clip(RoundedCornerShape(10.dp)), tint = Color.White)
+                        Icon(imageVector = Icons.Default.AccountBox, contentDescription = "", modifier= Modifier
+                            .size(40.dp)
+                            .padding(bottom = 6.dp)
+                            .clip(RoundedCornerShape(10.dp)), tint = Color.White)
                     }
                 }
             }
