@@ -70,6 +70,7 @@ import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 import okio.AsyncTimeout.Companion.condition
 import java.util.Properties
+import java.util.concurrent.locks.Condition
 
 @Composable
 fun GetWeatherResponse(weatherViewModel: WeatherViewModel): CurrentWeather? {
@@ -88,6 +89,10 @@ fun DisplayPokeballList(
 ) {
     // Collecting the list of Pokemons from the ViewModel.
     val weather = GetWeatherResponse(weatherViewModel = weatherViewModel)
+    val condition = weather?.weather?.firstOrNull()?.main
+    pokeballViewModel.getSpecialPokeball(condition.toString())
+    val pokeballList = pokeballViewModel.pokemonViewState.collectAsState().value.pokeballs
+
         Column(modifier = Modifier
             .background(color = Color(0, 0, 0, 125))
             .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
@@ -99,42 +104,10 @@ fun DisplayPokeballList(
                     Text("Retrieving the latest weather data...", color = Color.White)
                 }
             } else {
-                val condition = weather.weather.firstOrNull()?.main
-                pokeballViewModel.getSpecialPokeball(condition.toString())
-                val pokeballList = pokeballViewModel.pokemonViewState.collectAsState().value.pokeballs
-
-            val specialPokeball = pokeballList.firstOrNull()
-            specialPokeball?.let { pokeball ->
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .padding(vertical = 20.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = weather.smallbackground()),
-                        contentDescription = "Background",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp)),
-                        contentScale = ContentScale.FillWidth
-                    )
-                    Column(
-                        Modifier
-                            .padding(top = 6.dp, bottom = 6.dp)
-                            .align(Alignment.TopCenter),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            modifier=Modifier.padding(4.dp),
-                            text="Currently it's ${condition}!\n\n" +
-                                    "The ${pokeball.name} is now available.\n\n" +
-                                    "${pokeball.name} contains: ${pokeball.type1}, ${pokeball.type2} & ${pokeball.type3} types.",
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-
+            WeatherBox(
+                weather = weather ,
+                pokeballList = pokeballList,
+                condition= condition)
             }
             CustomSplitter(h = 2)
             // A Row to display the list of Pokemon.
@@ -145,6 +118,41 @@ fun DisplayPokeballList(
                     pokeballs = pokeballList,
                     pokeballViewModel = pokeballViewModel,
                     pokeCoinViewModel = pokeCoinViewModel
+                )
+            }
+        }
+    }
+
+@Composable
+fun WeatherBox(weather:CurrentWeather, pokeballList:List<Pokeball?>, condition: String?) {
+    val specialPokeball = pokeballList.firstOrNull()
+    specialPokeball?.let { pokeball ->
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .padding(vertical = 20.dp)
+        ) {
+            Image(
+                painter = painterResource(id = weather.smallbackground()),
+                contentDescription = "Background",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp)),
+                contentScale = ContentScale.FillWidth
+            )
+            Column(
+                Modifier
+                    .padding(top = 6.dp, bottom = 6.dp)
+                    .align(Alignment.TopCenter),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = "Currently it's ${condition}!\n\n" +
+                            "The ${pokeball.name} is now available.\n\n" +
+                            "${pokeball.name} contains: ${pokeball.type1}, ${pokeball.type2} & ${pokeball.type3} types.",
+                    color = Color.White,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -179,31 +187,13 @@ fun PokeballList(
                     .fillMaxSize()
                     .padding(vertical = 4.dp)
             ) {
-                PokeballsItem(pokeCoinViewModel = pokeCoinViewModel,
+                PokeballsItem(
+                    pokeCoinViewModel = pokeCoinViewModel,
                     pokemonViewModel = pokemonViewModel,
-                    pokeball = pokeball,
-                    onBuyClick = {
-                        println("You bought ${pokeball?.name}!")
-                        if (pokeball != null) {
-                            pokemonViewModel.getRandomPokemon(
-                                pokeball.type1, pokeball.type2, pokeball.type3
-                            )
-                            pokemonBought = true
-                        }
-                    })
+                    pokeball = pokeball)
                 }
             }
         }
-    // Display the Pokemon message conditionally outside LazyColumn
-    if (pokemonBought) {
-        val randomPokemon by pokemonViewModel.pokemonViewState.collectAsState()
-        if (randomPokemon != null) {
-            DisplayPokemonMessage(pokemonViewModel) {
-                // Reset the state when the message is dismissed
-                pokemonBought = false
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -211,11 +201,10 @@ fun PokeballList(
 fun PokeballsItem(
     pokeCoinViewModel: PokeCoinViewModel,
     pokemonViewModel: PokemonViewModel,
-    pokeball: Pokeball?,
-    onBuyClick: (Pokeball) -> Unit
-) {
+    pokeball: Pokeball?) {
     // Declare a state variable to track if the dialog is shown
     var showDialog by remember { mutableStateOf(false) }
+    var pokemonBought by remember { mutableStateOf(false) }
     val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
     // Spacer to add some space before the item starts.
     Spacer(
@@ -303,8 +292,6 @@ fun PokeballsItem(
             )
         }
     }
-
-
     // Show the AlertDialog when showDialog is true
     if (showDialog && currentCoins.pokeCoin.amount >= pokeball!!.price) {
         AlertDialog(
@@ -329,7 +316,12 @@ fun PokeballsItem(
                                         currentCoins.pokeCoin,
                                         pokeball.price
                                     )
-                                    onBuyClick(pokeball)
+                                    pokemonViewModel.getRandomPokemon(
+                                        pokeball.type1,
+                                        pokeball.type2,
+                                        pokeball.type3
+                                    )
+                                    pokemonBought = true
                                     showDialog = false
                                 }
                             }
@@ -402,7 +394,7 @@ fun PokeballsItem(
                     modifier = Modifier
                         .width(80.dp)
                         .height(50.dp)
-                        .clickable(onClick = {showDialog = false}) // Makes the surface clickable
+                        .clickable(onClick = { showDialog = false }) // Makes the surface clickable
                         .clip(RoundedCornerShape(10.dp))
                         .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
                 ) {
@@ -426,19 +418,29 @@ fun PokeballsItem(
                 }
             })
     }
-
+    if(pokemonBought){
+        if (pokeball != null) {
+            BuyPokemon(pokeball = pokeball, pokemonViewModel = pokemonViewModel, pokemonBought=pokemonBought, onClose = { pokemonBought = false })
+        }
+    }
+}
+@Composable
+fun BuyPokemon(pokeball:Pokeball, pokemonViewModel: PokemonViewModel, pokemonBought: Boolean, onClose: () -> Unit){
+        if (pokeball.name != "") {
+            DisplayPokemonMessage(pokemonViewModel,pokemonBought, onClose)
+        }
 }
 
 @Composable
 fun DisplayPokemonMessage(
-    pokemonViewModel: PokemonViewModel, onDismiss: () -> Unit = {}
+    pokemonViewModel: PokemonViewModel, pokemonBought: Boolean,  onClose: () -> Unit
 ) {
     val randomPokemon by pokemonViewModel.pokemonViewState.collectAsState()
 
-    if (randomPokemon.pokemon?.name == "") {
+    if (randomPokemon.pokemon?.name != "" && pokemonBought) {
         AlertDialog(
             containerColor = Color(0, 0, 0, 215),
-            onDismissRequest = onDismiss,
+            onDismissRequest = onClose,
             title = {
                 Text(
                     text = "CONGRATULATION",
@@ -482,7 +484,7 @@ fun DisplayPokemonMessage(
                     modifier = Modifier
                         .width(80.dp)
                         .height(50.dp)
-                        .clickable(onClick = onDismiss) // Makes the surface clickable
+                        .clickable(onClick = onClose) // Makes the surface clickable
                         .clip(RoundedCornerShape(10.dp))
                         .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))// Optional if you want extra clipping, but shape already does this
                 ) {

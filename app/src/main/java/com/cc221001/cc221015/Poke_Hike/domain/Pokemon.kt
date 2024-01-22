@@ -12,7 +12,6 @@ data class Pokemon (
 	val owned: String = "false"  // Indicates whether the Pokemon is liked by the user (defaults to "false").
 ){
 	init{
-		println(number)
 		if(number<10) {
 			this.imageUrl = "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/00$number.png"
 		} else if(number >= 10 && number < 100) {
@@ -20,7 +19,6 @@ data class Pokemon (
 		} else if(number >= 100){
 			this.imageUrl = "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/$number.png"
 		}
-		println(imageUrl)
 	}
 
 }
