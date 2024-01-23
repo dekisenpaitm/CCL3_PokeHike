@@ -13,14 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import com.cc221001.cc221015.Poke_Hike.composables.CreatePokeballEntries
-import com.cc221001.cc221015.Poke_Hike.composables.CreateTrainerStash
 import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.StepCounterBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
-import com.cc221001.cc221015.Poke_Hike.domain.StepCounter
 import com.cc221001.cc221015.Poke_Hike.service.StepCounterService
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
@@ -102,11 +99,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CreatePokeballEntries(pokeballViewModel)
-                    CreateTrainerStash(pokeCoinViewModel)
-                    scdb.insertSteps(StepCounter(0,0))
-                    db.getPokemonTrainers()
-                    // Create and display the main view with associated ViewModels.
                     MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel, pokeCoinViewModel)
                 }
             }

@@ -44,19 +44,24 @@ class StepCounterService : Service(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
-            val newStepCount = event.values[0].toInt()
-            var previousStepCount =
-                stepCounterBaseHandler.retrieveSteps(0)?.amount
-            if(previousStepCount == 0){
-                previousStepCount = event.values[0].toInt()
+        if(stepCounterBaseHandler.isDatabaseInitialized() && stepCounterBaseHandler.retrieveSteps(0)?.id != null) {
+            if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
+                val newStepCount = event.values[0].toInt()
+                var previousStepCount =
+                    stepCounterBaseHandler.retrieveSteps(0)?.amount
+                if (previousStepCount == 0) {
+                    previousStepCount = event.values[0].toInt()
+                }
+                val difference = newStepCount - previousStepCount!!
+                //CoinStashRepository.plusCoinStash(difference)
+                pokeCoinBaseHandler.updatePokeCoin(
+                    pokeCoinBaseHandler.getPokeCoinById(1),
+                    pokeCoinBaseHandler.getPokeCoinById(1).amount + difference
+                )
+                StepCounterRepository.updateStepCount(newStepCount)
+                stepCounterBaseHandler.updateCurrentSteps(0, newStepCount)
+                //println(stepCounterBaseHandler.retrieveSteps(0))
             }
-            val difference = newStepCount - previousStepCount!!
-            //CoinStashRepository.plusCoinStash(difference)
-            pokeCoinBaseHandler.updatePokeCoin(pokeCoinBaseHandler.getPokeCoinById(1),pokeCoinBaseHandler.getPokeCoinById(1).amount + difference)
-            StepCounterRepository.updateStepCount(newStepCount)
-            stepCounterBaseHandler.updateCurrentSteps(0,newStepCount)
-            //println(stepCounterBaseHandler.retrieveSteps(0))
         }
     }
 

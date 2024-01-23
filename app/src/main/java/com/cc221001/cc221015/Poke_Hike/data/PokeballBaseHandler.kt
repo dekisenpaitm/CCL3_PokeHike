@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
 
-class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, null, 1) {
+class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName, null, 2) {
     companion object PokeBallDatabase {
-        private const val dbName = "PokemonBallDatabase"
+        private const val dbName = "PokeBallDatabase"
         private const val tableName = "PokeBall"
         private const val id = "_id"
         private const val name = "name"
@@ -70,7 +70,6 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
 
             if (cursor != null) {
                 val exists = cursor.moveToFirst()
-                cursor.close()
                 return exists
             }
         }

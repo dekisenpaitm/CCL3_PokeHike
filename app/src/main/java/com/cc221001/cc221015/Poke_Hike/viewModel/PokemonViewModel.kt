@@ -6,6 +6,7 @@ import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.stateModel.PokemonViewState
 import com.cc221001.cc221015.Poke_Hike.views.Screen
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,6 +50,11 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 				notAvailableTypePokemon = db.getPokemonsOfMultipleTypes(type1, type2, type3, "true"))}
 	}
 
+
+	fun resetPokemonDatabase(){
+		_pokemonViewState.update{it.copy(pokemons=db.resetPokemonDatabase())}
+	}
+
 	// Select a screen in the UI.
 	fun selectScreen(screen: Screen) {
 		_pokemonViewState.update { it.copy(selectedScreen = screen) }
@@ -81,7 +87,7 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	}
 
 	// Load Pokemon data from an API and insert it into the database.
-	 fun loadPokemons() {
+	fun loadPokemons() {
 		GlobalScope.launch(Dispatchers.IO) {
 			val pokemonsApiResult = PokemonRepository.listPokemons()
 			if (pokemonsApiResult != null) {

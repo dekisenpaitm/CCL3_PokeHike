@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.StepCounterBaseHandler
+import com.cc221001.cc221015.Poke_Hike.domain.StepCounter
 import com.cc221001.cc221015.Poke_Hike.service.StepCounterRepository
 
 class StepCounterViewModel(private val db:StepCounterBaseHandler, private val pcdb:PokeCoinBaseHandler) : ViewModel(), SensorEventListener {
@@ -20,6 +21,15 @@ class StepCounterViewModel(private val db:StepCounterBaseHandler, private val pc
             //println("This is stepcount in ViewModel: $newStepCount")
         }
     }
+
+    fun createStepCounter(stepCounter: StepCounter){
+        db.insertSteps(stepCounter)
+    }
+
+    fun getStepCounter(){
+        db.getAllSteps()
+    }
+
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
             db.updateCurrentSteps(0,event.values[0].toInt())

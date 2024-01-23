@@ -1,6 +1,4 @@
-package com.cc221001.cc221015.Poke_Hike.data
-
-import com.cc221001.cc221015.Poke_Hike.domain.PokemonType
+package com.cc221001.cc221015.Poke_Hike.domain
 
 // Represents the result of a list of Pokemons fetched from the API.
 data class PokemonsApiResult (

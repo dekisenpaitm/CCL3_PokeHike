@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.cc221001.cc221015.Poke_Hike.domain.PokeCoin
 
-class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, null, 1) {
+class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, null, 2) {
 
     companion object PokeCoinDatabase {
         private const val dbname ="PokeCoinDatabase"
@@ -19,7 +19,7 @@ class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, nu
     override fun onCreate(db: SQLiteDatabase?){
         db?.execSQL(
             "CREATE TABLE IF NOT EXISTS $tableName (" +
-            "$id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$id INTEGER PRIMARY KEY, " +
             "$name VARCHAR(30)," +
             "$amount INT);"
         )
@@ -34,6 +34,7 @@ class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, nu
         val db = this.writableDatabase
         if(!pokeCoinExists(db, pokeCoin.name)){
             val values = ContentValues()
+            values.put(id, pokeCoin.id)
             values.put(name, pokeCoin.name)
             values.put(amount, pokeCoin.amount)
 

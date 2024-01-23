@@ -26,5 +26,5 @@ fun CreatePokeballEntries(pokeballViewModel: PokeballViewModel){
 }
 
 fun CreateTrainerStash(pokeCoinViewModel: PokeCoinViewModel){
-    pokeCoinViewModel.createPokeCoinStash("pokeCoinStash", 0)
+    pokeCoinViewModel.createPokeCoinStash(id=1,"pokeCoinStash", 0)
 }

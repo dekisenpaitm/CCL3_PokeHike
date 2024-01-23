@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,7 +46,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
+import java.util.logging.Handler
 
 // Composable function to display values related to a Pokemon Trainer.
 @Composable
@@ -130,87 +132,121 @@ fun TrainerItem(trainerValue: String, mainViewModel: MainViewModel) {
 @SuppressLint("DiscouragedApi")
 // Composable function to display the profile of a Pokemon Trainer.
 @Composable
-fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel) {
+fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, pokeCoinViewModel: PokeCoinViewModel) {
     // Collects the current state from the MainViewModel.
     val state = mainViewModel.mainViewState.collectAsState()
+    var isButtonClicked = false
 
-    // A Column layout to vertically arrange elements.
-    Column(verticalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color(0, 0, 0, 125), RoundedCornerShape(10.dp))
-            .padding(0.dp, 10.dp, 0.dp, 0.dp)) {
-        // A LazyColumn for efficiently displaying a scrollable list.
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
+    if(state.value.pokemonTrainers.isNotEmpty()) {
+        // A Column layout to vertically arrange elements.
+        Column(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(20.dp,20.dp,20.dp,0.dp)
+                .fillMaxSize()
+                .background(color = Color(0, 0, 0, 125), RoundedCornerShape(10.dp))
+                .padding(0.dp, 10.dp, 0.dp, 0.dp)
         ) {
-            // Displaying the trainer's image.
-            item {
-                Box() {
-                    // Retrieve the resource ID for the trainer's sprite.
-                    val resourceId = LocalContext.current.resources.getIdentifier(
-                        state.value.pokemonTrainers[0].sprite,
-                        "drawable",
-                        LocalContext.current.packageName
-                    )
-                    // Construct the image URL.
-                    val imageUrl = "android.resource://${LocalContext.current.packageName}/$resourceId"
-                    val painter = rememberAsyncImagePainter(model = imageUrl)
-                    // Display the image.
-                    Surface(
-                        modifier = Modifier
-                            .width(150.dp)
-                            .height(150.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
-                        color = Color(255, 255, 255, 50)
-                    ) {
-                        Image(
-                            painter = painter,
-                            contentDescription = "Pokemon Image",
-                            contentScale = ContentScale.FillHeight,
-                            modifier = Modifier
-                                .size(120.dp)
-                                .clip(MaterialTheme.shapes.medium)
-                                .padding(10.dp)
-                        )
+            // A LazyColumn for efficiently displaying a scrollable list.
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(20.dp, 20.dp, 20.dp, 0.dp)
+            ) {
+                // Displaying the trainer's image.
+                item {
+                    if (state.value.pokemonTrainers.isNotEmpty()) {
+                        Box() {
+                            // Retrieve the resource ID for the trainer's sprite.
+
+                            val resourceId = LocalContext.current.resources.getIdentifier(
+                                state.value.pokemonTrainers[0].sprite,
+                                "drawable",
+                                LocalContext.current.packageName
+                            )
+                            // Construct the image URL.
+                            val imageUrl =
+                                "android.resource://${LocalContext.current.packageName}/$resourceId"
+                            val painter = rememberAsyncImagePainter(model = imageUrl)
+                            // Display the image.
+                            Surface(
+                                modifier = Modifier
+                                    .width(150.dp)
+                                    .height(150.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .border(
+                                        2.dp,
+                                        Color(255, 255, 255, 75),
+                                        RoundedCornerShape(10.dp)
+                                    ),
+                                color = Color(255, 255, 255, 50)
+                            ) {
+                                Image(
+                                    painter = painter,
+                                    contentDescription = "Pokemon Image",
+                                    contentScale = ContentScale.FillHeight,
+                                    modifier = Modifier
+                                        .size(120.dp)
+                                        .clip(MaterialTheme.shapes.medium)
+                                        .padding(10.dp)
+                                )
+                            }
+                        }
                     }
                 }
-            }
-            item{
-                // Display trainer's attributes using TrainerValues composable.
-                TrainerValues(mainViewModel = mainViewModel)
-            }
-            item {
-                // Button to delete the trainer.
-                Column(
-                    modifier=Modifier.height(140.dp),
-                    verticalArrangement = Arrangement.SpaceEvenly) {
-                    CustomButton(
-                        text = "Update Trainer",
-                        onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]); pokemonViewModel.deleteAllFavedPokemon() },
-                        amount = 320,
-                        amount2 = 50,
-                        true
-                    )
-
-                    CustomButton(
-                        text = "Delete Trainer",
-                        onClick = { mainViewModel.deletePokemonTrainer(state.value.pokemonTrainers[0]) },
-                        amount = 320,
-                        amount2 = 50,
-                        basic = false
-                    )
+                item {
+                    // Display trainer's attributes using TrainerValues composable.
+                    TrainerValues(mainViewModel = mainViewModel)
                 }
-            }
-            item{
-                Column {
-                    editTrainerModel(mainViewModel)
+                item {
+                    // Button to delete the trainer.
+                    Column(
+                        modifier = Modifier.height(140.dp),
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        CustomButton(
+                            text = "Update Trainer",
+                            onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]) },
+                            amount = 320,
+                            amount2 = 50,
+                            true
+                        )
+                        Surface(
+                            color = Color(58, 42, 75, 255),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                                .clickable(onClick = {
+                                    if(!isButtonClicked && state.value.pokemonTrainers.isNotEmpty()) {
+                                        isButtonClicked=true
+                                        mainViewModel.deletePokemonTrainer(state.value.pokemonTrainers[0]);
+                                        pokeCoinViewModel.deletePokeCoinStash(pokeCoinViewModel.pokeCoinViewState.value.pokeCoin);
+                                        pokemonViewModel.resetPokemonDatabase()
+                                        android.os.Handler()
+                                            .postDelayed({ isButtonClicked = false }, 2000)
+                                    }
+                                })
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = "Delete Trainer",
+                                    modifier = Modifier.padding(8.dp),
+                                    color = Color.White
+                                )
+                            }
+                        }
+
+                    }
+                }
+                item {
+                    Column {
+                        editTrainerModel(mainViewModel)
+                    }
                 }
             }
         }
