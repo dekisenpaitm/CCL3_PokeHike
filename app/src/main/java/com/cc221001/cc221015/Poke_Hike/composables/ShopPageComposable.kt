@@ -337,8 +337,7 @@ fun PokeballsItem(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                               /* text = "¢${pokeball.price}",*/
-                                text = "¢1000",
+                               text = "¢${pokeball.price}",
                                 color = Color.White,
                                 fontSize = 14.sp,
                             )
@@ -405,7 +404,7 @@ fun PokeballsItem(
         // Show the AlertDialog when showDialog is true
         if (showDialog && currentCoins.pokeCoin.amount >= pokeball!!.price) {
             AlertDialog(
-                containerColor = Color(0, 0, 0, 215),
+                containerColor = Color(16, 0, 25, 200),
                 onDismissRequest = {
                     // Dismiss the dialog when clicking outside of it
                     showDialog = false
@@ -496,7 +495,7 @@ fun PokeballsItem(
                 })
         } else if (showDialog && currentCoins.pokeCoin.amount < pokeball!!.price) {
             AlertDialog(
-                containerColor = Color(0, 0, 0, 215),
+                containerColor = Color(16, 0, 25, 200),
                 onDismissRequest = {
                     // Dismiss the dialog when clicking outside of it
                     showDialog = false
@@ -563,13 +562,16 @@ fun DisplayPokemonMessage(
 
     if (randomPokemon.pokemon?.name != "" && pokemonBought) {
         AlertDialog(
-            containerColor = Color(0, 0, 0, 215),
+            containerColor = Color(16, 0, 25, 200),
             onDismissRequest = onClose,
             title = {
                 Text(
-                    text = "CONGRATULATION",
+                    text = "Congratulations!",
                     color = Color.White,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth() // Take up the full width
+                        .padding(16.dp)  // Add padding for spacing
                 )
             },
             text = {
