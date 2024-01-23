@@ -47,54 +47,59 @@ class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, nu
     fun pokeCoinExists(db:SQLiteDatabase?, pokeCoinName:String):Boolean{
         db?.let{
             val query = "SELECT $id FROM $tableName WHERE $name = '$pokeCoinName'"
-            val cursor = it.rawQuery(query, null)
-
-            if(cursor != null){
-                val exists = cursor.moveToFirst()
-                cursor.close()
-                return exists
+            val cursor = it.rawQuery(query, null).use{ cursor ->
+                if(cursor != null){
+                    val exists = cursor.moveToFirst()
+                    cursor.close()
+                    return exists
+                }
             }
         }
         return false
     }
 
     fun getPokeCoinById(coinId: Int): PokeCoin {
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $id = ?", arrayOf(coinId.toString()))
-
         var pokeCoin = PokeCoin(0, "Default", 0)
-        if (cursor.moveToFirst()) {
-            val idIndex = cursor.getColumnIndex(id)
-            val nameIndex = cursor.getColumnIndex(name)
-            val amountIndex = cursor.getColumnIndex(amount)
-            pokeCoin = PokeCoin(
-                cursor.getInt(idIndex),
-                cursor.getString(nameIndex),
-                cursor.getInt(amountIndex)
-            )
-        }
-        cursor.close()
-        return pokeCoin
+        val db = this.readableDatabase
+        val cursor =
+            db.rawQuery("SELECT * FROM $tableName WHERE $id = ?", arrayOf(coinId.toString()))
+                .use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val idIndex = cursor.getColumnIndex(id)
+                        val nameIndex = cursor.getColumnIndex(name)
+                        val amountIndex = cursor.getColumnIndex(amount)
+                        pokeCoin = PokeCoin(
+                            cursor.getInt(idIndex),
+                            cursor.getString(nameIndex),
+                            cursor.getInt(amountIndex)
+                        )
+                        cursor.close()
+                    }
+                    return pokeCoin
+                }
     }
+
+
 
     fun getAllPokeCoins():List<PokeCoin>{
         val allPokeCoins = mutableListOf<PokeCoin>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName", null)
-        while(cursor.moveToNext()){
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val amountID = cursor.getColumnIndex(amount)
+        val cursor = db.rawQuery("SELECT * FROM $tableName", null).use { cursor ->
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val amountID = cursor.getColumnIndex(amount)
 
-            if(nameID >= 0){
-                allPokeCoins.add(
-                    PokeCoin(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getInt(amountID)
+                if (nameID >= 0) {
+                    allPokeCoins.add(
+                        PokeCoin(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getInt(amountID)
+                        )
                     )
-                )
+                }
             }
         }
         return allPokeCoins.toList()

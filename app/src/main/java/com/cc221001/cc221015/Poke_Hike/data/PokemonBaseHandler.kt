@@ -46,22 +46,23 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         val db = this.writableDatabase
 
         val query = "SELECT * FROM $tableName WHERE $id = ?"
-        val cursor = db.rawQuery(query, arrayOf(pokemon.number.toString()))
+        val cursor = db.rawQuery(query, arrayOf(pokemon.number.toString())).use { cursor ->
 
-        if (cursor.moveToFirst()) {
-            return
+            if (cursor.moveToFirst()) {
+                return
+            }
+
+            val values = ContentValues()
+            values.put(id, pokemon.number)
+            values.put(name, pokemon.name)
+            values.put(type0, pokemon.type0)
+            values.put(type1, pokemon.type1)
+            values.put(liked, pokemon.liked)
+            values.put(owned, pokemon.owned)
+            values.put(imageUrl, pokemon.imageUrl)
+
+            db.insert(tableName, null, values)
         }
-
-        val values = ContentValues()
-        values.put(id, pokemon.number)
-        values.put(name, pokemon.name)
-        values.put(type0, pokemon.type0)
-        values.put(type1, pokemon.type1)
-        values.put(liked, pokemon.liked)
-        values.put(owned, pokemon.owned)
-        values.put(imageUrl, pokemon.imageUrl)
-
-        db.insert(tableName, null, values)
     }
 
     // Mark a Pokemon as liked in the database.
@@ -100,27 +101,28 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         var allPokemons = mutableListOf<Pokemon>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName", null)
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val type0ID = cursor.getColumnIndex(type0)
-            val type1ID = cursor.getColumnIndex(type1)
-            val likedID = cursor.getColumnIndex(liked)
-            val ownedID = cursor.getColumnIndex(owned)
-            val imageUrlID = cursor.getColumnIndex(imageUrl)
-            if (nameID >= 0)
-                allPokemons.add(
-                    Pokemon(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(type0ID),
-                        cursor.getString(type1ID),
-                        cursor.getString(imageUrlID),
-                        cursor.getString(likedID),
-                        cursor.getString(ownedID)
+        val cursor = db.rawQuery("SELECT * FROM $tableName", null).use { cursor ->
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val type0ID = cursor.getColumnIndex(type0)
+                val type1ID = cursor.getColumnIndex(type1)
+                val likedID = cursor.getColumnIndex(liked)
+                val ownedID = cursor.getColumnIndex(owned)
+                val imageUrlID = cursor.getColumnIndex(imageUrl)
+                if (nameID >= 0)
+                    allPokemons.add(
+                        Pokemon(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getString(type0ID),
+                            cursor.getString(type1ID),
+                            cursor.getString(imageUrlID),
+                            cursor.getString(likedID),
+                            cursor.getString(ownedID)
+                        )
                     )
-                )
+            }
         }
 
         //println("those are all your pokemon: $allPokemons")
@@ -132,27 +134,28 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         var allPokemons = mutableListOf<Pokemon>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='true'", null)
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val type0ID = cursor.getColumnIndex(type0)
-            val type1ID = cursor.getColumnIndex(type1)
-            val likedID = cursor.getColumnIndex(liked)
-            val ownedID = cursor.getColumnIndex(owned)
-            val imageUrlID = cursor.getColumnIndex(imageUrl)
-            if (nameID >= 0)
-                allPokemons.add(
-                    Pokemon(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(type0ID),
-                        cursor.getString(type1ID),
-                        cursor.getString(imageUrlID),
-                        cursor.getString(likedID),
-                        cursor.getString(ownedID)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='true'", null).use { cursor ->
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val type0ID = cursor.getColumnIndex(type0)
+                val type1ID = cursor.getColumnIndex(type1)
+                val likedID = cursor.getColumnIndex(liked)
+                val ownedID = cursor.getColumnIndex(owned)
+                val imageUrlID = cursor.getColumnIndex(imageUrl)
+                if (nameID >= 0)
+                    allPokemons.add(
+                        Pokemon(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getString(type0ID),
+                            cursor.getString(type1ID),
+                            cursor.getString(imageUrlID),
+                            cursor.getString(likedID),
+                            cursor.getString(ownedID)
+                        )
                     )
-                )
+            }
         }
 
         return allPokemons.toList()
@@ -163,27 +166,30 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         var allPokemons = mutableListOf<Pokemon>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $liked='true'", null)
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val type0ID = cursor.getColumnIndex(type0)
-            val type1ID = cursor.getColumnIndex(type1)
-            val likedID = cursor.getColumnIndex(liked)
-            val ownedID = cursor.getColumnIndex(owned)
-            val imageUrlID = cursor.getColumnIndex(imageUrl)
-            if (nameID >= 0)
-                allPokemons.add(
-                    Pokemon(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(type0ID),
-                        cursor.getString(type1ID),
-                        cursor.getString(imageUrlID),
-                        cursor.getString(likedID),
-                        cursor.getString(ownedID)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $liked='true'", null).use { cursor ->
+
+
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val type0ID = cursor.getColumnIndex(type0)
+                val type1ID = cursor.getColumnIndex(type1)
+                val likedID = cursor.getColumnIndex(liked)
+                val ownedID = cursor.getColumnIndex(owned)
+                val imageUrlID = cursor.getColumnIndex(imageUrl)
+                if (nameID >= 0)
+                    allPokemons.add(
+                        Pokemon(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getString(type0ID),
+                            cursor.getString(type1ID),
+                            cursor.getString(imageUrlID),
+                            cursor.getString(likedID),
+                            cursor.getString(ownedID)
+                        )
                     )
-                )
+            }
         }
 
         return allPokemons.toList()
@@ -193,27 +199,28 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         var allPokemons = mutableListOf<Pokemon>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false'", null)
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val type0ID = cursor.getColumnIndex(type0)
-            val type1ID = cursor.getColumnIndex(type1)
-            val likedID = cursor.getColumnIndex(liked)
-            val ownedID = cursor.getColumnIndex(owned)
-            val imageUrlID = cursor.getColumnIndex(imageUrl)
-            if (nameID >= 0)
-                allPokemons.add(
-                    Pokemon(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(type0ID),
-                        cursor.getString(type1ID),
-                        cursor.getString(imageUrlID),
-                        cursor.getString(likedID),
-                        cursor.getString(ownedID)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false'", null).use { cursor ->
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val type0ID = cursor.getColumnIndex(type0)
+                val type1ID = cursor.getColumnIndex(type1)
+                val likedID = cursor.getColumnIndex(liked)
+                val ownedID = cursor.getColumnIndex(owned)
+                val imageUrlID = cursor.getColumnIndex(imageUrl)
+                if (nameID >= 0)
+                    allPokemons.add(
+                        Pokemon(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getString(type0ID),
+                            cursor.getString(type1ID),
+                            cursor.getString(imageUrlID),
+                            cursor.getString(likedID),
+                            cursor.getString(ownedID)
+                        )
                     )
-                )
+            }
         }
 
         return allPokemons.toList()
@@ -226,63 +233,84 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
             unlikePokemon(pokemon)
         }
     }
-    fun getPokemonsOfMultipleTypes(type_1:String,type_2:String,type_3:String,string:String):List<Pokemon?> {
-        //println("pokemonOfTypeCalled")
-        var allPokemons = mutableListOf<Pokemon>()
+    fun getPokemonsOfMultipleTypes(pkmntype1: String, pkmntype2: String, pkmntype3: String, ownedFilter: String): List<Pokemon> {
+        val allPokemons = mutableListOf<Pokemon>()
         val db = this.readableDatabase
-        var cursor = db.rawQuery("SELECT * FROM $tableName WHERE ($type0 LIKE '%$type_1%' OR $type0 LIKE '%$type_2%' OR $type0 LIKE '%$type_3%' OR $type1 LIKE '%$type_1%' OR $type1 LIKE '%$type_2%' OR $type1 LIKE '%$type_3%');", null)
-        if(string == "true"){
-            cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND ($type0 LIKE '%$type_1%' OR $type0 LIKE '%$type_2%' OR $type0 LIKE '%$type_3%' OR $type1 LIKE '%$type_1%' OR $type1 LIKE '%$type_2%' OR $type1 LIKE '%$type_3%');", null)
+
+        // Lowercase the type parameters for case-insensitive comparison
+        val lowerType1 = pkmntype1.lowercase()
+        val lowerType2 = pkmntype2.lowercase()
+        val lowerType3 = pkmntype3.lowercase()
+
+        // Constructing the base query with LOWER() for case-insensitivity
+        val baseQuery = "SELECT * FROM $tableName WHERE " +
+                "((LOWER($type0) LIKE '%$lowerType1%' OR LOWER($type0) LIKE '%$lowerType2%' OR LOWER($type0) LIKE '%$lowerType3%') OR " +
+                "(LOWER($type1) LIKE '%$lowerType1%' OR LOWER($type1) LIKE '%$lowerType2%' OR LOWER($type1) LIKE '%$lowerType3%'))"
+
+        // Adding condition for 'owned' if required
+        val query = if (ownedFilter == "false") {
+            "$baseQuery AND $owned='false'"
+        } else {
+            baseQuery
         }
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val type0ID = cursor.getColumnIndex(type0)
-            val type1ID = cursor.getColumnIndex(type1)
-            val likedID = cursor.getColumnIndex(liked)
-            val ownedID = cursor.getColumnIndex(owned)
-            val imageUrlID = cursor.getColumnIndex(imageUrl)
-            if (nameID >= 0)
-                allPokemons.add(
-                    Pokemon(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(type0ID),
-                        cursor.getString(type1ID),
-                        cursor.getString(imageUrlID),
-                        cursor.getString(likedID),
-                        cursor.getString(ownedID)
+
+        db.rawQuery(query, null).use { cursor ->
+            while (cursor.moveToNext()) {
+                val idIndex = cursor.getColumnIndex(id)
+                val nameIndex = cursor.getColumnIndex(name)
+                val type0Index = cursor.getColumnIndex(type0)
+                val type1Index = cursor.getColumnIndex(type1)
+                val likedIndex = cursor.getColumnIndex(liked)
+                val ownedIndex = cursor.getColumnIndex(owned)
+                val imageUrlIndex = cursor.getColumnIndex(imageUrl)
+
+                if (nameIndex >= 0) {
+                    allPokemons.add(
+                        Pokemon(
+                            cursor.getInt(idIndex),
+                            cursor.getString(nameIndex),
+                            cursor.getString(type0Index),
+                            cursor.getString(type1Index),
+                            cursor.getString(imageUrlIndex),
+                            cursor.getString(likedIndex),
+                            cursor.getString(ownedIndex)
+                        )
                     )
-                )
+                }
+            }
         }
+        println(allPokemons)
         return allPokemons.toList()
     }
+
+
     fun getPokemonsOfType(type:String):List<Pokemon?> {
         //println("pokemonOfTypeCalled")
         var allPokemons = mutableListOf<Pokemon>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $owned='false' AND $type0 LIKE '%$type%' OR $type1 LIKE '%$type';", null)
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val type0ID = cursor.getColumnIndex(type0)
-            val type1ID = cursor.getColumnIndex(type1)
-            val likedID = cursor.getColumnIndex(liked)
-            val ownedID = cursor.getColumnIndex(owned)
-            val imageUrlID = cursor.getColumnIndex(imageUrl)
-            if (nameID >= 0)
-                allPokemons.add(
-                    Pokemon(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(type0ID),
-                        cursor.getString(type1ID),
-                        cursor.getString(imageUrlID),
-                        cursor.getString(likedID),
-                        cursor.getString(ownedID)
+        val cursor =db.rawQuery( "SELECT * FROM $tableName WHERE $owned='false' AND (LOWER($type0) LIKE LOWER('%$type%') OR LOWER($type1) LIKE LOWER('%$type%'));", null).use{cursor ->
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val type0ID = cursor.getColumnIndex(type0)
+                val type1ID = cursor.getColumnIndex(type1)
+                val likedID = cursor.getColumnIndex(liked)
+                val ownedID = cursor.getColumnIndex(owned)
+                val imageUrlID = cursor.getColumnIndex(imageUrl)
+                if (nameID >= 0)
+                    allPokemons.add(
+                        Pokemon(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getString(type0ID),
+                            cursor.getString(type1ID),
+                            cursor.getString(imageUrlID),
+                            cursor.getString(likedID),
+                            cursor.getString(ownedID)
+                        )
                     )
-                )
+            }
         }
         return allPokemons.toList()
     }

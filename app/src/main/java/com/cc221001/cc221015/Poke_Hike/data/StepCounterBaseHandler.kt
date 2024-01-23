@@ -49,8 +49,6 @@ class StepCounterBaseHandler(context: Context) : SQLiteOpenHelper(context, dbNam
         }
 
         // Close the database connection
-        db?.close()
-
         return tableExists
     }
 
@@ -127,6 +125,7 @@ class StepCounterBaseHandler(context: Context) : SQLiteOpenHelper(context, dbNam
                     )
                 )
         }
+        cursor.close()
 
         //println("those are all your pokemon: $allPokemons")
         return stepCounterList.toList()
