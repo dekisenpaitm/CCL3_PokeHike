@@ -72,7 +72,7 @@ class StepCounterService : Service(), SensorEventListener {
     private fun createNotification(): Notification {
         val channelId = "step_counter_channel"
         val channelName = "Step Counter Service"
-        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
 

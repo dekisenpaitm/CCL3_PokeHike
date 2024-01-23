@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +19,7 @@ import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.StepCounterBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
+import com.cc221001.cc221015.Poke_Hike.handler.PermissionHandler
 import com.cc221001.cc221015.Poke_Hike.service.StepCounterService
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
@@ -31,6 +33,24 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    //David Shenanigans
+    private val permissionHandler = PermissionHandler(this)
+    private val requiredPermissions = arrayOf(
+        Manifest.permission.ACTIVITY_RECOGNITION,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.FOREGROUND_SERVICE,
+        Manifest.permission.POST_NOTIFICATIONS
+    )
+
+    private val requiredPermissionsLowerVersion = arrayOf(
+        Manifest.permission.ACTIVITY_RECOGNITION,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.FOREGROUND_SERVICE
+    )
+
+
+
 
     // Database handler for Pokemon trainers && ViewModel for the main screen.
     private val db = TrainerBaseHandler(this)
@@ -78,18 +98,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Check and request permission before starting the service
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Permission is not granted, request it
-            requestPermissionStepCounter.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+        if (permissionHandler.hasPermissions(requiredPermissions)) {
+            startStepTrackingService()
         } else {
-            // Permission is already granted, start the service
-            //println("StepCounter Started")
-            startForegroundService(Intent(this, StepCounterService::class.java))
+            permissionHandler.requestPermissions(requiredPermissions)
         }
-
 
         setContent {
             requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -104,6 +117,35 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (permissionHandler.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            println("PERMISSION given")
+            startStepTrackingService()
+        } else {
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+                if (permissionHandler.hasPermissions(requiredPermissionsLowerVersion)) {
+                    startStepTrackingService()
+                    println("PERMISSION given")
+                }else{
+                    println("PERMISSION not given")
+                }
+            }else{
+                println("PERMISSION not given")
+            }
+        }
+    }
+
+    private fun startStepTrackingService() {
+        val intent = Intent(this, StepCounterService::class.java).apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        }
+        startService(intent)
+    }
+
 
 }
 
