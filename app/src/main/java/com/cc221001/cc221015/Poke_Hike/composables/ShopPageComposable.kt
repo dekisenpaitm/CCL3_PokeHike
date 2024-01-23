@@ -54,8 +54,11 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -97,7 +100,7 @@ fun DisplayPokeballList(
         Column(modifier = Modifier
             .background(color = Color(0, 0, 0, 125))
             .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
-            .padding(20.dp)
+            .padding(20.dp, top = 4.dp)
             .fillMaxSize()) {
 
             if (weather == null) {
@@ -148,10 +151,10 @@ fun WeatherBox(weather:CurrentWeather, pokeballList:List<Pokeball?>, condition: 
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = "Currently it's ${condition}!\n\n" +
-                            "The ${pokeball.name} is now available.\n\n" +
-                            "${pokeball.name} contains: ${pokeball.type1}, ${pokeball.type2} & ${pokeball.type3} types.",
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
+                    text = "Weather currently: ${condition}!\n\n" +
+                            "${pokeball.name} is now available.\n\n" +
+                            "${pokeball.name}s contain: ${pokeball.type1}, ${pokeball.type2} & ${pokeball.type3} pokemons.",
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
@@ -169,7 +172,7 @@ fun PokeballList(
 ) {
     LazyColumn(
         modifier = Modifier
-            .padding(top = 20.dp),
+            .padding(top = 10.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         // Iterating over each Pokemon in the pokemonList.
@@ -206,315 +209,342 @@ fun PokeballsItem(
     //println(currentAvailablePokemon.availableTypePokemon)
     Spacer(
         modifier = Modifier
-            .height(5.dp)
+            .height(6.dp)
             .fillMaxWidth()
     )
-    Row(modifier = Modifier.fillMaxWidth()) {
-        // Box for Image, Text, and Price
-        Box(
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(
             modifier = Modifier
-                .weight(3f)
-                .height(80.dp)
-                .background(Color(255, 255, 255, 50), RoundedCornerShape(10.dp))
-                .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxSize()
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("x")
+                    }
+                    append(
+                        when {
+                            pokeball?.type1 != "All" -> "${currentAvailablePokemon.notAvailableTypePokemon.size}"
+                            else -> "${currentAvailablePokemon.availableAllPokemon.size}"
+                        }
+                    )
+                },
+                color = Color.White,
+            )
+        }
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            // Box for Image, Text, and Price
+            Box(
+                modifier = Modifier
+                    .weight(3f)
+                    .height(80.dp)
+                    .background(Color(255, 255, 255, 50), RoundedCornerShape(10.dp))
+                    .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+                contentAlignment = Alignment.Center
             ) {
-                if (pokeball != null) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if(pokeball?.type1 != "All") {
-                            pokemonViewModel.getAvailablePokemon(pokeball!!.type1,pokeball.type2,pokeball.type3)
-                            if(currentAvailablePokemon.notAvailableTypePokemon.isEmpty()){
-                                AsyncImage(
-                                    model = pokeball.imageUrl,
-                                    contentDescription = "Pokemon Image",
-                                    colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
-                                    contentScale = ContentScale.FillHeight,
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clip(MaterialTheme.shapes.small)
-                                )
-                            } else {
-                                AsyncImage(
-                                    model = pokeball.imageUrl,
-                                    contentDescription = "Pokemon Image",
-                                    contentScale = ContentScale.FillHeight,
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clip(MaterialTheme.shapes.small)
-                                )
-                            }
-                        } else {
-                            pokemonViewModel.getNotOwnedPokemon()
-                            if(currentAvailablePokemon.notAvailableAllPokemon.isEmpty()){
-                                AsyncImage(
-                                    model = pokeball.imageUrl,
-                                    contentDescription = "Pokemon Image",
-                                    colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
-                                    contentScale = ContentScale.FillHeight,
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clip(MaterialTheme.shapes.small)
-                                )
-                            } else {
-                                AsyncImage(
-                                    model = pokeball.imageUrl,
-                                    contentDescription = "Pokemon Image",
-                                    contentScale = ContentScale.FillHeight,
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clip(MaterialTheme.shapes.small)
-                                )
-                            }
-                        }
-
-                    }
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = pokeball.name.replaceFirstChar { it.titlecase() },
-                            color = Color.White,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "$ ${pokeball.price},-",
-                            color = Color.White,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    if(pokeball?.type1 != "All") {
-                        pokemonViewModel.getAvailablePokemon(pokeball!!.type1,pokeball.type2,pokeball.type3)
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (pokeball != null) {
                         Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = "${currentAvailablePokemon.notAvailableTypePokemon.size}/${currentAvailablePokemon.availableTypePokemon.size}",
-                                color = Color.White,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        }
-                    } else {
-                        pokemonViewModel.getNotOwnedPokemon()
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "${currentAvailablePokemon.availableAllPokemon.size}/${currentAvailablePokemon.notAvailableAllPokemon.size}",
-                                color = Color.White,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(
-            modifier = Modifier
-                .width(8.dp)
-                .weight(0.1f)
-        )
-
-        // Button
-        Box(
-            modifier = Modifier
-                .weight(0.9f)
-                .fillMaxHeight(), contentAlignment = Alignment.Center
-        ) {
-            if(pokeball?.type1 != "All") {
-                pokemonViewModel.getAvailablePokemon(pokeball!!.type1,pokeball.type2,pokeball.type3)
-                if(currentAvailablePokemon.notAvailableTypePokemon.isEmpty()){
-                    CustomButtonGray(
-                        text = "N/A", onClick = {
-                        }, amount = 100,
-                        amount2 = 80,
-                        true
-                    )
-                } else {
-                    CustomButton(
-                        text = "Buy", onClick = {
-                            showDialog = true
-                        }, amount = 100,
-                        amount2 = 80,
-                        true
-                    )
-                }
-            } else {
-                pokemonViewModel.getNotOwnedPokemon()
-                if(currentAvailablePokemon.notAvailableAllPokemon.isEmpty()){
-                    CustomButtonGray(
-                        text = "N/A", onClick = {
-                        }, amount = 100,
-                        amount2 = 80,
-                        true
-                    )
-                } else {
-                    CustomButton(
-                        text = "Buy", onClick = {
-                            showDialog = true
-                        }, amount = 100,
-                        amount2 = 80,
-                        true
-                    )
-                }
-            }
-        }
-    }
-    // Show the AlertDialog when showDialog is true
-    if (showDialog && currentCoins.pokeCoin.amount >= pokeball!!.price) {
-        AlertDialog(
-            containerColor = Color(0,0,0,215),
-            onDismissRequest = {
-                // Dismiss the dialog when clicking outside of it
-                showDialog = false
-            }, title = {
-                Text(text = "Buy ${pokeball?.name}?", color= Color.White)
-            }, text = {
-                Text(text = "Are you sure you want to buy ${pokeball?.name}?", color= Color.White)
-            }, confirmButton = {
-                Surface(
-                    color = Color(106, 84, 141, 255), // Set the background color of the surface
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(50.dp)
-                        .clickable(onClick = {
-                            if (pokeball != null) {
-                                if (currentCoins.pokeCoin.amount >= pokeball.price) {
-                                    pokeCoinViewModel.usePokeCoins(
-                                        currentCoins.pokeCoin,
-                                        pokeball.price
+                            if (pokeball?.type1 != "All") {
+                                pokemonViewModel.getAvailablePokemon(
+                                    pokeball!!.type1,
+                                    pokeball.type2,
+                                    pokeball.type3
+                                )
+                                if (currentAvailablePokemon.notAvailableTypePokemon.isEmpty()) {
+                                    AsyncImage(
+                                        model = pokeball.imageUrl,
+                                        contentDescription = "Pokemon Image",
+                                        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                                            setToSaturation(
+                                                0f
+                                            )
+                                        }),
+                                        contentScale = ContentScale.FillHeight,
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .clip(MaterialTheme.shapes.small)
                                     )
-                                    pokemonViewModel.getRandomPokemon(
-                                        pokeball.type1,
-                                        pokeball.type2,
-                                        pokeball.type3
+                                } else {
+                                    AsyncImage(
+                                        model = pokeball.imageUrl,
+                                        contentDescription = "Pokemon Image",
+                                        contentScale = ContentScale.FillHeight,
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .clip(MaterialTheme.shapes.small)
                                     )
-                                    pokemonBought = true
-                                    showDialog = false
+                                }
+                            } else {
+                                pokemonViewModel.getNotOwnedPokemon()
+                                if (currentAvailablePokemon.notAvailableAllPokemon.isEmpty()) {
+                                    AsyncImage(
+                                        model = pokeball.imageUrl,
+                                        contentDescription = "Pokemon Image",
+                                        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                                            setToSaturation(
+                                                0f
+                                            )
+                                        }),
+                                        contentScale = ContentScale.FillHeight,
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .clip(MaterialTheme.shapes.small)
+                                    )
+                                } else {
+                                    AsyncImage(
+                                        model = pokeball.imageUrl,
+                                        contentDescription = "Pokemon Image",
+                                        contentScale = ContentScale.FillHeight,
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .clip(MaterialTheme.shapes.small)
+                                    )
                                 }
                             }
-                        }) // Makes the surface clickable
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(4.dp), // Padding inside the Row
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            tint = Color.White // Set icon color
+
+                        }
+                        Box(
+                            modifier = Modifier
+                                .weight(1.8f)
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = pokeball.name.replaceFirstChar { it.titlecase() },
+                                color = Color.White,
+                                fontSize = 14.sp,
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .weight(1.2f)
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                               /* text = "¢${pokeball.price}",*/
+                                text = "¢1000",
+                                color = Color.White,
+                                fontSize = 14.sp,
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(
+                modifier = Modifier
+                    .width(8.dp)
+                    .weight(0.1f)
+            )
+
+            // Button
+            Box(
+                modifier = Modifier
+                    .weight(0.9f)
+                    .fillMaxHeight(), contentAlignment = Alignment.Center
+            ) {
+                if (pokeball?.type1 != "All") {
+                    pokemonViewModel.getAvailablePokemon(
+                        pokeball!!.type1,
+                        pokeball.type2,
+                        pokeball.type3
+                    )
+                    if (currentAvailablePokemon.notAvailableTypePokemon.isEmpty()) {
+                        CustomButtonGray(
+                            text = "N/A", onClick = {
+                            }, amount = 100,
+                            amount2 = 80,
+                            true
                         )
-                        Spacer(Modifier.width(4.dp)) // Spacer for the gap
-                        Text(
-                            text = "Yes",
-                            color = Color.White,
-                            textAlign = TextAlign.Center
+                    } else {
+                        CustomButton(
+                            text = "Buy", onClick = {
+                                showDialog = true
+                            }, amount = 100,
+                            amount2 = 80,
+                            true
+                        )
+                    }
+                } else {
+                    pokemonViewModel.getNotOwnedPokemon()
+                    if (currentAvailablePokemon.notAvailableAllPokemon.isEmpty()) {
+                        CustomButtonGray(
+                            text = "N/A", onClick = {
+                            }, amount = 100,
+                            amount2 = 80,
+                            true
+                        )
+                    } else {
+                        CustomButton(
+                            text = "Buy", onClick = {
+                                showDialog = true
+                            }, amount = 100,
+                            amount2 = 80,
+                            true
                         )
                     }
                 }
-            }, dismissButton = {
-                // Customizing the confirm button
-                Surface(
-                    color = Color(106, 84, 141, 255), // Set the background color of the surface
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(50.dp)
-                        .clickable(onClick = { showDialog = false }) // Makes the surface clickable
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
-                ) {
-                    Row(
+            }
+        }
+        // Show the AlertDialog when showDialog is true
+        if (showDialog && currentCoins.pokeCoin.amount >= pokeball!!.price) {
+            AlertDialog(
+                containerColor = Color(0, 0, 0, 215),
+                onDismissRequest = {
+                    // Dismiss the dialog when clicking outside of it
+                    showDialog = false
+                }, title = {
+                    Text(text = "Buy ${pokeball?.name}?", color = Color.White)
+                }, text = {
+                    Text(
+                        text = "Are you sure you want to buy ${pokeball?.name}?",
+                        color = Color.White
+                    )
+                }, confirmButton = {
+                    Surface(
+                        color = Color(106, 84, 141, 255), // Set the background color of the surface
                         modifier = Modifier
-                            .padding(4.dp), // Padding inside the Row
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                            .width(80.dp)
+                            .height(50.dp)
+                            .clickable(onClick = {
+                                if (pokeball != null) {
+                                    if (currentCoins.pokeCoin.amount >= pokeball.price) {
+                                        pokeCoinViewModel.usePokeCoins(
+                                            currentCoins.pokeCoin,
+                                            pokeball.price
+                                        )
+                                        pokemonViewModel.getRandomPokemon(
+                                            pokeball.type1,
+                                            pokeball.type2,
+                                            pokeball.type3
+                                        )
+                                        pokemonBought = true
+                                        showDialog = false
+                                    }
+                                }
+                            }) // Makes the surface clickable
+                            .clip(RoundedCornerShape(10.dp))
+                            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = null,
-                            tint = Color.White // Set icon color
-                        )
-                        Spacer(Modifier.width(4.dp)) // Spacer for the gap
-                        Text(
-                            text = "No",
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
+                        Row(
+                            modifier = Modifier
+                                .padding(4.dp), // Padding inside the Row
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                tint = Color.White // Set icon color
+                            )
+                            Spacer(Modifier.width(4.dp)) // Spacer for the gap
+                            Text(
+                                text = "Yes",
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
-                }
-            })
-    } else if(showDialog && currentCoins.pokeCoin.amount < pokeball!!.price) {
-        AlertDialog(
-            containerColor = Color(0,0,0,215),
-            onDismissRequest = {
-                // Dismiss the dialog when clicking outside of it
-                showDialog = false
-            }, title = {
-                Text(text = "Oops!", color= Color.White)
-            }, text = {
-                Text(text = "Looks like you're out of coins!", color= Color.White)
-            }, confirmButton = {
-                Surface(
-                    color = Color(106, 84, 141, 255), // Set the background color of the surface
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(50.dp)
-                        .clickable(onClick = { showDialog = false }) // Makes the surface clickable
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
-                ) {
-                    Row(
+                }, dismissButton = {
+                    // Customizing the confirm button
+                    Surface(
+                        color = Color(106, 84, 141, 255), // Set the background color of the surface
                         modifier = Modifier
-                            .padding(4.dp), // Padding inside the Row
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                            .width(80.dp)
+                            .height(50.dp)
+                            .clickable(onClick = {
+                                showDialog = false
+                            }) // Makes the surface clickable
+                            .clip(RoundedCornerShape(10.dp))
+                            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
                     ) {
-                        Icon(imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            tint = Color.White // Set icon color
-                        )
-                        Spacer(Modifier.width(4.dp)) // Spacer for the gap
-                        Text(
-                            text = "Yes",
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
+                        Row(
+                            modifier = Modifier
+                                .padding(4.dp), // Padding inside the Row
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                tint = Color.White // Set icon color
+                            )
+                            Spacer(Modifier.width(4.dp)) // Spacer for the gap
+                            Text(
+                                text = "No",
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
-                }
-            })
-    }
-    if(pokemonBought){
-        if (pokeball != null) {
-            BuyPokemon(pokeball = pokeball, pokemonViewModel = pokemonViewModel, pokemonBought=pokemonBought, onClose = { pokemonBought = false })
+                })
+        } else if (showDialog && currentCoins.pokeCoin.amount < pokeball!!.price) {
+            AlertDialog(
+                containerColor = Color(0, 0, 0, 215),
+                onDismissRequest = {
+                    // Dismiss the dialog when clicking outside of it
+                    showDialog = false
+                }, title = {
+                    Text(text = "Oops!", color = Color.White)
+                }, text = {
+                    Text(text = "Looks like you're out of coins!", color = Color.White)
+                }, confirmButton = {
+                    Surface(
+                        color = Color(106, 84, 141, 255), // Set the background color of the surface
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(50.dp)
+                            .clickable(onClick = {
+                                showDialog = false
+                            }) // Makes the surface clickable
+                            .clip(RoundedCornerShape(10.dp))
+                            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(4.dp), // Padding inside the Row
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                tint = Color.White // Set icon color
+                            )
+                            Spacer(Modifier.width(4.dp)) // Spacer for the gap
+                            Text(
+                                text = "Yes",
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                })
+        }
+        if (pokemonBought) {
+            if (pokeball != null) {
+                BuyPokemon(
+                    pokeball = pokeball,
+                    pokemonViewModel = pokemonViewModel,
+                    pokemonBought = pokemonBought,
+                    onClose = { pokemonBought = false })
+            }
         }
     }
 }

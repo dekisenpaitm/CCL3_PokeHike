@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 
 // Helper Composable function for displaying errors.
@@ -156,7 +157,8 @@ fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int, bas
             Text(
                 text = text,
                 modifier = Modifier.padding(8.dp),
-                color = Color.White
+                color = Color.White,
+                fontSize = 16.sp
             )
         }
     }

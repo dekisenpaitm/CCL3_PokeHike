@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -161,14 +162,16 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         val itemModifier = Modifier.clip(RoundedCornerShape(8.dp))
 
         // Box for displaying the Pokemon image.
-        Box(contentAlignment = Alignment.Center) {
+        Box( modifier = Modifier.
+            weight(1.1f),
+            contentAlignment = Alignment.Center) {
             if (pokemon != null) {
                 AsyncImage(
                     model = pokemon.imageUrl,
                     contentDescription = "Pokemon Image",
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier
-                        .size(90.dp)
+                        .size(80.dp)
                         .clip(MaterialTheme.shapes.medium)
                 )
             }
@@ -177,13 +180,15 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         // Box for displaying the Pokemon's name.
         Box(modifier = itemModifier
             .fillMaxHeight()
-            .weight(1f), contentAlignment = Alignment.Center) {
+            .weight(1.6f),
+            contentAlignment = Alignment.Center) {
             if (pokemon != null) {
                 Text(
                     text = pokemon.name.replaceFirstChar { it.titlecase() },
-                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 14.sp,
                     modifier = Modifier.padding(top = 8.dp),
-                    color=Color.White,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -191,7 +196,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         // Box for displaying the Pokemon's types.
         Box(modifier = itemModifier
             .fillMaxHeight()
-            .weight(1f), contentAlignment = Alignment.Center) {
+            .weight(1.2f), contentAlignment = Alignment.Center) {
             // List of specific Pokemon types.
             val specificTypes = listOf("fire", "water", "electric", "grass", "bug", "normal", "poison", "flying", "ground", "ghost", "psychic", "fairy", "fighting", "rock", "dragon", "ice")
             if (pokemon != null) {
@@ -202,8 +207,14 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
                 if (matchingTypes.isNotEmpty()) {
                     Column {
                         matchingTypes.forEach { pokemonType ->
-                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                                Text(text = pokemonType.replaceFirstChar { it.uppercase() }, color=Color.White)
+                            Row(modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center) {
+                                Text(
+                                    text = pokemonType.replaceFirstChar { it.uppercase() },
+                                    color=Color.White,
+                                    fontSize = 14.sp,
+                                    textAlign = TextAlign.Center)
                             }
                         }
                     }
@@ -214,7 +225,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         // Box for the like/unlike button.
         Box(modifier = itemModifier
             .fillMaxHeight()
-            .weight(0.5f),
+            .weight(0.4f),
             contentAlignment = Alignment.Center) {
             if (pokemon != null) {
                 IconButton(onClick = {
