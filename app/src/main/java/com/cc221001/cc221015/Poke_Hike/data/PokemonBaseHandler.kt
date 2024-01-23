@@ -279,7 +279,6 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
                 }
             }
         }
-        println(allPokemons)
         return allPokemons.toList()
     }
 
