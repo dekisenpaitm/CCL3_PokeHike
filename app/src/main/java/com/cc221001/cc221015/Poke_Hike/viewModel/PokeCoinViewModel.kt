@@ -33,10 +33,10 @@ class PokeCoinViewModel(private val db: PokeCoinBaseHandler):ViewModel() {
 
     fun deletePokeCoinStash(pokeCoin:PokeCoin){
         db.deletePokeCoin(pokeCoin)
-        getPokeCoins()
+        //getPokeCoins()
     }
 
-    fun createPokeCoinStash(name:String, amount:Int){
+    fun createPokeCoinStash(id:Int, name:String, amount:Int){
         val pokeCoin = PokeCoin(name = name, amount = amount)
         db.insertCoin(pokeCoin)
     }

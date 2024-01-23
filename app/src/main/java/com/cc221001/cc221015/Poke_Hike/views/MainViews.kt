@@ -94,7 +94,6 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
     val state = mainViewModel.mainViewState.collectAsState()
     val weather by weatherViewModel.weather.collectAsState(null)
     val navController = rememberNavController()
-
     // Scaffold is a material design container that includes standard layout structures.
     Scaffold(
         // Define the bottom navigation bar for the Scaffold.
@@ -124,7 +123,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                     mainScreen(mainViewModel) // Show the main screen if trainers exist.
                 } else {
                     mainViewModel.selectScreen(Screen.Home)
-                    landingPage(mainViewModel,pokemonViewModel) // Show the landing page otherwise.
+                    landingPage(mainViewModel,pokemonViewModel,pokeballViewModel,stepCounterViewModel,pokeCoinViewModel) // Show the landing page otherwise.
                 }
             }
 
@@ -175,7 +174,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 // Similar logic as above for the Profile screen.
                 if (state.value.pokemonTrainers.isNotEmpty()) {
                     mainViewModel.selectScreen(Screen.Profile)
-                    DisplayTrainerProfile(mainViewModel, pokemonViewModel)
+                    DisplayTrainerProfile(mainViewModel, pokemonViewModel, pokeCoinViewModel)
                 } else {
                     mainViewModel.selectScreen(Screen.Profile)
                     ErrorScreen()

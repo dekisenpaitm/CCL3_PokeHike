@@ -8,7 +8,7 @@ import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import kotlinx.coroutines.runBlocking
 
 // This class handles database operations for storing Pokemon data.
-class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, null, 1) {
+class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, null, 2) {
     companion object PokemonDatabase {
         private const val dbName = "PokemonDatabase"
         private const val tableName = "Pokemon"
@@ -41,9 +41,17 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         onCreate(db)
     }
 
-    // Insert a Pokemon into the database.
+
     fun insertPokemon(pokemon: Pokemon) {
         val db = this.writableDatabase
+
+        val query = "SELECT * FROM $tableName WHERE $id = ?"
+        val cursor = db.rawQuery(query, arrayOf(pokemon.number.toString()))
+
+        if (cursor.moveToFirst()) {
+            return
+        }
+
         val values = ContentValues()
         values.put(id, pokemon.number)
         values.put(name, pokemon.name)
@@ -72,6 +80,19 @@ class PokemonBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         values.put(liked, "false")
 
         db.update(tableName, values, "_id = ?", arrayOf(pokemon.number.toString()))
+    }
+
+    fun resetPokemonDatabase(): List<Pokemon>{
+        val allPokemon:List<Pokemon> = getPokemons()
+        allPokemon.forEach { pokemon ->
+            val db = this.writableDatabase
+            val values = ContentValues()
+            values.put(liked, "false")
+            values.put(owned, "false")
+
+            db.update(tableName, values, "_id = ?", arrayOf(pokemon.number.toString()))
+        }
+        return allPokemon
     }
 
     // Retrieve all Pokemons from the database.

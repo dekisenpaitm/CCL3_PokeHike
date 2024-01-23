@@ -1,7 +1,7 @@
 package com.cc221001.cc221015.Poke_Hike.service
 
-import com.cc221001.cc221015.Poke_Hike.data.PokemonApiResult
-import com.cc221001.cc221015.Poke_Hike.data.PokemonsApiResult
+import com.cc221001.cc221015.Poke_Hike.domain.PokemonApiResult
+import com.cc221001.cc221015.Poke_Hike.domain.PokemonsApiResult
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

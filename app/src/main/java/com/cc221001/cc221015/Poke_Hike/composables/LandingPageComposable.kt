@@ -43,8 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
+import com.cc221001.cc221015.Poke_Hike.domain.StepCounter
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
 import java.time.format.TextStyle
 
 // Suppresses lint warnings for using discouraged or experimental APIs.
@@ -52,7 +56,7 @@ import java.time.format.TextStyle
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 // Defines a Composable function for the landing page.
 @Composable
-fun landingPage(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel) {
+fun landingPage(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel, pokeCoinViewModel: PokeCoinViewModel) {
     // State for tracking the expansion status of the dropdown menu.
 
     LazyColumn(modifier = Modifier
@@ -62,13 +66,18 @@ fun landingPage(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel
         .background(Color(0,0,0,125), RoundedCornerShape(10.dp)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = CenterHorizontally){
-        item{ LandingPageContent(mainViewModel = mainViewModel, pokemonViewModel = pokemonViewModel )}
+        item{ LandingPageContent(
+            mainViewModel = mainViewModel,
+            pokemonViewModel = pokemonViewModel,
+            pokeballViewModel = pokeballViewModel,
+            stepCounterViewModel = stepCounterViewModel,
+            coinViewModel = pokeCoinViewModel)}
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel){
+fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, pokeballViewModel:PokeballViewModel, stepCounterViewModel:StepCounterViewModel, coinViewModel: PokeCoinViewModel){
 
     var isExpanded by remember { mutableStateOf(false) }
     // State for storing the index of the selected trainer's image.
@@ -221,8 +230,12 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                 )
             Box(modifier = Modifier.padding(20.dp)) {
                 CustomButton(text = "Create Trainer", onClick = {
+                    CreatePokeballEntries(pokeballViewModel)
+                    CreateTrainerStash(coinViewModel)
+                    stepCounterViewModel.createStepCounter((StepCounter(0,0)));
                     mainViewModel.save(PokemonTrainer(null, name, gender, trainerName))
-                    mainViewModel.getPokemonTrainer(); pokemonViewModel.loadPokemons()
+                    mainViewModel.getPokemonTrainer();
+                    pokemonViewModel.loadPokemons();
                 }, amount = 300, amount2 = 50, true)
             }
         }
