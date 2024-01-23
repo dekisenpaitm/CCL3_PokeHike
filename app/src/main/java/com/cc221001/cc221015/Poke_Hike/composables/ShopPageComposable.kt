@@ -100,7 +100,7 @@ fun DisplayPokeballList(
         Column(modifier = Modifier
             .background(color = Color(0, 0, 0, 125))
             .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
-            .padding(20.dp, top = 4.dp)
+            .padding(20.dp,4.dp,20.dp)
             .fillMaxSize()) {
 
             if (weather == null) {
@@ -228,7 +228,7 @@ fun PokeballsItem(
                     }
                     append(
                         when {
-                            pokeball?.type1 != "All" -> "${currentAvailablePokemon.notAvailableTypePokemon.size}"
+                            pokeball?.type1 != "All" -> "${currentAvailablePokemon.availableTypePokemon.size}"
                             else -> "${currentAvailablePokemon.availableAllPokemon.size}"
                         }
                     )
@@ -265,7 +265,7 @@ fun PokeballsItem(
                                     pokeball.type2,
                                     pokeball.type3
                                 )
-                                if (currentAvailablePokemon.notAvailableTypePokemon.isEmpty()) {
+                                if (currentAvailablePokemon.availableTypePokemon.isEmpty()) {
                                     AsyncImage(
                                         model = pokeball.imageUrl,
                                         contentDescription = "Pokemon Image",
@@ -291,7 +291,7 @@ fun PokeballsItem(
                                 }
                             } else {
                                 pokemonViewModel.getNotOwnedPokemon()
-                                if (currentAvailablePokemon.notAvailableAllPokemon.isEmpty()) {
+                                if (currentAvailablePokemon.availableAllPokemon.isEmpty()) {
                                     AsyncImage(
                                         model = pokeball.imageUrl,
                                         contentDescription = "Pokemon Image",
@@ -360,12 +360,12 @@ fun PokeballsItem(
                     .fillMaxHeight(), contentAlignment = Alignment.Center
             ) {
                 if (pokeball?.type1 != "All") {
-                    pokemonViewModel.getAvailablePokemon(
+                    /*pokemonViewModel.getAvailablePokemon(
                         pokeball!!.type1,
                         pokeball.type2,
                         pokeball.type3
-                    )
-                    if (currentAvailablePokemon.notAvailableTypePokemon.isEmpty()) {
+                    )*/
+                    if (currentAvailablePokemon.availableTypePokemon.isEmpty()) {
                         CustomButtonGray(
                             text = "N/A", onClick = {
                             }, amount = 100,
@@ -382,8 +382,8 @@ fun PokeballsItem(
                         )
                     }
                 } else {
-                    pokemonViewModel.getNotOwnedPokemon()
-                    if (currentAvailablePokemon.notAvailableAllPokemon.isEmpty()) {
+                    //pokemonViewModel.getNotOwnedPokemon()
+                    if (currentAvailablePokemon.availableAllPokemon.isEmpty()) {
                         CustomButtonGray(
                             text = "N/A", onClick = {
                             }, amount = 100,

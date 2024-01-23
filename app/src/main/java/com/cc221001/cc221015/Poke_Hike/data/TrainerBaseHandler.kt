@@ -62,21 +62,22 @@ class TrainerBaseHandler(context: Context) : SQLiteOpenHelper(context, dbName, n
         var allPokemonTrainers = mutableListOf<PokemonTrainer>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName", null)
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val hometownID = cursor.getColumnIndex(hometown)
-            val spriteID = cursor.getColumnIndex(sprite)
-            if (nameID >= 0 && hometownID >= 0 && spriteID >= 0)
-                allPokemonTrainers.add(
-                    PokemonTrainer(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(hometownID),
-                        cursor.getString(spriteID)
+        val cursor = db.rawQuery("SELECT * FROM $tableName", null).use { cursor ->
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val hometownID = cursor.getColumnIndex(hometown)
+                val spriteID = cursor.getColumnIndex(sprite)
+                if (nameID >= 0 && hometownID >= 0 && spriteID >= 0)
+                    allPokemonTrainers.add(
+                        PokemonTrainer(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getString(hometownID),
+                            cursor.getString(spriteID)
+                        )
                     )
-                )
+            }
         }
 
         return allPokemonTrainers.toList()

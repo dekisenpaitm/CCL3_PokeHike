@@ -68,9 +68,10 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
             val query = "SELECT $id FROM $tableName WHERE $name = '$pokeballName'"
             val cursor = it.rawQuery(query, null)
 
-            if (cursor != null) {
-                val exists = cursor.moveToFirst()
-                return exists
+            cursor.use { cursor ->
+                if (cursor != null && cursor.moveToFirst()) {
+                    return true
+                }
             }
         }
         return false
@@ -82,29 +83,30 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
         var allPokeballs = mutableListOf<Pokeball>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName", null)
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val type0ID = cursor.getColumnIndex(type0)
-            val type1ID = cursor.getColumnIndex(type1)
-            val type2ID = cursor.getColumnIndex(type2)
-            val type3ID = cursor.getColumnIndex(type3)
-            val priceID = cursor.getColumnIndex(price)
-            val imageUrlID = cursor.getColumnIndex(imageUrl)
-            if (nameID >= 0)
-                allPokeballs.add(
-                    Pokeball(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(type0ID),
-                        cursor.getString(type1ID),
-                        cursor.getString(type2ID),
-                        cursor.getString(type3ID),
-                        cursor.getInt(priceID),
-                        cursor.getString(imageUrlID),
+        val cursor = db.rawQuery("SELECT * FROM $tableName", null).use { cursor ->
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val type0ID = cursor.getColumnIndex(type0)
+                val type1ID = cursor.getColumnIndex(type1)
+                val type2ID = cursor.getColumnIndex(type2)
+                val type3ID = cursor.getColumnIndex(type3)
+                val priceID = cursor.getColumnIndex(price)
+                val imageUrlID = cursor.getColumnIndex(imageUrl)
+                if (nameID >= 0)
+                    allPokeballs.add(
+                        Pokeball(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getString(type0ID),
+                            cursor.getString(type1ID),
+                            cursor.getString(type2ID),
+                            cursor.getString(type3ID),
+                            cursor.getInt(priceID),
+                            cursor.getString(imageUrlID),
+                        )
                     )
-                )
+            }
         }
         return allPokeballs.toList()
     }
@@ -114,29 +116,30 @@ class PokeballBaseHandler (context: Context) : SQLiteOpenHelper(context, dbName,
         var specialPokeball = mutableListOf<Pokeball>()
 
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $type0= '$weather' OR $type0='All'", null)
-        while (cursor.moveToNext()) {
-            val idID = cursor.getColumnIndex(id)
-            val nameID = cursor.getColumnIndex(name)
-            val type0ID = cursor.getColumnIndex(type0)
-            val type1ID = cursor.getColumnIndex(type1)
-            val type2ID = cursor.getColumnIndex(type2)
-            val type3ID = cursor.getColumnIndex(type3)
-            val priceID = cursor.getColumnIndex(price)
-            val imageUrlID = cursor.getColumnIndex(imageUrl)
-            if (nameID >= 0)
-                specialPokeball.add(
-                    Pokeball(
-                        cursor.getInt(idID),
-                        cursor.getString(nameID),
-                        cursor.getString(type0ID),
-                        cursor.getString(type1ID),
-                        cursor.getString(type2ID),
-                        cursor.getString(type3ID),
-                        cursor.getInt(priceID),
-                        cursor.getString(imageUrlID)
+        val cursor = db.rawQuery("SELECT * FROM $tableName WHERE $type0= '$weather' OR $type0='All'", null).use { cursor ->
+            while (cursor.moveToNext()) {
+                val idID = cursor.getColumnIndex(id)
+                val nameID = cursor.getColumnIndex(name)
+                val type0ID = cursor.getColumnIndex(type0)
+                val type1ID = cursor.getColumnIndex(type1)
+                val type2ID = cursor.getColumnIndex(type2)
+                val type3ID = cursor.getColumnIndex(type3)
+                val priceID = cursor.getColumnIndex(price)
+                val imageUrlID = cursor.getColumnIndex(imageUrl)
+                if (nameID >= 0)
+                    specialPokeball.add(
+                        Pokeball(
+                            cursor.getInt(idID),
+                            cursor.getString(nameID),
+                            cursor.getString(type0ID),
+                            cursor.getString(type1ID),
+                            cursor.getString(type2ID),
+                            cursor.getString(type3ID),
+                            cursor.getInt(priceID),
+                            cursor.getString(imageUrlID)
+                        )
                     )
-                )
+            }
         }
 
         return specialPokeball.toList()
