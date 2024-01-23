@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +32,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
+import com.cc221001.cc221015.Poke_Hike.views.Screen
 
 // Helper Composable function for displaying errors.
 @Composable
@@ -46,7 +58,7 @@ fun TextBox(text:String){
 }
 
 @Composable
-fun mainScreen(mainViewModel: MainViewModel){
+fun mainScreen(mainViewModel: MainViewModel, pokeCoinViewModel: PokeCoinViewModel, navController: NavHostController){
 // Using a Column to layout elements vertically.
     Column() {
         // A Row for displaying the title, with dynamic text based on the 'favorite' flag
@@ -54,33 +66,40 @@ fun mainScreen(mainViewModel: MainViewModel){
         Row (modifier = Modifier
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd= 20.dp, bottomEnd = 0.dp, bottomStart=0.dp))){
             // Calling PokemonList Composable to display the actual list.
-            ContentList()
+            ContentList(pokeCoinViewModel = pokeCoinViewModel, navController = navController)
         }
     }
 }
 
 @Composable
-fun ContentList() {
+fun ContentList(pokeCoinViewModel: PokeCoinViewModel, navController: NavHostController) {
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
-    LazyColumn (modifier= Modifier
-        .background(color = Color(0, 0, 0, 125))
-        .padding(top = 20.dp)
-        .fillMaxSize()
-    ){
-        item{
-            CustomContainer(200, 200, 20, null)
-            CustomSplitter(h = 2)
-            CustomContainerTransparent(w = 500, h = 300, p = 20, null)
-            Box(modifier=Modifier.fillMaxWidth(),
-                contentAlignment = Center) {
-                CustomButton(
-                    text = "Create Trainer",
-                    onClick = { /*TODO*/ },
-                    amount = 340,
-                    amount2 = 60,
-                    true
-                )
+    LazyColumn(
+        modifier = Modifier
+            .background(color = Color(0, 0, 0, 125))
+            .padding(top = 4.dp)
+            .fillMaxSize()
+    ) {
+        item {
+
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color(0, 0, 0, 125), RoundedCornerShape(10.dp))
+            ) {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(start = 20.dp, bottom = 20.dp, end = 20.dp)
+                ) {
+                    CustomHeadline(text = "Welcome Back!")
+                    CustomContainerWelcome()
+                    CustomHeadline(text = "Current Coins")
+                    CustomContainerCoins(pokeCoinViewModel = pokeCoinViewModel, navController = navController)
+                    CustomHeadline(text = "Reminders")
+                    CustomContainerReminder()
+                }
             }
         }
     }
@@ -112,32 +131,150 @@ fun CustomContainerTransparent(w:Int, h:Int, p:Int, content: @Composable() (() -
 }
 
 @Composable
-fun CustomContainer(w:Int, h:Int, p:Int, content: @Composable() (() -> Unit?)?){
-    Box(modifier=Modifier.fillMaxWidth(),
+fun CustomContainerWelcome(){
+    Box(modifier= Modifier
+        .fillMaxWidth()
+        .padding(top = 20.dp),
         contentAlignment = Center)
     {
         Surface(
             modifier = Modifier
-                .width(w.dp)
-                .height(h.dp)
-                .padding(p.dp)
+                .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
                 .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
-            color=Color(255,255,255,50)
+            color = Color(255,255,255,50),
         ) {
-            if (content != null) {
-                content()
+            Column()
+            {
+                Text(
+                    text = "Have you caught your favourite Pokemon yet? \n\n" +
+                    "If you forgot something, check reminders at the bottom of home page!",
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp),
+                )}}
+    }
+}
+
+
+
+@Composable
+fun CustomContainerCoins(pokeCoinViewModel: PokeCoinViewModel, navController: NavHostController){
+    val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
+    Box(modifier= Modifier
+        .fillMaxWidth()
+        .padding(top = 20.dp),
+        contentAlignment = Center)
+    {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+            color = Color(255,255,255,50),
+        ) { Column() {
+            Box(
+                contentAlignment = Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+            {
+                Text(
+                    text = "¢${currentCoins.pokeCoin.amount}\n",
+                    color = Color.White,
+                    modifier = Modifier.padding(
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 20.dp,
+                        bottom = 0.dp
+                    ),
+                    fontSize = 32.sp,
+                )
             }
+
+            Box(
+                contentAlignment = Center,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+            )
+            {
+                CustomButtonMaxWidth(
+                    text = "SHOP",
+                    onClick = { navController.navigate(Screen.Shop.route) },
+                    height = 50,
+                    true
+                )
+            }
+        }
         }
     }
 }
 
 @Composable
-fun CustomHeadline(text:String){
-    Box(modifier=Modifier.fillMaxWidth(),
-        contentAlignment = Center){
-        Text(text = text)
+fun CustomContainerReminder(){
+    Box(modifier= Modifier
+        .fillMaxWidth()
+        .padding(top = 20.dp),
+        contentAlignment = Center)
+    {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+            color = Color(255,255,255,50),
+        ) {
+            Column()
+            {
+            BulletText(
+            text = "Walk to collect coins.\n" + "Spend coins on Pokeballs in shop to collect all the Pokemons!\n" +
+                    "Do not forget that weather affects what type of Pokeballs you will see in the shop. \n" +
+                    "Normal Pokeball can give you a pokemon of any type.\n" + "Press heart to add Pokemon to your Favourites list.\n" +
+                    "Grey tick means that you do not own this Pokemon, coloured tick means that you do!")
+                }}
     }
+}
+
+@Composable
+fun BulletText(text: String) {
+    val lines = text.split("\n")
+
+    val annotatedString = buildAnnotatedString {
+        lines.forEachIndexed { index, line ->
+            if (line.isNotBlank()) {
+                withStyle(
+                    style = SpanStyle(
+                        color = Color.White
+                    )
+                ) {
+                    appendInlineContent("bullet", "•")
+                    append(" $line")
+
+                    // Add extra newline if it's not the last line
+                    if (index < lines.size - 1) {
+                        append("\n\n")
+                    }
+                }
+            }
+        }
+    }
+
+    Text(
+        text = annotatedString,
+        color = Color.White,
+        modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp),
+    )
+}
+
+@Composable
+fun CustomHeadline(text:String){
+    Box() {
+        Text(
+            text = text,
+            fontSize = 26.sp,
+            color = Color.White,
+            modifier = Modifier.padding(0.dp, 16.dp, 16.dp,16.dp)
+        )
+    }
+    CustomSplitter(h = 2)
 }
 @Composable
 fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int, basic:Boolean) {
@@ -180,6 +317,31 @@ fun CustomButtonGray(text: String, onClick: () -> Unit, amount:Int, amount2:Int,
                 text = text,
                 modifier = Modifier.padding(8.dp),
                 color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+fun CustomButtonMaxWidth(text: String, onClick: () -> Unit, height:Int, basic:Boolean) {
+
+    val newColor = if(basic) Color(106, 84, 141, 255) else Color(58, 42, 75, 255)
+    Surface(
+        color = newColor,
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick)
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = text,
+                modifier = Modifier.padding(8.dp),
+                color = Color.White,
+                fontSize = 16.sp
             )
         }
     }

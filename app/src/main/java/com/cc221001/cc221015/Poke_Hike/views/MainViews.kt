@@ -120,7 +120,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 if (state.value.pokemonTrainers.isNotEmpty()) {
                     CoinCounterDisplay(pokeCoinViewModel)
                     mainViewModel.selectScreen(Screen.Home)
-                    mainScreen(mainViewModel) // Show the main screen if trainers exist.
+                    mainScreen(mainViewModel, pokeCoinViewModel, navController) // Show the main screen if trainers exist.
                 } else {
                     mainViewModel.selectScreen(Screen.Home)
                     landingPage(mainViewModel,pokemonViewModel,pokeballViewModel,stepCounterViewModel,pokeCoinViewModel) // Show the landing page otherwise.
