@@ -1,5 +1,6 @@
 package com.cc221001.cc221015.Poke_Hike.composables
 
+import com.cc221001.cc221015.Poke_Hike.viewModel.OnBoardingViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 
@@ -27,4 +28,13 @@ fun CreatePokeballEntries(pokeballViewModel: PokeballViewModel){
 
 fun CreateTrainerStash(pokeCoinViewModel: PokeCoinViewModel){
     pokeCoinViewModel.createPokeCoinStash(id=1,"pokeCoinStash", 0)
+}
+
+fun CreateOnBoarding(onBoardingViewModel: OnBoardingViewModel){
+    onBoardingViewModel.createOnboardingViewState(name="homePage")
+    onBoardingViewModel.createOnboardingViewState(name="weatherPage")
+    onBoardingViewModel.createOnboardingViewState(name="favPage")
+    onBoardingViewModel.createOnboardingViewState(name="listPage")
+    onBoardingViewModel.createOnboardingViewState(name="shopPage")
+    onBoardingViewModel.createOnboardingViewState(name="profilePage")
 }

@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import com.cc221001.cc221015.Poke_Hike.data.OnBoardingStateHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
@@ -23,6 +24,7 @@ import com.cc221001.cc221015.Poke_Hike.handler.PermissionHandler
 import com.cc221001.cc221015.Poke_Hike.service.StepCounterService
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.OnBoardingViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
@@ -55,6 +57,9 @@ class MainActivity : ComponentActivity() {
     // Database handler for Pokemon trainers && ViewModel for the main screen.
     private val db = TrainerBaseHandler(this)
     private val mainViewModel = MainViewModel(db)
+
+    private val obdb = OnBoardingStateHandler(this)
+    private val onBoardingViewModel = OnBoardingViewModel(obdb)
 
     // UI logic based on connectivity status
     // Database handler for Pokemon entities && ViewModel for the Pokemon-related view.
@@ -112,7 +117,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel, pokeCoinViewModel)
+                    MainView(mainViewModel, pokemonViewModel, weatherViewModel, pokeballViewModel, stepCounterViewModel, pokeCoinViewModel, onBoardingViewModel)
                 }
             }
         }

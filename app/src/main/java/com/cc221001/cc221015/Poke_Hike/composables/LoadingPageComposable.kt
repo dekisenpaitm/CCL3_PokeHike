@@ -45,3 +45,28 @@ fun DisplayLoadingPage(){
 
     }
 }
+
+@Composable
+fun DisplayRemoveLoadingPage(){
+    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally,
+        modifier= Modifier
+            .background(color = Color(0, 0, 0, 125))
+            .padding(20.dp,20.dp,20.dp,0.dp)
+            .fillMaxSize()) {
+        Image(
+            painter = painterResource(
+                id = R.drawable.pokehikelogo
+            ),
+            contentDescription = "Login_Image",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.size(200.dp),
+        )
+        Box(contentAlignment = Alignment.Center, modifier=Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 10.dp)){
+            Text(text = "PokeHike", fontSize = 40.sp, color = Color.White)
+        }
+        Box(contentAlignment = Alignment.Center, modifier=Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 10.dp)){
+            Text(text = "We're currently deleting your previous account. We hope to see you again!", fontSize = 16.sp, color = Color.White, textAlign = TextAlign.Center)
+        }
+
+    }
+}
