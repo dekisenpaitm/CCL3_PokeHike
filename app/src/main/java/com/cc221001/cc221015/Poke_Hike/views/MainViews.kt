@@ -187,7 +187,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                             onBoardingViewModel.getState("favPage")
                             mainViewModel.selectScreen(Screen.Favourites)
                             pokemonViewModel.getFavPokemon()
-                            MyPokemonList(pokemonViewModel, true)
+                            MyPokemonList(pokemonViewModel, "favourite")
                             if(onBoardingState.value.currentState?.value == false){
                                 DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Collectionpage" , text ="In here you're able to scroll trough your pokemon. Favourites are the pokemon you liked by clicking the little heartshaped button. Owned are the pokemon you got out of the Pokeballs you bought. ", pageName="favPage")
                             }
@@ -203,7 +203,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                             onBoardingViewModel.getState("listPage")
                             mainViewModel.selectScreen(Screen.List)
                             pokemonViewModel.getPokemon()
-                            MyPokemonList(pokemonViewModel, false)
+                            MyPokemonList(pokemonViewModel, "all")
                             if(onBoardingState.value.currentState?.value == false){
                                 DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Pokedex" , text ="In here you can check out all the Pokemon that are currently available. By clicking the heartshaped button you add the Pokemon to your collection of favourite pokemon.", pageName="listPage")
                             }
