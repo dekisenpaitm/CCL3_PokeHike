@@ -170,7 +170,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                         if (state.value.pokemonTrainers.isNotEmpty()) {
                             mainViewModel.selectScreen(Screen.Favourites)
                             pokemonViewModel.getFavPokemon()
-                            MyPokemonList(pokemonViewModel, true)
+                            MyPokemonList(pokemonViewModel, "favourite")
                         } else {
                             mainViewModel.selectScreen(Screen.Favourites)
                             ErrorScreen()
@@ -182,7 +182,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                         if (state.value.pokemonTrainers.isNotEmpty()) {
                             mainViewModel.selectScreen(Screen.List)
                             pokemonViewModel.getPokemon()
-                            MyPokemonList(pokemonViewModel, false)
+                            MyPokemonList(pokemonViewModel, "all")
                         } else {
                             mainViewModel.selectScreen(Screen.List)
                             ErrorScreen()

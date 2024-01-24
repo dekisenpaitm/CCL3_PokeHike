@@ -26,6 +26,7 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	// Fetch and load all Pokemon from the database.
 	fun getPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
+		_currentListType.value = ListType.ALL
 	}
 
 	// Fetch and load favorite Pokemon from the database.
@@ -40,6 +41,7 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	}
 
 	enum class ListType {
+		ALL,
 		FAVORITES,
 		OWNED
 	}
@@ -71,22 +73,29 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	}
 
 	// Unlike a Pokemon and update the view state.
-	fun unlikePokemon(pokemon: Pokemon, favorite: Boolean) {
+	fun unlikePokemon(pokemon: Pokemon, currentList: String) {
 		db.unlikePokemon(pokemon)
-		if (favorite) {
-			_pokemonViewState.update { it.copy(pokemons = db.getFavPokemons()) }
-		} else {
-			_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
+		_pokemonViewState.update {
+			when (currentList) {
+				"favorite" -> it.copy(pokemons = db.getFavPokemons())
+				"owned" -> it.copy(pokemons = db.getOwnedPokemons())
+				"all" -> it.copy(pokemons = db.getPokemons())
+				else -> it
+			}
 		}
 	}
 
 	// Like a Pokemon and update the view state.
-	fun likePokemon(pokemon: Pokemon, favorite: Boolean) {
+	fun likePokemon(pokemon: Pokemon, currentList: String) {
 		db.likePokemon(pokemon)
-		if (favorite) {
-			_pokemonViewState.update { it.copy(pokemons = db.getFavPokemons()) }
-		} else {
-			_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
+
+		_pokemonViewState.update {
+			when (currentList) {
+				"favorite" -> it.copy(pokemons = db.getFavPokemons())
+				"owned" -> it.copy(pokemons = db.getOwnedPokemons())
+				"all" -> it.copy(pokemons = db.getPokemons())
+				else -> it  // handle default case or leave it as is
+			}
 		}
 	}
 
