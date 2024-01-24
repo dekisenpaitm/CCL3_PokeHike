@@ -4,13 +4,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Absolute.SpaceBetween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -163,52 +168,83 @@ fun CustomContainerWelcome(){
 
 
 @Composable
-fun CustomContainerCoins(pokeCoinViewModel: PokeCoinViewModel, navController: NavHostController){
+fun CustomContainerCoins(pokeCoinViewModel: PokeCoinViewModel, navController: NavHostController) {
     val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
-    Box(modifier= Modifier
-        .fillMaxWidth()
-        .padding(top = 20.dp),
-        contentAlignment = Center)
-    {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
-            color = Color(255,255,255,50),
-        ) { Column() {
-            Box(
-                contentAlignment = Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-            {
-                Text(
-                    text = "¢${currentCoins.pokeCoin.amount}\n",
-                    color = Color.White,
-                    modifier = Modifier.padding(
-                        start = 20.dp,
-                        end = 20.dp,
-                        top = 20.dp,
-                        bottom = 0.dp
-                    ),
-                    fontSize = 32.sp,
-                )
-            }
 
-            Box(
-                contentAlignment = Center,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
-            )
-            {
-                CustomButtonMaxWidth(
-                    text = "SHOP",
-                    onClick = { navController.navigate(Screen.Shop.route) },
-                    height = 50,
-                    true
-                )
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .padding(top = 20.dp, start = 0.dp, end = 0.dp, bottom = 0.dp)
+    ) {
+        // Left Box
+        Box(
+            modifier = Modifier
+                .weight(0.74f)
+                .height(80.dp)
+                .background(Color(255, 255, 255, 50), RoundedCornerShape(10.dp))
+                .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(0.33f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.pokecoin),
+                        contentDescription = "PokeCoin Icon",
+                        contentScale = ContentScale.Inside,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(MaterialTheme.shapes.small)
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .weight(0.67f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = "${currentCoins.pokeCoin.amount}\n",
+                        color = Color.White,
+                        modifier = Modifier.padding(
+                            start = 20.dp,
+                            end = 20.dp,
+                            top = 20.dp,
+                            bottom = 0.dp
+                        ),
+                        fontSize = 32.sp,
+                    )
+                }
             }
         }
+
+        Spacer(
+            modifier = Modifier
+                .width(8.dp)
+                .weight(0.02f)
+        )
+
+        // Right Box (Button)
+        Box(
+            contentAlignment = Center,
+            modifier = Modifier
+                .weight(0.26f)
+                .fillMaxHeight()
+                //.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+        ) {
+            CustomButtonMaxWidth(
+                text = "SPEND",
+                onClick = { navController.navigate(Screen.Shop.route) },
+                height = 80,
+                true
+            )
         }
     }
 }
