@@ -344,7 +344,7 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, myList: B
             contentAlignment = Alignment.Center
         ) {
             if (pokemon != null) {
-                val tint = if (pokemon.owned == "true") Color(106, 84, 141, 255) else Color.Gray
+                val tint = if (pokemon.owned == "true") Color.White else Color.Gray
                 Icon(
                     Icons.Default.CheckCircle, "Like", tint = tint, modifier = Modifier.size(20.dp)
                 )
