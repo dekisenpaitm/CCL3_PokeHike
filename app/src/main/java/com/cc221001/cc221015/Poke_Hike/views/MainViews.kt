@@ -108,10 +108,10 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
     val onBoardingState = onBoardingViewModel.onboardingViewState.collectAsState()
 
     mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
-
+    pokeCoinViewModel.startObeserving()
     if (loadingScreen) {
         android.os.Handler()
-            .postDelayed({ loadingScreen = false }, 3000)
+            .postDelayed({ loadingScreen = false}, 3000)
         WeatherComposable(weather = weather)
         DisplayLoadingPage()
     }

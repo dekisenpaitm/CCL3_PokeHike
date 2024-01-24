@@ -58,6 +58,28 @@ class PokeCoinBaseHandler(context: Context):SQLiteOpenHelper(context, dbname, nu
         return false
     }
 
+
+    fun isDatabaseInitialized(): Boolean {
+        val db = readableDatabase
+        var tableExists = false
+
+        // Check if the "StepCounter" table exists by attempting to query it
+        db?.let { database ->
+            val tableName = "StepCounter" // Replace with your actual table name
+            val cursor = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name=?", arrayOf(tableName))
+
+            cursor.use { cur ->
+                if (cur.moveToFirst()) {
+                    // The table exists
+                    tableExists = true
+                }
+            }
+        }
+
+        // Close the database connection
+        return tableExists
+    }
+
     fun getPokeCoinById(coinId: Int): PokeCoin {
         var pokeCoin = PokeCoin(0, "Default", 0)
         val db = this.readableDatabase
