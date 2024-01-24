@@ -59,7 +59,7 @@ fun DisplayPopUp(onBoardingViewModel: OnBoardingViewModel,title:String, text:Str
                         .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier=Modifier.fillMaxWidth()){
-                        Text(text="OK")
+                        Text(text="OK", color=Color.White)
                     }
                 }
             }
