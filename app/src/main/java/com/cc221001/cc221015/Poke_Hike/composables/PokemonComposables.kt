@@ -39,6 +39,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -60,84 +62,124 @@ import java.util.Locale
 // Composable function to display a list of Pokemon.
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
+fun MyPokemonList(pokemonViewModel: PokemonViewModel, listType: String) {
     // Collecting the list of Pokemons from the ViewModel.
     val pokemonList = pokemonViewModel.pokemonViewState.collectAsState().value.pokemons
-        // A Row to display the list of Pokemon.
-        Row (modifier = Modifier
-            .clip(RoundedCornerShape(topStart = 20.dp, topEnd= 20.dp, bottomEnd = 0.dp, bottomStart=0.dp))){
-            // Calling PokemonList Composable to display the actual list.
-            PokemonList(pokemonList = pokemonList, pokemonViewModel, favorite)
-        }
+    // A Row to display the list of Pokemon.
+    Row(
+        modifier = Modifier.clip(
+            RoundedCornerShape(
+                topStart = 20.dp, topEnd = 20.dp, bottomEnd = 0.dp, bottomStart = 0.dp
+            )
+        )
+    ) {
+        // Calling PokemonList Composable to display the actual list.
+        PokemonList(pokemonList = pokemonList, pokemonViewModel, listType)
     }
+}
 
 // This function decides whether to display the user's favorite Pokemon or the entire Pokedex based on the 'favorite' flag.
 // It uses a Column for vertical arrangement and dynamically sets the title text.
 @Composable
-fun ChoiceButton(pokemonViewModel: PokemonViewModel){
-
-    var ownedButton by remember { mutableStateOf(true)}
-    var favButton by remember { mutableStateOf(false) }
+fun ChoiceButton(pokemonViewModel: PokemonViewModel) {
+    val currentListType by remember { pokemonViewModel.currentListType }.collectAsState()
 
     Box(
-        contentAlignment = Alignment.Center, // Center aligns the content in the Box
+        contentAlignment = Alignment.Center,
         modifier = Modifier
-            .fillMaxWidth() // Makes the Box fill the entire screen
+            .fillMaxWidth()
             .padding(0.dp, 0.dp, 0.dp, 10.dp)
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp), // Add spacing between the buttons
-            verticalAlignment = Alignment.CenterVertically // Aligns items vertically to the center
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // First Button
-            CustomButton(
-                text = "Favourites",
-                onClick = { pokemonViewModel.getFavPokemon()},
-                amount = 120,
-                amount2 = 50,
-                favButton
-            )
+            // First Button (Favourites)
+            Box(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                    .background(
+                        if (currentListType == PokemonViewModel.ListType.FAVORITES) Color(
+                            58, 42, 75, 255
+                        )
+                        else Color(106, 84, 141, 255)
+                    )
+                    .clickable { pokemonViewModel.getFavPokemon() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Favourites",
+                    modifier = Modifier.padding(8.dp),
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+            }
 
-            // Second Button
-            CustomButton(
-                text = "Owned",
-                onClick = { pokemonViewModel.getOwnedPokemon()},
-                amount = 120,
-                amount2 = 50,
-                ownedButton
-            )
-        }
-    }
-}
-// Composable function to display a list of Pokemon.
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun PokemonList(pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel, favorite: Boolean) {
-
-    // LazyColumn is used for efficiently displaying a list that can be scrolled.
-    // It only renders the items that are currently visible on screen.
-
-Column(modifier= Modifier
-    .background(color = Color(0, 0, 0, 125))
-    .padding(20.dp, 20.dp, 20.dp, 0.dp)
-    .fillMaxSize()){
-    if(favorite) {
-        ChoiceButton(pokemonViewModel = pokemonViewModel)
-    }
-    LazyColumn ()
-    {
-        // Iterating over each Pokemon in the pokemonList.
-        items(pokemonList) { pokemon ->
-            // PokemonItem Composable is called for each Pokemon in the list.
-            // It displays individual Pokemon details.
-            Box(modifier= Modifier
-                .padding(vertical = 4.dp)
-                .clip(RoundedCornerShape(10.dp))) {
-                PokemonItem(pokemon = pokemon, pokemonViewModel = pokemonViewModel, favorite)
+            // Second Button (Owned)
+            Box(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                    .background(
+                        if (currentListType == PokemonViewModel.ListType.OWNED) Color(
+                            58, 42, 75, 255
+                        )
+                        else Color(106, 84, 141, 255)
+                    )
+                    .clickable { pokemonViewModel.getOwnedPokemon() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Owned",
+                    modifier = Modifier.padding(8.dp),
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
             }
         }
     }
 }
+
+
+// Composable function to display a list of Pokemon.
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PokemonList(
+    pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel, listType: String
+) {
+
+    // LazyColumn is used for efficiently displaying a list that can be scrolled.
+    // It only renders the items that are currently visible on screen.
+
+    Column(
+        modifier = Modifier
+            .background(color = Color(0, 0, 0, 125))
+            .padding(20.dp, 20.dp, 20.dp, 0.dp)
+            .fillMaxSize()
+    ) {
+        if (listType == "favourite" || listType == "owned") {
+            ChoiceButton(pokemonViewModel = pokemonViewModel)
+        }
+        LazyColumn() {
+            // Iterating over each Pokemon in the pokemonList.
+            items(pokemonList) { pokemon ->
+                // PokemonItem Composable is called for each Pokemon in the list.
+                // It displays individual Pokemon details.
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                ) {
+                    PokemonItem(pokemon = pokemon, pokemonViewModel = pokemonViewModel, myList = true)
+                }
+            }
+        }
+    }
 
 }
 
@@ -147,11 +189,15 @@ Column(modifier= Modifier
 // Opt-in for Experimental Layout API and define the Composable function for displaying individual Pokemon items.
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite: Boolean) {
+fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, myList: Boolean) {
+
+    val currentListType by remember { pokemonViewModel.currentListType }.collectAsState()
     // Spacer to add some space before the item starts.
-    Spacer(modifier = Modifier
-        .height(5.dp)
-        .fillMaxWidth())
+    Spacer(
+        modifier = Modifier
+            .height(5.dp)
+            .fillMaxWidth()
+    )
 
     // FlowRow is used to arrange items in a horizontal flow that wraps.
     FlowRow(
@@ -170,9 +216,9 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         val itemModifier = Modifier.clip(RoundedCornerShape(8.dp))
 
         // Box for displaying the Pokemon image.
-        Box( modifier = Modifier.
-            weight(1.1f),
-            contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier.weight(1.1f), contentAlignment = Alignment.Center
+        ) {
             if (pokemon != null) {
                 AsyncImage(
                     model = pokemon.imageUrl,
@@ -186,10 +232,12 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         }
 
         // Box for displaying the Pokemon's name.
-        Box(modifier = itemModifier
-            .fillMaxHeight()
-            .weight(1.6f),
-            contentAlignment = Alignment.Center) {
+        Box(
+            modifier = itemModifier
+                .fillMaxHeight()
+                .weight(1.6f),
+            contentAlignment = Alignment.Center
+        ) {
             if (pokemon != null) {
                 Text(
                     text = pokemon.name.replaceFirstChar { it.titlecase() },
@@ -202,27 +250,53 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         }
 
         // Box for displaying the Pokemon's types.
-        Box(modifier = itemModifier
-            .fillMaxHeight()
-            .weight(1.2f), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = itemModifier
+                .fillMaxHeight()
+                .weight(1.2f),
+            contentAlignment = Alignment.Center
+        ) {
             // List of specific Pokemon types.
-            val specificTypes = listOf("fire", "water", "electric", "grass", "bug", "normal", "poison", "flying", "ground", "ghost", "psychic", "fairy", "fighting", "rock", "dragon", "ice")
+            val specificTypes = listOf(
+                "fire",
+                "water",
+                "electric",
+                "grass",
+                "bug",
+                "normal",
+                "poison",
+                "flying",
+                "ground",
+                "ghost",
+                "psychic",
+                "fairy",
+                "fighting",
+                "rock",
+                "dragon",
+                "ice"
+            )
             if (pokemon != null) {
                 val matchingTypes = listOf(pokemon.type0, pokemon.type1).mapNotNull { type ->
-                    specificTypes.find { specificType -> type.toString().contains(specificType, ignoreCase = true) }?.toLowerCase(
-                        Locale.ROOT)
+                    specificTypes.find { specificType ->
+                        type.toString().contains(specificType, ignoreCase = true)
+                    }?.toLowerCase(
+                        Locale.ROOT
+                    )
                 }
                 if (matchingTypes.isNotEmpty()) {
                     Column {
                         matchingTypes.forEach { pokemonType ->
-                            Row(modifier = Modifier.fillMaxWidth(),
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center) {
+                                horizontalArrangement = Arrangement.Center
+                            ) {
                                 Text(
                                     text = pokemonType.replaceFirstChar { it.uppercase() },
-                                    color=Color.White,
+                                    color = Color.White,
                                     fontSize = 14.sp,
-                                    textAlign = TextAlign.Center)
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
                     }
@@ -231,32 +305,49 @@ fun PokemonItem(pokemon: Pokemon?, pokemonViewModel: PokemonViewModel, favorite:
         }
 
         // Box for the like/unlike button.
-        Box(modifier = itemModifier
-            .fillMaxHeight()
-            .weight(0.4f),
-            contentAlignment = Alignment.Center) {
+        Box(
+            modifier = itemModifier
+                .fillMaxHeight()
+                .weight(0.4f),
+            contentAlignment = Alignment.Center
+        ) {
             if (pokemon != null) {
                 IconButton(onClick = {
-                    if (pokemon.liked == "true") {
-                        pokemonViewModel.unlikePokemon(pokemon, favorite)
-                    } else {
-                        pokemonViewModel.likePokemon(pokemon, favorite)
+                    when {
+                        pokemon.liked == "true" && currentListType == PokemonViewModel.ListType.FAVORITES ->
+                            pokemonViewModel.unlikePokemon(pokemon, "favorite")
+                        pokemon.liked == "true" && currentListType == PokemonViewModel.ListType.OWNED ->
+                            pokemonViewModel.unlikePokemon(pokemon, "owned")
+                        pokemon.liked == "true" && currentListType == PokemonViewModel.ListType.ALL ->
+                            pokemonViewModel.unlikePokemon(pokemon, "all")
+                        pokemon.liked != "true" && currentListType == PokemonViewModel.ListType.FAVORITES ->
+                            pokemonViewModel.likePokemon(pokemon, "favorite")
+                        pokemon.liked != "true" && currentListType == PokemonViewModel.ListType.OWNED ->
+                            pokemonViewModel.likePokemon(pokemon, "owned")
+                        pokemon.liked != "true" && currentListType == PokemonViewModel.ListType.ALL ->
+                            pokemonViewModel.likePokemon(pokemon, "all")
                     }
                 }) {
                     val tint = if (pokemon.liked == "true") Color(200, 84, 141, 255) else Color.Gray
-                    Icon(Icons.Default.Favorite, "Like", tint = tint, modifier = Modifier.size(20.dp))
+                    Icon(
+                        Icons.Default.Favorite, "Like", tint = tint, modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }
 
         // Box for the owned/notOwned
-        Box(modifier = itemModifier
-            .fillMaxHeight()
-            .weight(0.5f),
-            contentAlignment = Alignment.Center) {
+        Box(
+            modifier = itemModifier
+                .fillMaxHeight()
+                .weight(0.5f),
+            contentAlignment = Alignment.Center
+        ) {
             if (pokemon != null) {
-                val tint = if (pokemon.owned == "true") Color(106, 84, 141, 255) else Color.Gray
-                Icon(Icons.Default.CheckCircle, "Like", tint = tint, modifier = Modifier.size(20.dp))
+                val tint = if (pokemon.owned == "true") Color.White else Color.Gray
+                Icon(
+                    Icons.Default.CheckCircle, "Like", tint = tint, modifier = Modifier.size(20.dp)
+                )
             }
         }
     }

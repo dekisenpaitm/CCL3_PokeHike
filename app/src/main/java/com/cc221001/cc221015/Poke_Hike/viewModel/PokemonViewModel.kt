@@ -20,18 +20,30 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	private val _pokemonViewState = MutableStateFlow(PokemonViewState())
 	val pokemonViewState: StateFlow<PokemonViewState> = _pokemonViewState.asStateFlow()
 
+	private val _currentListType = MutableStateFlow(ListType.FAVORITES)
+	val currentListType: StateFlow<ListType> get() = _currentListType
+
 	// Fetch and load all Pokemon from the database.
 	fun getPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
+		_currentListType.value = ListType.ALL
 	}
 
 	// Fetch and load favorite Pokemon from the database.
 	fun getFavPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getFavPokemons()) }
+		_currentListType.value = ListType.FAVORITES
 	}
 
 	fun getOwnedPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getOwnedPokemons()) }
+		_currentListType.value = ListType.OWNED
+	}
+
+	enum class ListType {
+		ALL,
+		FAVORITES,
+		OWNED
 	}
 
 	fun getNotOwnedPokemon(){
@@ -61,22 +73,29 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	}
 
 	// Unlike a Pokemon and update the view state.
-	fun unlikePokemon(pokemon: Pokemon, favorite: Boolean) {
+	fun unlikePokemon(pokemon: Pokemon, currentList: String) {
 		db.unlikePokemon(pokemon)
-		if (favorite) {
-			_pokemonViewState.update { it.copy(pokemons = db.getFavPokemons()) }
-		} else {
-			_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
+		_pokemonViewState.update {
+			when (currentList) {
+				"favorite" -> it.copy(pokemons = db.getFavPokemons())
+				"owned" -> it.copy(pokemons = db.getOwnedPokemons())
+				"all" -> it.copy(pokemons = db.getPokemons())
+				else -> it
+			}
 		}
 	}
 
 	// Like a Pokemon and update the view state.
-	fun likePokemon(pokemon: Pokemon, favorite: Boolean) {
+	fun likePokemon(pokemon: Pokemon, currentList: String) {
 		db.likePokemon(pokemon)
-		if (favorite) {
-			_pokemonViewState.update { it.copy(pokemons = db.getFavPokemons()) }
-		} else {
-			_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
+
+		_pokemonViewState.update {
+			when (currentList) {
+				"favorite" -> it.copy(pokemons = db.getFavPokemons())
+				"owned" -> it.copy(pokemons = db.getOwnedPokemons())
+				"all" -> it.copy(pokemons = db.getPokemons())
+				else -> it  // handle default case or leave it as is
+			}
 		}
 	}
 

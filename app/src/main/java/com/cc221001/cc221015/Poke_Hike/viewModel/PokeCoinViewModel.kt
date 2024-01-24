@@ -14,12 +14,13 @@ class PokeCoinViewModel(private val db: PokeCoinBaseHandler):ViewModel() {
     private val _pokeCoinViewState = MutableStateFlow(PokeCoinViewState())
     val pokeCoinViewState: StateFlow<PokeCoinViewState> = _pokeCoinViewState.asStateFlow()
 
-    init {
-        // Observe the repository's LiveData and update the ViewModel's LiveData
+
+    fun startObeserving(){
         StepCounterRepository.stepCountLiveData.observeForever {
             getPokeCoins()
         }
     }
+
 
     fun getPokeCoins():PokeCoin{
         _pokeCoinViewState.update{it.copy(pokeCoin=db.getPokeCoinById(1))}
