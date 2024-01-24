@@ -206,11 +206,10 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                         modifier = Modifier.height(140.dp),
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        CustomButton(
+                        CustomButtonMaxWidth(
                             text = "Update Trainer",
                             onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]) },
-                            amount = 320,
-                            amount2 = 50,
+                            height = 50,
                             true
                         )
                         Surface(

@@ -35,6 +35,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -71,6 +75,10 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
 // It uses a Column for vertical arrangement and dynamically sets the title text.
 @Composable
 fun ChoiceButton(pokemonViewModel: PokemonViewModel){
+
+    var ownedButton by remember { mutableStateOf(true)}
+    var favButton by remember { mutableStateOf(false) }
+
     Box(
         contentAlignment = Alignment.Center, // Center aligns the content in the Box
         modifier = Modifier
@@ -84,19 +92,19 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel){
             // First Button
             CustomButton(
                 text = "Favourites",
-                onClick = { pokemonViewModel.getFavPokemon() },
+                onClick = { pokemonViewModel.getFavPokemon()},
                 amount = 120,
                 amount2 = 50,
-                true
+                favButton
             )
 
             // Second Button
             CustomButton(
                 text = "Owned",
-                onClick = { pokemonViewModel.getOwnedPokemon() },
+                onClick = { pokemonViewModel.getOwnedPokemon()},
                 amount = 120,
                 amount2 = 50,
-                true
+                ownedButton
             )
         }
     }
@@ -111,7 +119,7 @@ fun PokemonList(pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel,
 
 Column(modifier= Modifier
     .background(color = Color(0, 0, 0, 125))
-    .padding(20.dp,20.dp,20.dp,0.dp)
+    .padding(20.dp, 20.dp, 20.dp, 0.dp)
     .fillMaxSize()){
     if(favorite) {
         ChoiceButton(pokemonViewModel = pokemonViewModel)
@@ -123,7 +131,7 @@ Column(modifier= Modifier
             // PokemonItem Composable is called for each Pokemon in the list.
             // It displays individual Pokemon details.
             Box(modifier= Modifier
-                .padding(vertical=4.dp)
+                .padding(vertical = 4.dp)
                 .clip(RoundedCornerShape(10.dp))) {
                 PokemonItem(pokemon = pokemon, pokemonViewModel = pokemonViewModel, favorite)
             }
