@@ -94,7 +94,7 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // First Button (Favourites)
+            // First Button (Collection)
             Box(
                 modifier = Modifier
                     .width(120.dp)
@@ -102,10 +102,8 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel) {
                     .clip(RoundedCornerShape(10.dp))
                     .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
                     .background(
-                        if (currentListType == PokemonViewModel.ListType.FAVORITES) Color(
-                            58, 42, 75, 255
-                        )
-                        else Color(106, 84, 141, 255)
+                        if (currentListType == PokemonViewModel.ListType.FAVORITES) Color(106, 84, 141, 255)
+                        else Color(58, 42, 75, 255)
                     )
                     .clickable { pokemonViewModel.getFavPokemon() },
                 contentAlignment = Alignment.Center
@@ -127,9 +125,9 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel) {
                     .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
                     .background(
                         if (currentListType == PokemonViewModel.ListType.OWNED) Color(
-                            58, 42, 75, 255
+                            106, 84, 141, 255
                         )
-                        else Color(106, 84, 141, 255)
+                        else Color(58, 42, 75, 255)
                     )
                     .clickable { pokemonViewModel.getOwnedPokemon() },
                 contentAlignment = Alignment.Center
@@ -152,7 +150,7 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel) {
 fun PokemonList(
     pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel, listType: String
 ) {
-
+    val currentListType by remember { pokemonViewModel.currentListType }.collectAsState()
     // LazyColumn is used for efficiently displaying a list that can be scrolled.
     // It only renders the items that are currently visible on screen.
 

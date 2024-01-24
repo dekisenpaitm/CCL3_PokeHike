@@ -1,10 +1,8 @@
 package com.cc221001.cc221015.Poke_Hike.views
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,9 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,8 +46,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.cc221001.cc221015.Poke_Hike.R
-import com.cc221001.cc221015.Poke_Hike.composables.CoinCounterDisplay
 import com.cc221001.cc221015.Poke_Hike.composables.CreateOnBoarding
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayLandingPage
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayLoadingPage
@@ -63,7 +56,6 @@ import com.cc221001.cc221015.Poke_Hike.composables.DisplayWeather
 import com.cc221001.cc221015.Poke_Hike.composables.ErrorScreen
 import com.cc221001.cc221015.Poke_Hike.composables.MyPokemonList
 import com.cc221001.cc221015.Poke_Hike.composables.WeatherComposable
-import com.cc221001.cc221015.Poke_Hike.composables.background
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
@@ -84,7 +76,7 @@ sealed class Screen(val route: String) {
 
     object Home : Screen("Home")   // Represents the first screen with route "first"
     object Weather : Screen("Weather") // Represents the second screen with route "second"
-    object Favourites : Screen("Collection")   // Represents the third screen with route "third"
+    object Collection : Screen("Collection")   // Represents the third screen with route "third"
     object List : Screen("Pokedex") // Represents the fourth screen with route "fourth"
     object Profile : Screen("Profile") // Represents the fourth screen with route "fourth"
     object Shop : Screen("Shop") // Represents the fourth screen with route "fourth"
@@ -158,7 +150,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                             if(onBoardingState.value.currentState?.value == false){
                                 DisplayPopUp(
                                     onBoardingViewModel= onBoardingViewModel,
-                                    title = "Homepage" ,
+                                    title = "Home" ,
                                     text ="You can find here your current collected coins, a button to the shop and the reminder how the app works! ", pageName="homePage")
                             }
                         } else {
@@ -173,7 +165,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                             mainViewModel.selectScreen(Screen.Weather)
                             DisplayWeather(weatherViewModel)
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Weatherpage" , text ="The weather page contains the current weather and a forecast for the next 5 days. Please make sure that you are connected to the internet!", pageName="weatherPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Weather" , text ="The weather page contains the current weather and a forecast for the next 5 days. Please make sure that you are connected to the internet!", pageName="weatherPage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Weather)
@@ -181,18 +173,18 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                         }
                     }
 
-                    // Define the composable function for the 'Favourites' route.
-                    composable(Screen.Favourites.route) {
+                    // Define the composable function for the 'Collection' route.
+                    composable(Screen.Collection.route) {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
                             onBoardingViewModel.getState("favPage")
-                            mainViewModel.selectScreen(Screen.Favourites)
-                            pokemonViewModel.getFavPokemon()
-                            MyPokemonList(pokemonViewModel, "favourite")
+                            mainViewModel.selectScreen(Screen.Collection)
+                            pokemonViewModel.getOwnedPokemon()
+                            MyPokemonList(pokemonViewModel, "owned")
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Collectionpage" , text ="In here you're able to scroll trough your pokemon. Favourites are the pokemon you liked by clicking the little heartshaped button. Owned are the pokemon you got out of the Pokeballs you bought. ", pageName="favPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Collection" , text ="In here you're able to scroll trough your pokemon. Collection are the pokemon you liked by clicking the little heartshaped button. Owned are the pokemon you got out of the Pokeballs you bought. ", pageName="favPage")
                             }
                         } else {
-                            mainViewModel.selectScreen(Screen.Favourites)
+                            mainViewModel.selectScreen(Screen.Collection)
                             ErrorScreen()
                         }
                     }
@@ -222,7 +214,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                                 pokeCoinViewModel
                             )
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Trainerpage" , text ="In here you can check and update your credentials. It's also possible to delete your account, but be careful since you're removing everything including your collected Pokemon and Coins!", pageName="profilePage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Trainer Page" , text ="In here you can check and update your credentials. It's also possible to delete your account, but be careful since you're removing everything including your collected Pokemon and Coins!", pageName="profilePage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Profile)
@@ -240,7 +232,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                                 pokeCoinViewModel
                             )
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Shoppage" , text ="In here you can spend your collected Pokecoins. Either for a weather based pokeball which contains only specific types or the standard pokeball which cointains all available Pokemon.", pageName="shopPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Shop" , text ="In here you can spend your collected Pokecoins. Either for a weather based pokeball which contains only specific types or the standard pokeball which cointains all available Pokemon.", pageName="shopPage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Shop)
@@ -363,7 +355,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
         NavigationBarItem(
             selected = (selectedScreen == Screen.Home), // Determine if this item is selected based on the current screen.
             onClick = { navController.navigate(Screen.Home.route) }, // Define action on click, navigating to the 'Home' route.
-            icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "Home Icon", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
                     indicatorColor = Color(106, 84, 141, 255)))
@@ -374,17 +366,17 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             selected = (selectedScreen == Screen.Weather),
             onClick = {
                 navController.navigate(Screen.Weather.route) },
-            icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Weather Icon", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
                     indicatorColor = Color(106, 84, 141, 255)))
 
-        // NavigationBarItem for the 'Favourites' screen.
+        // NavigationBarItem for the 'Collection' screen.
         NavigationBarItem(
-            // Similar configuration as the first item but for the 'Favourites' screen.
-            selected = (selectedScreen == Screen.Favourites),
-            onClick = { navController.navigate(Screen.Favourites.route) },
-            icon = { Icon(imageVector = Icons.Default.Favorite, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            // Similar configuration as the first item but for the 'Collection' screen.
+            selected = (selectedScreen == Screen.Collection),
+            onClick = { navController.navigate(Screen.Collection.route) },
+            icon = { Icon(imageVector = Icons.Default.Favorite, contentDescription = "Pokeball Icon", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
                     indicatorColor = Color(106, 84, 141, 255)))
@@ -393,7 +385,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             // Similar configuration as above for the 'Third' screen.
             selected = (selectedScreen == Screen.List),
             onClick = { navController.navigate(Screen.List.route) },
-            icon = { Icon(imageVector = Icons.Default.List, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            icon = { Icon(imageVector = Icons.Default.List, contentDescription = "Pokedex Icon", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
                     indicatorColor = Color(106, 84, 141, 255)))
@@ -402,7 +394,7 @@ fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen
             // Similar configuration as above for the 'Fourth' screen.
             selected = (selectedScreen == Screen.Shop),
             onClick = { navController.navigate(Screen.Shop.route) },
-            icon = { Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "", tint=Color.White) }, // Set the icon for this item.
+            icon = { Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "Shop Icon", tint=Color.White) }, // Set the icon for this item.
             colors = androidx.compose.material3.NavigationBarItemDefaults
                 .colors(
                     indicatorColor = Color(106, 84, 141, 255)))

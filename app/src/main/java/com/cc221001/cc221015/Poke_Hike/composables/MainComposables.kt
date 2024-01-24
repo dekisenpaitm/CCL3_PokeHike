@@ -232,7 +232,7 @@ fun CustomContainerReminder(){
             BulletText(
             text = "Walk to collect coins.\n" + "Spend coins on Pokeballs in shop to collect all the Pokemons!\n" +
                     "Do not forget that weather affects what type of Pokeballs you will see in the shop. \n" +
-                    "Normal Pokeball can give you a pokemon of any type.\n" + "Press heart to add Pokemon to your Favourites list.\n" +
+                    "Normal Pokeball can give you a pokemon of any type.\n" + "Press heart to add Pokemon to your Collection list.\n" +
                     "Grey tick means that you do not own this Pokemon, coloured tick means that you do!")
                 }}
     }

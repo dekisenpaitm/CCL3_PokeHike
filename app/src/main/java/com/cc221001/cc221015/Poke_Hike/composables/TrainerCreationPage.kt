@@ -109,7 +109,7 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                     .width(180.dp)
                     .height(180.dp)
                     .padding(0.dp,20.dp,0.dp,0.dp)
-                    .clip(RoundedCornerShape(20.dp,20.dp,0.dp,0.dp))
+                    .clip(RoundedCornerShape(10.dp,10.dp,10.dp,10.dp))
                     .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
                 color = Color(255, 255, 255, 50)
             ) {
@@ -153,7 +153,7 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                 // Dropdown menu for selecting a trainer.
                 ExposedDropdownMenu(
                     modifier = Modifier
-                        .background(Color(255, 255, 255, 50))
+                        .background(Color(255, 255, 200, 50))
                         .clip(RoundedCornerShape(10.dp)),
                     expanded = isExpanded,
                     onDismissRequest = { isExpanded = false },
