@@ -57,24 +57,37 @@ import com.cc221001.cc221015.Poke_Hike.views.Screen
 
 // Helper Composable function for displaying errors.
 @Composable
-fun ErrorScreen(){
+fun ErrorScreen() {
     Text(text = "Looks like you didn't create your user yet, please make sure to create one before using PokeHike!")
 }
 
 // Helper Composable function for displaying text.
 @Composable
-fun TextBox(text:String){
+fun TextBox(text: String) {
     Text(text = text)
 }
 
 @Composable
-fun mainScreen(mainViewModel: MainViewModel, pokeCoinViewModel: PokeCoinViewModel, navController: NavHostController){
+fun mainScreen(
+    mainViewModel: MainViewModel,
+    pokeCoinViewModel: PokeCoinViewModel,
+    navController: NavHostController
+) {
 // Using a Column to layout elements vertically.
     Column() {
         // A Row for displaying the title, with dynamic text based on the 'favorite' flag
         // A Row to display the list of Pokemon.
-        Row (modifier = Modifier
-            .clip(RoundedCornerShape(topStart = 20.dp, topEnd= 20.dp, bottomEnd = 0.dp, bottomStart=0.dp))){
+        Row(
+            modifier = Modifier
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 20.dp,
+                        topEnd = 20.dp,
+                        bottomEnd = 0.dp,
+                        bottomStart = 0.dp
+                    )
+                )
+        ) {
             // Calling PokemonList Composable to display the actual list.
             ContentList(pokeCoinViewModel = pokeCoinViewModel, navController = navController)
         }
@@ -106,7 +119,10 @@ fun ContentList(pokeCoinViewModel: PokeCoinViewModel, navController: NavHostCont
                     CustomHeadline(text = "Welcome Back!")
                     CustomContainerWelcome()
                     CustomHeadline(text = "Current Coins")
-                    CustomContainerCoins(pokeCoinViewModel = pokeCoinViewModel, navController = navController)
+                    CustomContainerCoins(
+                        pokeCoinViewModel = pokeCoinViewModel,
+                        navController = navController
+                    )
                     CustomHeadline(text = "Reminders")
                     CustomContainerReminder()
                 }
@@ -116,16 +132,21 @@ fun ContentList(pokeCoinViewModel: PokeCoinViewModel, navController: NavHostCont
 }
 
 @Composable
-fun CustomSplitter(h:Int){
-    Surface(modifier = Modifier
-        .fillMaxWidth()
-        .height(h.dp),
-        color =Color(255, 255, 255, 50)){}
+fun CustomSplitter(h: Int) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(h.dp),
+        color = Color(255, 255, 255, 50)
+    ) {}
 }
+
 @Composable
-fun CustomContainerTransparent(w:Int, h:Int, p:Int, content: @Composable() (() -> Unit?)?){
-    Box(modifier=Modifier.fillMaxWidth(),
-        contentAlignment = Center)
+fun CustomContainerTransparent(w: Int, h: Int, p: Int, content: @Composable() (() -> Unit?)?) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Center
+    )
     {
         Box(
             modifier = Modifier
@@ -141,30 +162,38 @@ fun CustomContainerTransparent(w:Int, h:Int, p:Int, content: @Composable() (() -
 }
 
 @Composable
-fun CustomContainerWelcome(){
-    Box(modifier= Modifier
-        .fillMaxWidth()
-        .padding(top = 20.dp),
-        contentAlignment = Center)
+fun CustomContainerWelcome() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp),
+        contentAlignment = Center
+    )
     {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
                 .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
-            color = Color(255,255,255,50),
+            color = Color(255, 255, 255, 50),
         ) {
             Column()
             {
                 Text(
                     text = "Have you caught your favourite Pokemon yet? \n\n" +
-                    "If you forgot something, check reminders at the bottom of home page!",
+                            "If you forgot something, scroll down for reminders at the bottom of Home Page!",
                     color = Color.White,
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp),
-                )}}
+                    modifier = Modifier.padding(
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 20.dp,
+                        bottom = 20.dp
+                    ),
+                )
+            }
+        }
     }
 }
-
 
 
 @Composable
@@ -172,7 +201,8 @@ fun CustomContainerCoins(pokeCoinViewModel: PokeCoinViewModel, navController: Na
     val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
 
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(top = 20.dp, start = 0.dp, end = 0.dp, bottom = 0.dp)
     ) {
         // Left Box
@@ -237,7 +267,7 @@ fun CustomContainerCoins(pokeCoinViewModel: PokeCoinViewModel, navController: Na
             modifier = Modifier
                 .weight(0.26f)
                 .fillMaxHeight()
-                //.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+            //.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
         ) {
             CustomButtonMaxWidth(
                 text = "SPEND",
@@ -250,27 +280,37 @@ fun CustomContainerCoins(pokeCoinViewModel: PokeCoinViewModel, navController: Na
 }
 
 @Composable
-fun CustomContainerReminder(){
-    Box(modifier= Modifier
-        .fillMaxWidth()
-        .padding(top = 20.dp),
-        contentAlignment = Center)
+fun CustomContainerReminder() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp),
+        contentAlignment = Center
+    )
     {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
                 .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
-            color = Color(255,255,255,50),
+            color = Color(255, 255, 255, 50),
         ) {
             Column()
             {
-            BulletText(
-            text = "Walk to collect coins.\n" + "Spend coins on Pokeballs in shop to collect all the Pokemons!\n" +
-                    "Do not forget that weather affects what type of Pokeballs you will see in the shop. \n" +
-                    "Normal Pokeball can give you a pokemon of any type.\n" + "Press heart to add Pokemon to your Collection list.\n" +
-                    "Grey tick means that you do not own this Pokemon, coloured tick means that you do!")
-                }}
+                BulletText(
+                    text = "You need coins to buy Pokemons. Hike together with your phone to collect coins.\n"
+                            + "One Step is One Coin!\n"
+                            + "Spend coins on Pokeballs in shop to collect all the Pokemons!\n"
+                            + "Do not forget that Weather affects what type of Pokeballs you will see in the shop. \n"
+                            + "Normal Pokeball can give you a pokemon of any type, while special Weather Pokeballs will give you pokemons depending on weather.\n"
+                            + "Shop always provides details on current Weather Pokeball.\n"
+                            + "When viewing Pokedex or Owned Pokemons, you can press heart in order to add Pokemon to your favourites list.\n"
+                            + "When viewing Pokemons in Your Collection or in Pokedex, you can see a tick. Grey tick means that you do not own this Pokemon, white tick means that you do!\n"
+                            + "Numbers above Items in Shop indicate how many Pokemons are still available to get from that Pokeball\n"
+                            + "Pokemons recieved are unique, you cannot get more than one of the same Pokemon."
+                )
+            }
+        }
     }
 }
 
@@ -306,21 +346,22 @@ fun BulletText(text: String) {
 }
 
 @Composable
-fun CustomHeadline(text:String){
+fun CustomHeadline(text: String) {
     Box() {
         Text(
             text = text,
             fontSize = 26.sp,
             color = Color.White,
-            modifier = Modifier.padding(0.dp, 16.dp, 16.dp,16.dp)
+            modifier = Modifier.padding(0.dp, 16.dp, 16.dp, 16.dp)
         )
     }
     CustomSplitter(h = 2)
 }
-@Composable
-fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int, basic:Boolean) {
 
-    val newColor = if(basic) Color(106, 84, 141, 255) else Color(58, 42, 75, 255)
+@Composable
+fun CustomButton(text: String, onClick: () -> Unit, amount: Int, amount2: Int, basic: Boolean) {
+
+    val newColor = if (basic) Color(106, 84, 141, 255) else Color(58, 42, 75, 255)
     Surface(
         color = newColor,
         shape = RoundedCornerShape(10.dp),
@@ -343,7 +384,7 @@ fun CustomButton(text: String, onClick: () -> Unit, amount:Int, amount2:Int, bas
 }
 
 @Composable
-fun CustomButtonGray(text: String, onClick: () -> Unit, amount:Int, amount2:Int, basic:Boolean) {
+fun CustomButtonGray(text: String, onClick: () -> Unit, amount: Int, amount2: Int, basic: Boolean) {
     Surface(
         color = Color.Gray,
         shape = RoundedCornerShape(10.dp),
@@ -364,9 +405,9 @@ fun CustomButtonGray(text: String, onClick: () -> Unit, amount:Int, amount2:Int,
 }
 
 @Composable
-fun CustomButtonMaxWidth(text: String, onClick: () -> Unit, height:Int, basic:Boolean) {
+fun CustomButtonMaxWidth(text: String, onClick: () -> Unit, height: Int, basic: Boolean) {
 
-    val newColor = if(basic) Color(106, 84, 141, 255) else Color(58, 42, 75, 255)
+    val newColor = if (basic) Color(106, 84, 141, 255) else Color(58, 42, 75, 255)
     Surface(
         color = newColor,
         shape = RoundedCornerShape(10.dp),
@@ -389,7 +430,7 @@ fun CustomButtonMaxWidth(text: String, onClick: () -> Unit, height:Int, basic:Bo
 }
 
 @Composable
-fun WeatherComposable(weather: CurrentWeather?){
+fun WeatherComposable(weather: CurrentWeather?) {
     Image(
         painter = painterResource(
             id = weather?.background(weather!!.weather) ?: R.drawable.clear
