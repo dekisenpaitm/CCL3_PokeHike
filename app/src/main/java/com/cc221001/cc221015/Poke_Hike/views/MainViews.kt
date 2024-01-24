@@ -149,6 +149,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                     composable(Screen.Home.route) {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
                             onBoardingViewModel.getState("homePage")
+                            pokeCoinViewModel.getPokeCoins()
                             mainViewModel.selectScreen(Screen.Home)
                             mainScreen(
                                 mainViewModel,
