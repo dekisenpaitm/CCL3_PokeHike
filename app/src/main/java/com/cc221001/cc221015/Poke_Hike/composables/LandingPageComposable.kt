@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LandingPageDisplay(onClick: ()->Unit) {
+fun DisplayLandingPage(onClick: ()->Unit) {
     Row (modifier = Modifier
         .clip(RoundedCornerShape(topStart = 20.dp, topEnd= 20.dp, bottomEnd = 0.dp, bottomStart=0.dp))){
         Column(modifier= Modifier

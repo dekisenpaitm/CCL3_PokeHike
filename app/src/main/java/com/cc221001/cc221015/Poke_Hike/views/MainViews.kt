@@ -34,6 +34,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,11 +53,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.composables.CoinCounterDisplay
+import com.cc221001.cc221015.Poke_Hike.composables.DisplayLandingPage
+import com.cc221001.cc221015.Poke_Hike.composables.DisplayLoadingPage
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayPokeballList
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayTrainerProfile
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayWeather
 import com.cc221001.cc221015.Poke_Hike.composables.ErrorScreen
 import com.cc221001.cc221015.Poke_Hike.composables.MyPokemonList
+import com.cc221001.cc221015.Poke_Hike.composables.WeatherComposable
 import com.cc221001.cc221015.Poke_Hike.composables.background
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
@@ -94,108 +100,128 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
     val state = mainViewModel.mainViewState.collectAsState()
     val weather by weatherViewModel.weather.collectAsState(null)
     val navController = rememberNavController()
-    // Scaffold is a material design container that includes standard layout structures.
-    Scaffold(
-        // Define the bottom navigation bar for the Scaffold.
-        topBar = { MyTopAppBar(navController, state.value.selectedScreen)},
-        bottomBar = { BottomNavigationBar(navController, state.value.selectedScreen) },
-        containerColor = Color.White,
-    ) {
-        Image(
-            painter = painterResource(id = weather?.background(weather!!.weather) ?: R.drawable.clear),
-            contentDescription = "Login_Image",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        // NavHost manages composable destinations for navigation.
-        NavHost(
-            navController = navController,
-            modifier = Modifier.padding(it), // Apply padding from the Scaffold.
-            startDestination = Screen.Home.route // Define the starting screen.
-        ) {
-            // Define the composable function for the 'Home' route.
-            composable(Screen.Home.route) {
-                mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
-                // Check if the pokemon trainers list is not empty.
-                if (state.value.pokemonTrainers.isNotEmpty()) {
-                    CoinCounterDisplay(pokeCoinViewModel)
-                    mainViewModel.selectScreen(Screen.Home)
-                    mainScreen(mainViewModel, pokeCoinViewModel, navController) // Show the main screen if trainers exist.
-                } else {
-                    mainViewModel.selectScreen(Screen.Home)
-                    landingPage(mainViewModel,pokemonViewModel,pokeballViewModel,stepCounterViewModel,pokeCoinViewModel) // Show the landing page otherwise.
-                }
-            }
+    var nextStep by remember { mutableStateOf(false) }
+    var loadingScreen by remember { mutableStateOf(true) }
 
-            // Define the composable function for the 'Weather' route.
-            composable(Screen.Weather.route) {
-                mainViewModel.getPokemonTrainer()
-                // Similar logic as above for the fourth screen.
-                if (state.value.pokemonTrainers.isNotEmpty()) {
-                    mainViewModel.selectScreen(Screen.Weather)
-                    DisplayWeather(weatherViewModel)
-                } else {
-                    mainViewModel.selectScreen(Screen.Weather)
-                    ErrorScreen()
-                }
-            }
+    mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
 
-            // Define the composable function for the 'Favourites' route.
-            composable(Screen.Favourites.route) {
-                mainViewModel.getPokemonTrainer()
-                // Similar logic as the 'First' route but for the second screen.
-                if (state.value.pokemonTrainers.isNotEmpty()) {
-                    mainViewModel.selectScreen(Screen.Favourites)
-                    pokemonViewModel.getFavPokemon()
-                    MyPokemonList(pokemonViewModel, true)
-                } else {
-                    mainViewModel.selectScreen(Screen.Favourites)
-                    ErrorScreen()
-                }
-            }
+    if (loadingScreen) {
+        android.os.Handler()
+            .postDelayed({ loadingScreen = false }, 3000)
+        WeatherComposable(weather = weather)
+        DisplayLoadingPage()
+    }
+    else{
+        if (state.value.pokemonTrainers.isEmpty() && !nextStep) {
+            WeatherComposable(weather = weather)
+            DisplayLandingPage(onClick = { nextStep = true })
+        } else if (state.value.pokemonTrainers.isEmpty() && nextStep) {
+            WeatherComposable(weather = weather)
+            landingPage(
+                mainViewModel = mainViewModel,
+                pokemonViewModel = pokemonViewModel,
+                pokeballViewModel = pokeballViewModel,
+                stepCounterViewModel = stepCounterViewModel,
+                pokeCoinViewModel = pokeCoinViewModel
+            )
+        } else if (state.value.pokemonTrainers.isNotEmpty()) {
+            nextStep = false
+            Scaffold(
+                // Define the bottom navigation bar for the Scaffold.
+                topBar = { MyTopAppBar(navController, state.value.selectedScreen) },
+                bottomBar = { BottomNavigationBar(navController, state.value.selectedScreen) },
+                containerColor = Color.White,
+            ) {
+                WeatherComposable(weather = weather)
+                // NavHost manages composable destinations for navigation.
+                NavHost(
+                    navController = navController,
+                    modifier = Modifier.padding(it), // Apply padding from the Scaffold.
+                    startDestination = Screen.Home.route // Define the starting screen.
+                ) {
+                    // Define the composable function for the 'Home' route.
+                    composable(Screen.Home.route) {
+                        if (state.value.pokemonTrainers.isNotEmpty()) {
+                            CoinCounterDisplay(pokeCoinViewModel)
+                            mainViewModel.selectScreen(Screen.Home)
+                            mainScreen(
+                                mainViewModel,
+                                pokeCoinViewModel,
+                                navController
+                            )
+                        } else {
+                            mainViewModel.selectScreen(Screen.Home)
+                            ErrorScreen()
+                        }
+                    }
+                    // Define the composable function for the 'Weather' route.
+                    composable(Screen.Weather.route) {
+                        if (state.value.pokemonTrainers.isNotEmpty()) {
+                            mainViewModel.selectScreen(Screen.Weather)
+                            DisplayWeather(weatherViewModel)
+                        } else {
+                            mainViewModel.selectScreen(Screen.Weather)
+                            ErrorScreen()
+                        }
+                    }
 
-            // Define the composable function for the 'List' route.
-            composable(Screen.List.route) {
-                mainViewModel.getPokemonTrainer()
-                // Similar logic as above for the third screen.
-                if (state.value.pokemonTrainers.isNotEmpty()) {
-                    mainViewModel.selectScreen(Screen.List)
-                    pokemonViewModel.getPokemon()
-                    MyPokemonList(pokemonViewModel, false)
-                } else {
-                    mainViewModel.selectScreen(Screen.List)
-                    ErrorScreen()
-                }
-            }
+                    // Define the composable function for the 'Favourites' route.
+                    composable(Screen.Favourites.route) {
+                        if (state.value.pokemonTrainers.isNotEmpty()) {
+                            mainViewModel.selectScreen(Screen.Favourites)
+                            pokemonViewModel.getFavPokemon()
+                            MyPokemonList(pokemonViewModel, true)
+                        } else {
+                            mainViewModel.selectScreen(Screen.Favourites)
+                            ErrorScreen()
+                        }
+                    }
 
-            // Define the composable function for the 'Profile' route.
-            composable(Screen.Profile.route) {
-                mainViewModel.getPokemonTrainer()
-                // Similar logic as above for the Profile screen.
-                if (state.value.pokemonTrainers.isNotEmpty()) {
-                    mainViewModel.selectScreen(Screen.Profile)
-                    DisplayTrainerProfile(mainViewModel, pokemonViewModel, pokeCoinViewModel)
-                } else {
-                    mainViewModel.selectScreen(Screen.Profile)
-                    ErrorScreen()
-                }
-            }
-
-            // Define the composable function for the 'Shop' route.
-            composable(Screen.Shop.route) {
-                mainViewModel.getPokemonTrainer()
-                // Similar logic as above for the fourth screen.
-                if (state.value.pokemonTrainers.isNotEmpty()) {
-                    mainViewModel.selectScreen(Screen.Shop)
-                    DisplayPokeballList(pokemonViewModel,pokeballViewModel,weatherViewModel,pokeCoinViewModel)
-                } else {
-                    mainViewModel.selectScreen(Screen.Shop)
-                    ErrorScreen()
+                    // Define the composable function for the 'List' route.
+                    composable(Screen.List.route) {
+                        if (state.value.pokemonTrainers.isNotEmpty()) {
+                            mainViewModel.selectScreen(Screen.List)
+                            pokemonViewModel.getPokemon()
+                            MyPokemonList(pokemonViewModel, false)
+                        } else {
+                            mainViewModel.selectScreen(Screen.List)
+                            ErrorScreen()
+                        }
+                    }
+                    composable(Screen.Profile.route) {
+                        if (state.value.pokemonTrainers.isNotEmpty()) {
+                            mainViewModel.selectScreen(Screen.Profile)
+                            DisplayTrainerProfile(
+                                mainViewModel,
+                                pokemonViewModel,
+                                pokeCoinViewModel
+                            )
+                        } else {
+                            mainViewModel.selectScreen(Screen.Profile)
+                            ErrorScreen()
+                        }
+                    }
+                    composable(Screen.Shop.route) {
+                        if (state.value.pokemonTrainers.isNotEmpty()) {
+                            mainViewModel.selectScreen(Screen.Shop)
+                            DisplayPokeballList(
+                                pokemonViewModel,
+                                pokeballViewModel,
+                                weatherViewModel,
+                                pokeCoinViewModel
+                            )
+                        } else {
+                            mainViewModel.selectScreen(Screen.Shop)
+                            ErrorScreen()
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+
 
 @Composable
 fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {

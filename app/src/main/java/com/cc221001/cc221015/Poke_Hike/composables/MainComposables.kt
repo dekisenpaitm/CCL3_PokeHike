@@ -1,5 +1,6 @@
 package com.cc221001.cc221015.Poke_Hike.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -41,6 +44,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.cc221001.cc221015.Poke_Hike.R
+import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.views.Screen
@@ -345,4 +350,16 @@ fun CustomButtonMaxWidth(text: String, onClick: () -> Unit, height:Int, basic:Bo
             )
         }
     }
+}
+
+@Composable
+fun WeatherComposable(weather: CurrentWeather?){
+    Image(
+        painter = painterResource(
+            id = weather?.background(weather!!.weather) ?: R.drawable.clear
+        ),
+        contentDescription = "Login_Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize()
+    )
 }
