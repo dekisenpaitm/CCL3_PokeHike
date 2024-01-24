@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,15 +17,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
-import androidx.compose.material3.Button
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,104 +39,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
-import java.util.logging.Handler
 
-// Composable function to display values related to a Pokemon Trainer.
-@Composable
-fun TrainerValues(mainViewModel: MainViewModel) {
-    // Retrieves declared fields from the PokemonTrainer class for reflection.
-    val pokemonTrainer = PokemonTrainer::class.java.declaredFields
-    // Sorts the attributes based on the length of their names.
-    val sortedAttributes = pokemonTrainer.sortedBy { it.name.length }
-
-    // LazyColumn is used for efficient, scrollable lists.
-    Column(
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        // Iterates over the sorted attributes to create list items.
-        sortedAttributes.forEach { pokemonTrainerField ->
-            // Ensures that the field is accessible.
-            pokemonTrainerField.isAccessible
-            // Filter out fields with specific names.
-            if (!pokemonTrainerField.name.contains("stable", false)
-                && !pokemonTrainerField.name.contains("sprite", false)) {
-                // Calls TrainerItem Composable for each field.
-                TrainerItem(pokemonTrainerField.name, mainViewModel)
-            }
-        }
-    }
-}
-
-// This function uses reflection to dynamically create UI components based on the fields of the PokemonTrainer class.
-// It filters out certain fields and displays the rest using the TrainerItem Composable.
-
-
-// Composable function to display individual trainer items, using the ExperimentalLayoutApi.
 @OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun TrainerItem(trainerValue: String, mainViewModel: MainViewModel) {
-    // Collects the state from the MainViewModel.
-    val state = mainViewModel.mainViewState.collectAsState()
-
-    // Accesses a specific property of the PokemonTrainer class using reflection.
-    val trainerProperty = PokemonTrainer::class.java.getDeclaredField(trainerValue)
-    trainerProperty.isAccessible = true
-
-    // FlowRow is used for arranging items in a row that can wrap onto multiple lines.
-    // Box for the label of the trainer property.
-    CustomContainerTransparent(w = 370, h = 20, p = 0 ) {
-            Text(text = trainerValue.uppercase() + ":", color = Color.White)
-    }
-    Surface(
-        modifier = Modifier
-            .width(400.dp)
-            .padding(vertical = 4.dp)
-            .height(60.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
-        color = Color(255, 255, 255, 50)
-    ) {
-        FlowRow(verticalArrangement = Arrangement.Center,
-            horizontalArrangement = Arrangement.Center,
-            ) {
-            // Box for the value of the trainer property.
-            Box(modifier=Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
-                Text(
-                    modifier=Modifier.padding(horizontal = 10.dp),
-                    text = "${trainerProperty.get(state.value.pokemonTrainers[0])}",
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
-            }
-        }
-    }
-}
-
-
-// This function utilizes reflection to dynamically access properties of the PokemonTrainer class.
-// It displays each property as a text label with its corresponding value in a flow layout.
-
-
-// Suppresses lint warnings for discouraged API usage.
 @SuppressLint("DiscouragedApi")
-// Composable function to display the profile of a Pokemon Trainer.
 @Composable
 fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, pokeCoinViewModel: PokeCoinViewModel) {
-    // Collects the current state from the MainViewModel.
     val state = mainViewModel.mainViewState.collectAsState()
-    var isButtonClicked = false
+    var editPopUp by remember{ mutableStateOf(false) }
+    var deletePopUp by remember { mutableStateOf(false) }
     var deleteScreenVisible by remember { mutableStateOf(false) }
+    var id by rememberSaveable { mutableStateOf(state.value.pokemonTrainers[0].id) }
+    var name by rememberSaveable { mutableStateOf(state.value.pokemonTrainers[0].name) }
+    var hometown by rememberSaveable { mutableStateOf(state.value.pokemonTrainers[0].hometown) }
+    var sprite by rememberSaveable { mutableStateOf(state.value.pokemonTrainers[0].sprite) }
+    var currentHometown by remember{mutableStateOf(hometown)}
+    var currentName by remember{mutableStateOf(name)}
+    var isButtonClicked = false
+
+    mainViewModel.getPokemonTrainer()
 
     if (deleteScreenVisible==false) {
         if(state.value.pokemonTrainers.isNotEmpty()) {
@@ -201,8 +126,83 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                         }
                     }
                     item {
-                        // Display trainer's attributes using TrainerValues composable.
-                        TrainerValues(mainViewModel = mainViewModel)
+                        CustomContainerTransparent(w = 370, h = 20, p = 0) {
+                            Text(text = "NAME:", color = Color.White)
+                        }
+                        FlowRow(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            // Box for the value of the trainer property.
+                            Box(
+                                modifier = Modifier.weight(1f).fillMaxWidth(),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                TextField(
+                                    value = currentName,
+                                    onValueChange = { currentName=it },
+                                    label = { Text(text = "Change Name") },
+                                    colors = TextFieldDefaults.textFieldColors(
+                                        backgroundColor = Color(
+                                            255,
+                                            255,
+                                            255,
+                                            75
+                                        ),
+                                        textColor = Color.White
+                                    ),
+                                    modifier = Modifier
+                                        .padding(top = 4.dp, bottom = 20.dp)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .border(
+                                            1.dp,
+                                            Color(255, 255, 255, 75),
+                                            RoundedCornerShape(10.dp)
+                                        )
+                                )
+                            }
+                        }
+                    }
+                    item {
+
+                        CustomContainerTransparent(w = 370, h = 20, p = 0) {
+                            Text(text = "HOMETOWN:", color = Color.White)
+                        }
+                        FlowRow(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            // Box for the value of the trainer property.
+                            Box(
+                                modifier = Modifier.weight(1f).fillMaxWidth(),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                TextField(
+                                    value = currentHometown,
+                                    onValueChange = { currentHometown = it},
+                                    label = { Text(text = "Change Hometown") },
+                                    colors = TextFieldDefaults.textFieldColors(
+                                        backgroundColor = Color(
+                                            255,
+                                            255,
+                                            255,
+                                            75
+                                        ),
+                                        textColor = Color.White
+                                    ),
+                                    modifier = Modifier
+                                        .padding(top = 4.dp, bottom = 20.dp)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .border(
+                                            1.dp,
+                                            Color(255, 255, 255, 75),
+                                            RoundedCornerShape(10.dp)
+                                        )
+                                )
+                            }
+                        }
                     }
                     item {
                         // Button to delete the trainer.
@@ -211,8 +211,8 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                             verticalArrangement = Arrangement.SpaceEvenly
                         ) {
                             CustomButtonMaxWidth(
-                                text = "Update Trainer",
-                                onClick = { mainViewModel.editPokemonTrainer(state.value.pokemonTrainers[0]) },
+                                text = "Save Changes",
+                                onClick = { editPopUp = true },
                                 height = 50,
                                 true
                             )
@@ -229,23 +229,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                                         RoundedCornerShape(10.dp)
                                     )
                                     .clickable(onClick = {
-                                        deleteScreenVisible = true
-                                        android.os
-                                            .Handler()
-                                            .postDelayed({
-                                                pokeCoinViewModel.deletePokeCoinStash(pokeCoinViewModel.pokeCoinViewState.value.pokeCoin);
-                                                pokemonViewModel.resetPokemonDatabase()
-                                                if (!isButtonClicked && state.value.pokemonTrainers.isNotEmpty()) {
-                                                    isButtonClicked = true
-                                                    mainViewModel.deletePokemonTrainer(state.value.pokemonTrainers[0])
-                                                    android.os
-                                                        .Handler()
-                                                        .postDelayed({
-                                                            isButtonClicked = false; deleteScreenVisible =
-                                                            false
-                                                        }, 500)
-                                                }
-                                            }, 2000)
+                                        deletePopUp = true
                                     })
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
@@ -259,73 +243,115 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
 
                         }
                     }
-                    item {
-                        Column {
-                            editTrainerModel(mainViewModel)
-                        }
-                    }
                 }
             }
         }
     }else {
-
         DisplayRemoveLoadingPage()
+    }
 
+    if(editPopUp){
+        DisplayTrainerPopUp(
+            title = "Save Changes?" ,
+            text = "Do you really want to save your changes?",
+            buttonAcceptText = "SAVE",
+            buttonDismissText = "CANCEL",
+            onAcceptClick={
+                mainViewModel.savePokemonTrainer(PokemonTrainer(id, currentName, currentHometown, sprite))
+                editPopUp=false
+            },
+            onDismissClick={
+                editPopUp=false
+            },
+            onDismiss={
+                editPopUp=false
+            })
+    }
+
+    if(deletePopUp){
+        DisplayTrainerPopUp(
+            title = "Delete Trainer?" ,
+            text = "Do you really want to delete your Trainer? This can't be undone!",
+            buttonAcceptText = "DELETE",
+            buttonDismissText = "CANCEL",
+            onAcceptClick={
+                deletePopUp=false
+                deleteScreenVisible = true
+                android.os
+                    .Handler()
+                    .postDelayed({
+                        pokeCoinViewModel.deletePokeCoinStash(
+                            pokeCoinViewModel.pokeCoinViewState.value.pokeCoin
+                        );
+                        pokemonViewModel.resetPokemonDatabase()
+                        if (!isButtonClicked && state.value.pokemonTrainers.isNotEmpty()) {
+                            isButtonClicked = true
+                            mainViewModel.deletePokemonTrainer(state.value.pokemonTrainers[0])
+                            android.os
+                                .Handler()
+                                .postDelayed({
+                                    isButtonClicked =
+                                        false; deleteScreenVisible =
+                                    false
+                                }, 500)
+                        }
+                    }, 2000)
+            },
+            onDismissClick={
+                deletePopUp=false
+            },
+            onDismiss={
+                deletePopUp=false
+            })
     }
 }
 
-// This function is designed to display detailed information about a Pokemon Trainer,
-// including an image, attributes, and options to update or delete the trainer.
-
-// Opt-in for Experimental Material3 API and define the Composable function for editing a trainer's model.
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun editTrainerModel(mainViewModel: MainViewModel) {
-    // Collect state from the MainViewModel.
-    val state = mainViewModel.mainViewState.collectAsState()
-
-    // Check if the dialog state is open.
-    if (state.value.openDialog) {
-        // Remember saveable states for the trainer's properties.
-        var id by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.id) }
-        var name by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.name) }
-        var gender by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.hometown) }
-        var sprite by rememberSaveable { mutableStateOf(state.value.editPokemonTrainer.sprite) }
-
-        // AlertDialog to show the editing interface.
-        AlertDialog(
-            onDismissRequest = { mainViewModel.dismissDialog() }, // Handle dialog dismissal.
-            text = {
-                // Column layout for the text fields.
-                Column {
-                    // Text field for editing the username.
-                    TextField(
-                        modifier = Modifier.padding(top = 20.dp),
-                        value = name,
-                        onValueChange = { newText -> name = newText },
-                        label = { Text(text = "Change Username") }
-                    )
-                    // Text field for editing the gender.
-                    TextField(
-                        modifier = Modifier.padding(top = 20.dp),
-                        value = gender,
-                        onValueChange = { newText -> gender = newText },
-                        label = { Text(text = "Change Gender") }
-                    )
-                }
-            },
-            confirmButton = {
-                // Button for saving changes.
-                Button(onClick = {
-                    mainViewModel.savePokemonTrainer(PokemonTrainer(id, name, gender, sprite))
-                }) {
-                    Text(stringResource(R.string.editmodal_button_save))
+fun DisplayTrainerPopUp(title:String, text:String, buttonAcceptText:String, buttonDismissText:String, onAcceptClick: ()->Unit, onDismiss: ()->Unit, onDismissClick: ()->Unit) {
+    androidx.compose.material3.AlertDialog(
+        containerColor = Color(16, 0, 25, 200),
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = title,
+                color = Color.White
+            )
+        }, text = {
+            Text(
+                text = text,
+                color = Color.White
+            )
+        }, confirmButton = {
+            Surface(
+                color = Color(106, 84, 141, 255), // Set the background color of the surface
+                modifier = Modifier
+                    .width(80.dp)
+                    .height(50.dp)
+                    .clickable(onClick = onAcceptClick)
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                    Text(text = buttonAcceptText, color=Color.White)
                 }
             }
-        )
-    }
+        },
+        dismissButton={
+            Surface(
+                color = Color(58, 42, 75, 255), // Set the background color of the surface
+                modifier = Modifier
+                    .width(80.dp)
+                    .height(50.dp)
+                    .clickable(onClick = onDismissClick)
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                    Text(text = buttonDismissText, color=Color.White)
+                }
+            }
+        }
+    )
 }
 
-// This function provides an interface for editing a Pokemon Trainer's details, using an AlertDialog for input.
-// It uses saveable states to preserve data during configuration changes and interacts with the MainViewModel for data handling.
 
