@@ -20,6 +20,9 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	private val _pokemonViewState = MutableStateFlow(PokemonViewState())
 	val pokemonViewState: StateFlow<PokemonViewState> = _pokemonViewState.asStateFlow()
 
+	private val _currentListType = MutableStateFlow(ListType.FAVORITES)
+	val currentListType: StateFlow<ListType> get() = _currentListType
+
 	// Fetch and load all Pokemon from the database.
 	fun getPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
@@ -28,10 +31,17 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	// Fetch and load favorite Pokemon from the database.
 	fun getFavPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getFavPokemons()) }
+		_currentListType.value = ListType.FAVORITES
 	}
 
 	fun getOwnedPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getOwnedPokemons()) }
+		_currentListType.value = ListType.OWNED
+	}
+
+	enum class ListType {
+		FAVORITES,
+		OWNED
 	}
 
 	fun getNotOwnedPokemon(){

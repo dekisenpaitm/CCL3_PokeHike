@@ -35,6 +35,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -70,37 +72,67 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, favorite: Boolean) {
 // This function decides whether to display the user's favorite Pokemon or the entire Pokedex based on the 'favorite' flag.
 // It uses a Column for vertical arrangement and dynamically sets the title text.
 @Composable
-fun ChoiceButton(pokemonViewModel: PokemonViewModel){
+fun ChoiceButton(pokemonViewModel: PokemonViewModel) {
+    val currentListType by remember { pokemonViewModel.currentListType }.collectAsState()
+
     Box(
-        contentAlignment = Alignment.Center, // Center aligns the content in the Box
+        contentAlignment = Alignment.Center,
         modifier = Modifier
-            .fillMaxWidth() // Makes the Box fill the entire screen
+            .fillMaxWidth()
             .padding(0.dp, 0.dp, 0.dp, 10.dp)
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp), // Add spacing between the buttons
-            verticalAlignment = Alignment.CenterVertically // Aligns items vertically to the center
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // First Button
-            CustomButton(
-                text = "Favourites",
-                onClick = { pokemonViewModel.getFavPokemon() },
-                amount = 120,
-                amount2 = 50,
-                true
-            )
+            // First Button (Favourites)
+            Box(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                    .background(
+                        if (currentListType == PokemonViewModel.ListType.FAVORITES) Color(58, 42, 75, 255)
+                        else Color(106, 84, 141, 255)
+                    )
+                    .clickable { pokemonViewModel.getFavPokemon() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Favourites",
+                    modifier = Modifier.padding(8.dp),
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+            }
 
-            // Second Button
-            CustomButton(
-                text = "Owned",
-                onClick = { pokemonViewModel.getOwnedPokemon() },
-                amount = 120,
-                amount2 = 50,
-                true
-            )
+            // Second Button (Owned)
+            Box(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                    .background(
+                        if (currentListType == PokemonViewModel.ListType.OWNED) Color(58, 42, 75, 255)
+                        else Color(106, 84, 141, 255)
+                    )
+                    .clickable { pokemonViewModel.getOwnedPokemon() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Owned",
+                    modifier = Modifier.padding(8.dp),
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+            }
         }
     }
 }
+
+
 // Composable function to display a list of Pokemon.
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
