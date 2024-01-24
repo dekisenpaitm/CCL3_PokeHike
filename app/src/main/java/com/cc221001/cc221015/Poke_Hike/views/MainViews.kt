@@ -53,9 +53,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.composables.CoinCounterDisplay
+import com.cc221001.cc221015.Poke_Hike.composables.CreateOnBoarding
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayLandingPage
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayLoadingPage
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayPokeballList
+import com.cc221001.cc221015.Poke_Hike.composables.DisplayPopUp
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayTrainerProfile
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayWeather
 import com.cc221001.cc221015.Poke_Hike.composables.ErrorScreen
@@ -65,6 +67,7 @@ import com.cc221001.cc221015.Poke_Hike.composables.background
 import com.cc221001.cc221015.Poke_Hike.composables.landingPage
 import com.cc221001.cc221015.Poke_Hike.composables.mainScreen
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
+import com.cc221001.cc221015.Poke_Hike.viewModel.OnBoardingViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
@@ -96,12 +99,13 @@ sealed class Screen(val route: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 // MainView is a Composable function that creates the main view of your app.
 @Composable
-fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel, pokeCoinViewModel: PokeCoinViewModel,) {
+fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, weatherViewModel: WeatherViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel, pokeCoinViewModel: PokeCoinViewModel,onBoardingViewModel: OnBoardingViewModel) {
     val state = mainViewModel.mainViewState.collectAsState()
     val weather by weatherViewModel.weather.collectAsState(null)
     val navController = rememberNavController()
     var nextStep by remember { mutableStateOf(false) }
     var loadingScreen by remember { mutableStateOf(true) }
+    val onBoardingState = onBoardingViewModel.onboardingViewState.collectAsState()
 
     mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
 
@@ -113,6 +117,8 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
     }
     else{
         if (state.value.pokemonTrainers.isEmpty() && !nextStep) {
+            CreateOnBoarding(onBoardingViewModel)
+            onBoardingViewModel.resetAllStates()
             WeatherComposable(weather = weather)
             DisplayLandingPage(onClick = { nextStep = true })
         } else if (state.value.pokemonTrainers.isEmpty() && nextStep) {
@@ -142,13 +148,19 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                     // Define the composable function for the 'Home' route.
                     composable(Screen.Home.route) {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
-                            CoinCounterDisplay(pokeCoinViewModel)
+                            onBoardingViewModel.getState("homePage")
                             mainViewModel.selectScreen(Screen.Home)
                             mainScreen(
                                 mainViewModel,
                                 pokeCoinViewModel,
                                 navController
                             )
+                            if(onBoardingState.value.currentState?.value == false){
+                                DisplayPopUp(
+                                    onBoardingViewModel= onBoardingViewModel,
+                                    title = "Homepage" ,
+                                    text ="You can find here your current collected coins, a button to the shop and the reminder how the app works! ", pageName="homePage")
+                            }
                         } else {
                             mainViewModel.selectScreen(Screen.Home)
                             ErrorScreen()
@@ -157,8 +169,12 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                     // Define the composable function for the 'Weather' route.
                     composable(Screen.Weather.route) {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
+                            onBoardingViewModel.getState("weatherPage")
                             mainViewModel.selectScreen(Screen.Weather)
                             DisplayWeather(weatherViewModel)
+                            if(onBoardingState.value.currentState?.value == false){
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Weatherpage" , text ="The weather page contains the current weather and a forecast for the next 5 days. Please make sure that you are connected to the internet!", pageName="weatherPage")
+                            }
                         } else {
                             mainViewModel.selectScreen(Screen.Weather)
                             ErrorScreen()
@@ -168,9 +184,13 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                     // Define the composable function for the 'Favourites' route.
                     composable(Screen.Favourites.route) {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
+                            onBoardingViewModel.getState("favPage")
                             mainViewModel.selectScreen(Screen.Favourites)
                             pokemonViewModel.getFavPokemon()
                             MyPokemonList(pokemonViewModel, "favourite")
+                            if(onBoardingState.value.currentState?.value == false){
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Collectionpage" , text ="In here you're able to scroll trough your pokemon. Favourites are the pokemon you liked by clicking the little heartshaped button. Owned are the pokemon you got out of the Pokeballs you bought. ", pageName="favPage")
+                            }
                         } else {
                             mainViewModel.selectScreen(Screen.Favourites)
                             ErrorScreen()
@@ -180,9 +200,13 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                     // Define the composable function for the 'List' route.
                     composable(Screen.List.route) {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
+                            onBoardingViewModel.getState("listPage")
                             mainViewModel.selectScreen(Screen.List)
                             pokemonViewModel.getPokemon()
                             MyPokemonList(pokemonViewModel, "all")
+                            if(onBoardingState.value.currentState?.value == false){
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Pokedex" , text ="In here you can check out all the Pokemon that are currently available. By clicking the heartshaped button you add the Pokemon to your collection of favourite pokemon.", pageName="listPage")
+                            }
                         } else {
                             mainViewModel.selectScreen(Screen.List)
                             ErrorScreen()
@@ -190,12 +214,16 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                     }
                     composable(Screen.Profile.route) {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
+                            onBoardingViewModel.getState("profilePage")
                             mainViewModel.selectScreen(Screen.Profile)
                             DisplayTrainerProfile(
                                 mainViewModel,
                                 pokemonViewModel,
                                 pokeCoinViewModel
                             )
+                            if(onBoardingState.value.currentState?.value == false){
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Trainerpage" , text ="In here you can check and update your credentials. It's also possible to delete your account, but be careful since you're removing everything including your collected Pokemon and Coins!", pageName="profilePage")
+                            }
                         } else {
                             mainViewModel.selectScreen(Screen.Profile)
                             ErrorScreen()
@@ -203,6 +231,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                     }
                     composable(Screen.Shop.route) {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
+                            onBoardingViewModel.getState("shopPage")
                             mainViewModel.selectScreen(Screen.Shop)
                             DisplayPokeballList(
                                 pokemonViewModel,
@@ -210,6 +239,9 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                                 weatherViewModel,
                                 pokeCoinViewModel
                             )
+                            if(onBoardingState.value.currentState?.value == false){
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Shoppage" , text ="In here you can spend your collected Pokecoins. Either for a weather based pokeball which contains only specific types or the standard pokeball which cointains all available Pokemon.", pageName="shopPage")
+                            }
                         } else {
                             mainViewModel.selectScreen(Screen.Shop)
                             ErrorScreen()
