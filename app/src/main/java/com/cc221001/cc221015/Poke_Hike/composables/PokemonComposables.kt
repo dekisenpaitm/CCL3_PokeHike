@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,60 +22,132 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
+import com.cc221001.cc221015.Poke_Hike.views.Screen
 import java.util.Locale
 
 
 // Composable function to display a list of Pokemon.
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun MyPokemonList(pokemonViewModel: PokemonViewModel, listType: String) {
     // Collecting the list of Pokemons from the ViewModel.
     val pokemonList = pokemonViewModel.pokemonViewState.collectAsState().value.pokemons
+    var currentListEntry by remember { mutableIntStateOf(0) }
     // A Row to display the list of Pokemon.
-    Row(
-        modifier = Modifier.clip(
-            RoundedCornerShape(
-                topStart = 20.dp, topEnd = 20.dp, bottomEnd = 0.dp, bottomStart = 0.dp
-            )
-        )
-    ) {
+    val searchText by pokemonViewModel.searchText.collectAsState()
+    val isSearching by pokemonViewModel.isSearching.collectAsState()
+    val pokemonListBar by pokemonViewModel.pokemonList.collectAsState()
+
+    val listState= rememberLazyListState()
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally,  modifier = Modifier
+        .background(color = Color(0, 0, 0, 125))
+        .padding(20.dp, 20.dp, 20.dp, 0.dp)
+        .fillMaxSize()) {
+
+        if(listType=="all") {
+            SearchBar(
+                placeholder = { Text(text = "Search Pokemon", color = Color.White) },
+                query = searchText,//text showed on SearchBar
+                onQueryChange = pokemonViewModel::onSearchTextChange, //update the value of searchText
+                onSearch = pokemonViewModel::onSearchTextChange, //the callback to be invoked when the input service triggers the ImeAction.Search action
+                active = isSearching, //whether the user is searching or not
+                onActiveChange = { pokemonViewModel.onToogleSearch() },
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.Search,
+                        contentDescription = "Search Icon",
+                        tint = Color.White
+                    )
+                },
+                colors = SearchBarDefaults.colors(
+                    containerColor = Color(
+                        255,
+                        255,
+                        255,
+                        50
+                    )
+                ),//the callback to be invoked when this search bar's active state is changed
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 0.dp, vertical = 10.dp)
+                ) {
+                    CustomSplitter(h = 2)
+                }
+                LazyColumn(state = listState) {
+                    println("this is your pokemonlist: $pokemonList")
+                    items(pokemonListBar) { pokemon ->
+                        val listNumber = if (pokemon != null) {
+                            if (pokemon?.number!! < 1) pokemon?.number else pokemon?.number?.minus(1)
+                        } else {
+                            0
+                        }
+                        Box(modifier = Modifier.clickable {
+                            pokemonViewModel.onToogleSearch()
+                            if (listNumber != null) {
+                                currentListEntry = listNumber
+                            }
+                        }.fillMaxWidth().padding(vertical = 4.dp, horizontal = 8.dp))
+                        {
+                            pokemon?.name?.let { Text(text = it, color=Color.White) }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 0.dp, vertical = 10.dp)
+                        ) {
+                            CustomSplitter(h = 2)
+                        }
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+            ) {
+                CustomSplitter(h = 2)
+            }
+        }
         // Calling PokemonList Composable to display the actual list.
-        PokemonList(pokemonList = pokemonList, pokemonViewModel, listType)
+        PokemonList(pokemonList = pokemonList, pokemonViewModel, listType, currentListEntry)
     }
 }
 
@@ -102,7 +175,12 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel) {
                     .clip(RoundedCornerShape(10.dp))
                     .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
                     .background(
-                        if (currentListType == PokemonViewModel.ListType.FAVORITES) Color(106, 84, 141, 255)
+                        if (currentListType == PokemonViewModel.ListType.FAVORITES) Color(
+                            106,
+                            84,
+                            141,
+                            255
+                        )
                         else Color(58, 42, 75, 255)
                     )
                     .clickable { pokemonViewModel.getFavPokemon() },
@@ -148,22 +226,20 @@ fun ChoiceButton(pokemonViewModel: PokemonViewModel) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PokemonList(
-    pokemonList: List<Pokemon?>, pokemonViewModel: PokemonViewModel, listType: String
+    pokemonList: List<Pokemon?>,
+    pokemonViewModel: PokemonViewModel,
+    listType: String,
+    currentListEntry: Int
 ) {
-    val currentListType by remember { pokemonViewModel.currentListType }.collectAsState()
-    // LazyColumn is used for efficiently displaying a list that can be scrolled.
-    // It only renders the items that are currently visible on screen.
+
+    val listState = rememberLazyListState()
 
     Column(
-        modifier = Modifier
-            .background(color = Color(0, 0, 0, 125))
-            .padding(20.dp, 20.dp, 20.dp, 0.dp)
-            .fillMaxSize()
     ) {
         if (listType == "favourite" || listType == "owned") {
             ChoiceButton(pokemonViewModel = pokemonViewModel)
         }
-        LazyColumn() {
+        LazyColumn(state = listState) {
             // Iterating over each Pokemon in the pokemonList.
             items(pokemonList) { pokemon ->
                 // PokemonItem Composable is called for each Pokemon in the list.
@@ -177,6 +253,10 @@ fun PokemonList(
                 }
             }
         }
+    }
+
+    LaunchedEffect(key1 = currentListEntry){
+        listState.scrollToItem(index=currentListEntry)
     }
 
 }

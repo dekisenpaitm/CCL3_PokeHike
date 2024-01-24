@@ -1,6 +1,7 @@
 package com.cc221001.cc221015.Poke_Hike.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.cc221001.cc221015.Poke_Hike.service.PokemonRepository
 import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
@@ -10,8 +11,12 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,9 +28,43 @@ class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
 	private val _currentListType = MutableStateFlow(ListType.FAVORITES)
 	val currentListType: StateFlow<ListType> get() = _currentListType
 
+	private val _isSearching = MutableStateFlow(false)
+	val isSearching = _isSearching.asStateFlow()
+
+	//second state the text typed by the user
+	private val _searchText = MutableStateFlow("")
+	val searchText = _searchText.asStateFlow()
+
+	private val _pokemonList = MutableStateFlow(pokemonViewState.value.pokemons)
+	val pokemonList = searchText
+		.combine(_pokemonList) { text, pokemons ->//combine searchText with _contriesList
+			if (text.isBlank()) { //return the entery list of countries if not is typed
+				pokemons
+			}
+			pokemons.filter { pokemon ->// filter and return a list of countries based on the text the user typed
+				pokemon!!.name.uppercase().contains(text.trim().uppercase())
+			}
+		}.stateIn(//basically convert the Flow returned from combine operator to StateFlow
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5000),//it will allow the StateFlow survive 5 seconds before it been canceled
+			initialValue = _pokemonList.value
+		)
+
+	fun onSearchTextChange(text: String) {
+		_searchText.value = text
+	}
+
+	fun onToogleSearch() {
+		_isSearching.value = !_isSearching.value
+		if (!_isSearching.value) {
+			onSearchTextChange("")
+		}
+	}
+
 	// Fetch and load all Pokemon from the database.
 	fun getPokemon() {
 		_pokemonViewState.update { it.copy(pokemons = db.getPokemons()) }
+		_pokemonList.update {db.getPokemons()}
 		_currentListType.value = ListType.ALL
 	}
 
