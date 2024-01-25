@@ -19,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cc221001.cc221015.Poke_Hike.R
@@ -38,21 +42,20 @@ import kotlin.math.roundToInt
 fun DisplayWeather(weatherViewModel: WeatherViewModel) {
     val weather by weatherViewModel.weather.collectAsState(null)
     val forecast by weatherViewModel.forecast.collectAsState(emptyList())
-    //println("Current Weather: $weather")
-    //println("Forecast: $forecast")
+
 
     Column(
-        Modifier.fillMaxSize()
+        Modifier
+            .fillMaxSize()
             .background(Color(0, 0, 0, 125), RoundedCornerShape(10.dp))
     ) {
-
-        Column( Modifier.fillMaxSize()
-            .padding(20.dp)) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             if (weather == null) {
-                // Show loading message
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Retrieving the latest weather data...", color = Color.White)
-                }
+                WeatherFeedback()
             } else {
                 // Display weather data
                 WeatherSummary(weather = weather!!)
@@ -60,6 +63,33 @@ fun DisplayWeather(weatherViewModel: WeatherViewModel) {
                 FiveDayForecast(forecast)
             }
         }
+    }
+}
+
+
+@Composable
+fun WeatherFeedback(){
+
+    var checkInternet by remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf("Retrieving the latest weather data...") }
+
+    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Text(text= text, color = Color.White, textAlign = TextAlign.Center)
+    }
+    if(checkInternet){
+        text="If this takes longer than you're used too, please make sure you're connected to the internet..."
+        android.os
+            .Handler()
+            .postDelayed({
+                checkInternet = false
+            }, 5000 )
+    } else {
+        text="Retrieving the latest weather data..."
+        android.os
+            .Handler()
+            .postDelayed({
+                checkInternet = true
+            }, 6000 )
     }
 }
 

@@ -103,29 +103,31 @@ fun DisplayPokeballList(
         Column(modifier = Modifier
             .background(color = Color(0, 0, 0, 125))
             .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
-            .padding(20.dp,4.dp,20.dp)
-            .fillMaxSize()) {
+            .padding(20.dp, 4.dp, 20.dp)
+            .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
 
             if (weather == null) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Retrieving the latest weather data...", color = Color.White)
-                }
+                WeatherFeedback()
             } else {
-            WeatherBox(
-                weather = weather ,
-                pokeballList = pokeballList,
-                condition= condition)
-            }
-            CustomSplitter(h = 2)
-            // A Row to display the list of Pokemon.
-            Row() {
-                // Calling PokeballList Composable to display the actual list.
-                PokeballList(
-                    pokemonViewModel = pokemonViewModel,
-                    pokeballs = pokeballList,
-                    pokeballViewModel = pokeballViewModel,
-                    pokeCoinViewModel = pokeCoinViewModel
+                WeatherBox(
+                    weather = weather,
+                    pokeballList = pokeballList,
+                    condition = condition
                 )
+
+                CustomSplitter(h = 2)
+                // A Row to display the list of Pokemon.
+                Row() {
+                    // Calling PokeballList Composable to display the actual list.
+                    PokeballList(
+                        pokemonViewModel = pokemonViewModel,
+                        pokeballs = pokeballList,
+                        pokeballViewModel = pokeballViewModel,
+                        pokeCoinViewModel = pokeCoinViewModel
+                    )
+                }
             }
         }
     }
@@ -698,7 +700,7 @@ fun DisplayPokemonMessage(
             modifier = Modifier
                 .fillMaxWidth() // Make sure the AlertDialog itself fills the width
                 .wrapContentHeight(Alignment.CenterVertically) // Vertically center the AlertDialog
-                .border(2.dp, Color(255,255,255,75),RoundedCornerShape(20.dp)),
+                .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(20.dp)),
         )
     }
 }
