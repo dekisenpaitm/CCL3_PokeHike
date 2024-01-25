@@ -2,6 +2,7 @@ package com.cc221001.cc221015.Poke_Hike.composables
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -214,9 +215,12 @@ fun LandingPageContent(
 
             // State and TextField for inputting the trainer's name.
             var name by remember { mutableStateOf("") }
+            val maxLength = 10
+            val context = LocalContext.current
             TextField(
                 value = name,
-                onValueChange = { name = it },
+                onValueChange = {  if (it.length <= maxLength) name = it
+                else Toast.makeText(context, "Cannot be more than 10 Characters", Toast.LENGTH_SHORT).show()  },
                 label = { Text(text = "Name", color = Color.White) },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color(
@@ -236,9 +240,11 @@ fun LandingPageContent(
                 )
             // State and TextField for inputting the trainer's hometown.
             var hometown by remember { mutableStateOf("") }
+            val maxHomeLength = 25
             TextField(
                 value = hometown,
-                onValueChange = { hometown = it },
+                onValueChange = { if (it.length <= maxHomeLength) hometown = it
+                else Toast.makeText(context, "Cannot be more than 25 Characters", Toast.LENGTH_SHORT).show()  },
                 label = { Text(text = "Hometown", color = Color.White) },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color(
@@ -258,13 +264,15 @@ fun LandingPageContent(
             Box(modifier = Modifier.padding(20.dp)) {
                 CustomButton(text = "Create Trainer", onClick = {
                     isConnected= isInternetAvailable(context)
-                    if(isConnected) {
+                    if(isConnected && name.isNotEmpty() && hometown.isNotEmpty()) {
                         CreatePokeballEntries(pokeballViewModel)
                         CreateTrainerStash(coinViewModel)
                         stepCounterViewModel.createStepCounter((StepCounter(0, 0)));
                         mainViewModel.save(PokemonTrainer(null, name, hometown, trainerName))
                         mainViewModel.getPokemonTrainer();
                         pokemonViewModel.loadPokemons();
+                    } else {
+                        Toast.makeText(context, "Name and Hometown can't be empty!", Toast.LENGTH_SHORT).show()
                     }
                 }, amount = 300, amount2 = 50, true)
             }

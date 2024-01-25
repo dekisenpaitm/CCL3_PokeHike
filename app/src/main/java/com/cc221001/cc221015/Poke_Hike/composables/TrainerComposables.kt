@@ -2,6 +2,7 @@ package com.cc221001.cc221015.Poke_Hike.composables
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -69,6 +70,9 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
     var currentName by remember{mutableStateOf(name)}
     var isButtonClicked = false
     val customFontFamily = FontFamily(Font(R.font.aldrich))
+    val context = LocalContext.current
+    val maxHomeLength = 25
+    val maxLength = 10
 
     mainViewModel.getPokemonTrainer()
 
@@ -155,7 +159,8 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                             ) {
                                 TextField(
                                     value = currentName,
-                                    onValueChange = { currentName=it },
+                                    onValueChange = { if (it.length <= maxLength) currentName = it
+                                    else Toast.makeText(context, "Cannot be more than 10 Characters", Toast.LENGTH_SHORT).show() },
                                     textStyle = TextStyle(
                                         fontFamily = customFontFamily),
                                     //label = { Text(text = "Click to change name") },
@@ -199,7 +204,8 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                             ) {
                                 TextField(
                                     value = currentHometown,
-                                    onValueChange = { currentHometown = it},
+                                    onValueChange = { if (it.length <= maxHomeLength) currentHometown = it
+                                    else Toast.makeText(context, "Cannot be more than 25 Characters", Toast.LENGTH_SHORT).show()},
                                     textStyle = TextStyle(
                                         fontFamily = customFontFamily),
                                     //label = { Text(text = "Click to change hometown") },
@@ -264,8 +270,12 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
             buttonAcceptText = "Save",
             buttonDismissText = "Cancel",
             onAcceptClick={
+                if(currentName.isNotEmpty()&&currentHometown.isNotEmpty()){
                 mainViewModel.savePokemonTrainer(PokemonTrainer(id, currentName, currentHometown, sprite))
-                editPopUp=false
+                editPopUp=false}
+                else {
+                    Toast.makeText(context, "Name and Hometown can't be empty!", Toast.LENGTH_SHORT).show()
+                }
             },
             onDismissClick={
                 editPopUp=false
