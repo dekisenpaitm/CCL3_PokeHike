@@ -461,7 +461,8 @@ fun PokeballsItem(
         // Show the AlertDialog when showDialog is true
         if (showDialog && currentCoins.pokeCoin.amount >= pokeball!!.price) {
             AlertDialog(
-                containerColor = Color(16, 0, 25, 200),
+                modifier=Modifier.border(2.dp, Color(255,255,255,75),RoundedCornerShape(20.dp)),
+                containerColor = Color(0, 0, 0, 200),
                 onDismissRequest = {
                     // Dismiss the dialog when clicking outside of it
                     showDialog = false
@@ -555,7 +556,8 @@ fun PokeballsItem(
                 })
         } else if (showDialog && currentCoins.pokeCoin.amount < pokeball!!.price) {
             AlertDialog(
-                containerColor = Color(16, 0, 25, 200),
+                modifier=Modifier.border(2.dp, Color(255,255,255,75),RoundedCornerShape(20.dp)),
+                containerColor = Color(0, 0, 0, 200),
                 onDismissRequest = {
                     // Dismiss the dialog when clicking outside of it
                     showDialog = false
@@ -623,7 +625,7 @@ fun DisplayPokemonMessage(
     val customFontFamily = FontFamily(Font(R.font.aldrich))
     if (randomPokemon.pokemon?.name != "" && pokemonBought) {
         AlertDialog(
-            containerColor = Color(16, 0, 25, 200),
+            containerColor = Color(0, 0, 0, 200),
             onDismissRequest = onClose,
             title = {
                 Text(
@@ -632,8 +634,8 @@ fun DisplayPokemonMessage(
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .fillMaxWidth() // Take up the full width
-                        .padding(16.dp)  // Add padding for spacing
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 )
             },
             text = {
@@ -696,6 +698,7 @@ fun DisplayPokemonMessage(
             modifier = Modifier
                 .fillMaxWidth() // Make sure the AlertDialog itself fills the width
                 .wrapContentHeight(Alignment.CenterVertically) // Vertically center the AlertDialog
+                .border(2.dp, Color(255,255,255,75),RoundedCornerShape(20.dp)),
         )
     }
 }

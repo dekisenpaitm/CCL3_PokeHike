@@ -243,7 +243,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                                 pokeCoinViewModel
                             )
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Trainer Page" , text ="On the Trainer Page, you can check and update your credentials. It is also possible to delete your account, but please be cautious as this action will remove everything, including your collected Pokémon and Coins!", pageName="profilePage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Trainer Page" , text ="On the Trainer Page, you can check and update your credentials. It is also possible to delete your account, but please be cautious as this action will remove everything, including your collected Pokemon and Coins!", pageName="profilePage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Profile)
