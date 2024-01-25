@@ -1,5 +1,13 @@
 package com.cc221001.cc221015.Poke_Hike.views
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.ContentAlpha
@@ -17,15 +26,15 @@ import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -40,6 +49,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,6 +79,7 @@ import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.WeatherViewModel
 
+
 // https://kotlinlang.org/docs/sealed-classes.html
 // Define a sealed class named 'Screen' to represent different screens in the app.
 // Sealed classes are used for representing restricted class hierarchies, where a value can have one of the types from a limited set.
@@ -90,6 +102,8 @@ sealed class Screen(val route: String) {
 // Each screen is represented as a singleton object, making it easy to reference them throughout the app.
 
 // Opt-in for the experimental Material3 API which is still in development.
+@SuppressLint("StateFlowValueCalledInComposition")
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 // MainView is a Composable function that creates the main view of your app.
 @Composable
@@ -100,6 +114,8 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
     var nextStep by remember { mutableStateOf(false) }
     var loadingScreen by remember { mutableStateOf(true) }
     val onBoardingState = onBoardingViewModel.onboardingViewState.collectAsState()
+    var isConnected by remember { mutableStateOf(false) }
+    var context = LocalContext.current
 
     mainViewModel.getPokemonTrainer() // Fetch the Pokemon trainer information.
     pokeCoinViewModel.startObeserving()
@@ -110,11 +126,20 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
         DisplayLoadingPage()
     }
     else{
+        isConnected = isInternetAvailable(context = context)
         if (state.value.pokemonTrainers.isEmpty() && !nextStep) {
             CreateOnBoarding(onBoardingViewModel)
             onBoardingViewModel.resetAllStates()
             WeatherComposable(weather = weather)
-            DisplayLandingPage(onClick = { nextStep = true })
+            DisplayLandingPage(onClick = {
+                nextStep = isConnected
+            })
+            if(!isConnected) {
+               NoInternetPopUp(
+                   title = "Are you connected?" ,
+                   text = "It seems like you're currently not connected to the internet. Please make sure you have an internet connection available upon using this app!",
+                   onAcceptClick= { isConnected = isInternetAvailable(context = context)})
+            }
         } else if (state.value.pokemonTrainers.isEmpty() && nextStep) {
             WeatherComposable(weather = weather)
             landingPage(
@@ -122,7 +147,8 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                 pokemonViewModel = pokemonViewModel,
                 pokeballViewModel = pokeballViewModel,
                 stepCounterViewModel = stepCounterViewModel,
-                pokeCoinViewModel = pokeCoinViewModel
+                pokeCoinViewModel = pokeCoinViewModel,
+                context = context,
             )
         } else if (state.value.pokemonTrainers.isNotEmpty()) {
             nextStep = false
@@ -248,6 +274,46 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
     }
 }
 
+@Composable
+fun NoInternetPopUp(title:String, text:String, onAcceptClick:()->Unit){
+    val customFontFamily = FontFamily(Font(R.font.aldrich))
+    AlertDialog(containerColor = Color(0, 0, 0, 200),
+        modifier= Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .border(
+                2.dp, Color(255, 255, 255, 75),
+                RoundedCornerShape(20.dp)
+            ),
+        onDismissRequest = {},
+        title = {
+            Text(
+                text = title,
+                color = Color.White,
+                fontFamily = customFontFamily
+            )
+        }, text = {
+            Text(
+                text = text,
+                color = Color.White,
+                fontFamily = customFontFamily
+            )
+        }, confirmButton = {
+            Surface(
+                color = Color(106, 84, 141, 255), // Set the background color of the surface
+                modifier = Modifier
+                    .width(80.dp)
+                    .height(50.dp)
+                    .clickable(onClick = onAcceptClick)
+                    .clip(RoundedCornerShape(10.dp))
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                    Text(text = "RETRY", color=Color.White, fontFamily = customFontFamily)
+                }
+            }
+        }
+    )
+}
+
 
 
 @Composable
@@ -345,6 +411,22 @@ fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
         }
     }
 }
+
+fun isInternetAvailable(context: Context): Boolean {
+    var result = false
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networkCapabilities = connectivityManager.activeNetwork ?: return false
+    val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+    result = when {
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+        else -> false
+    }
+    return result
+}
+
+
 // Define a Composable function for creating a Bottom Navigation Bar.
 @Composable
 fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen) {

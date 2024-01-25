@@ -1,6 +1,7 @@
 package com.cc221001.cc221015.Poke_Hike.composables
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,10 +18,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.ExposedDropdownMenuDefaults
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TextField
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,8 +39,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.domain.StepCounter
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
@@ -45,20 +52,29 @@ import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeballViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.StepCounterViewModel
+import com.cc221001.cc221015.Poke_Hike.views.NoInternetPopUp
+import com.cc221001.cc221015.Poke_Hike.views.isInternetAvailable
 
 // Suppresses lint warnings for using discouraged or experimental APIs.
 @SuppressLint("DiscouragedApi")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 // Defines a Composable function for the landing page.
 @Composable
-fun landingPage(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, pokeballViewModel: PokeballViewModel, stepCounterViewModel: StepCounterViewModel, pokeCoinViewModel: PokeCoinViewModel) {
+fun landingPage(
+    mainViewModel: MainViewModel,
+    pokemonViewModel: PokemonViewModel,
+    pokeballViewModel: PokeballViewModel,
+    stepCounterViewModel: StepCounterViewModel,
+    pokeCoinViewModel: PokeCoinViewModel,
+    context: Context
+) {
     // State for tracking the expansion status of the dropdown menu.
 
     LazyColumn(modifier = Modifier
         .fillMaxSize()
         .padding(0.dp)
         .clip(RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp))
-        .background(Color(0,0,0,125), RoundedCornerShape(10.dp)),
+        .background(Color(0, 0, 0, 125), RoundedCornerShape(10.dp)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = CenterHorizontally){
         item{ LandingPageContent(
@@ -66,13 +82,21 @@ fun landingPage(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel
             pokemonViewModel = pokemonViewModel,
             pokeballViewModel = pokeballViewModel,
             stepCounterViewModel = stepCounterViewModel,
-            coinViewModel = pokeCoinViewModel)}
+            coinViewModel = pokeCoinViewModel,
+            context=context)}
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, pokeballViewModel:PokeballViewModel, stepCounterViewModel:StepCounterViewModel, coinViewModel: PokeCoinViewModel){
+fun LandingPageContent(
+    mainViewModel: MainViewModel,
+    pokemonViewModel: PokemonViewModel,
+    pokeballViewModel: PokeballViewModel,
+    stepCounterViewModel: StepCounterViewModel,
+    coinViewModel: PokeCoinViewModel,
+    context: Context,
+){
 
     var isExpanded by remember { mutableStateOf(false) }
     // State for storing the index of the selected trainer's image.
@@ -80,6 +104,11 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
     // State for storing the selected trainer's name.
     var trainerName by remember { mutableStateOf("Pick Trainer") }
 
+    var isConnected by remember { mutableStateOf(false) }
+
+    val aldrichFontFamily = FontFamily(Font(R.font.aldrich))
+
+    isConnected=isInternetAvailable(context)
     // List of trainer image resource names.
     val trainerImageResources = listOf(
         "trainer1",
@@ -108,8 +137,8 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                 modifier = Modifier
                     .width(180.dp)
                     .height(180.dp)
-                    .padding(0.dp,20.dp,0.dp,0.dp)
-                    .clip(RoundedCornerShape(10.dp,10.dp,10.dp,10.dp))
+                    .padding(0.dp, 20.dp, 0.dp, 0.dp)
+                    .clip(RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
                     .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
                 color = Color(255, 255, 255, 50)
             ) {
@@ -143,8 +172,10 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                     },
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.White,
-                        backgroundColor = Color(255, 255, 255, 75)
+                        backgroundColor = Color(255, 255, 255, 50)
                     ),
+                    textStyle= TextStyle(fontFamily = aldrichFontFamily),
+
                     modifier = Modifier
                         .padding(top = 20.dp)
                         .clip(RoundedCornerShape(10.dp))
@@ -171,7 +202,7 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                         // DropdownMenuItem for each trainer.
                         DropdownMenuItem(
                             modifier = Modifier.background(Color(255, 255, 255, 50)),
-                            text = { Text(text = currentTrainerName) },
+                            text = { Text(text = currentTrainerName, fontFamily = aldrichFontFamily, color=Color(0,0,0,125)) },
                             onClick = {
                                 selectedTrainerIndex = imageUrl; trainerName =
                                 currentTrainerName; isExpanded = false;
@@ -196,6 +227,7 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                     ),
                     textColor = Color.White
                 ),
+                textStyle= TextStyle(fontFamily = aldrichFontFamily),
                 modifier = Modifier
                     .padding(top = 20.dp)
                     .clip(RoundedCornerShape(10.dp))
@@ -225,14 +257,24 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                 )
             Box(modifier = Modifier.padding(20.dp)) {
                 CustomButton(text = "Create Trainer", onClick = {
-                    CreatePokeballEntries(pokeballViewModel)
-                    CreateTrainerStash(coinViewModel)
-                    stepCounterViewModel.createStepCounter((StepCounter(0,0)));
-                    mainViewModel.save(PokemonTrainer(null, name, hometown, trainerName))
-                    mainViewModel.getPokemonTrainer();
-                    pokemonViewModel.loadPokemons();
+                    isConnected= isInternetAvailable(context)
+                    if(isConnected) {
+                        CreatePokeballEntries(pokeballViewModel)
+                        CreateTrainerStash(coinViewModel)
+                        stepCounterViewModel.createStepCounter((StepCounter(0, 0)));
+                        mainViewModel.save(PokemonTrainer(null, name, hometown, trainerName))
+                        mainViewModel.getPokemonTrainer();
+                        pokemonViewModel.loadPokemons();
+                    }
                 }, amount = 300, amount2 = 50, true)
             }
         }
+    }
+
+    if(!isConnected) {
+        NoInternetPopUp(
+            title = "Are you connected?" ,
+            text = "It seems like you're currently not connected to the internet. Please make sure you have an internet connection available upon using this app!" ,
+            onAcceptClick= {isConnected=isInternetAvailable(context = context)})
     }
 }

@@ -115,7 +115,7 @@ fun MyPokemonList(pokemonViewModel: PokemonViewModel, listType: String) {
                     println("this is your pokemonlist: $pokemonList")
                     items(pokemonListBar) { pokemon ->
                         val listNumber = if (pokemon != null) {
-                            if (pokemon?.number!! < 1) pokemon?.number else pokemon?.number?.minus(1)
+                            if (pokemon?.number!! < 1) pokemon?.number else if (pokemon?.number > 1) pokemon?.number?.minus(1) else 0
                         } else {
                             0
                         }
