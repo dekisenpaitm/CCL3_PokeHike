@@ -73,11 +73,11 @@ fun WeatherFeedback(){
     var checkInternet by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("Retrieving the latest weather data...") }
 
-    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text= text, color = Color.White, textAlign = TextAlign.Center)
     }
     if(checkInternet){
-        text="If this takes longer than you're used too, please make sure you're connected to the internet..."
+        text="If this takes longer than you're used to, please make sure you're connected to the internet..."
         android.os
             .Handler()
             .postDelayed({

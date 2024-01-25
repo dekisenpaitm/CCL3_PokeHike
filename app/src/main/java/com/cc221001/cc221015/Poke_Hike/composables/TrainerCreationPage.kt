@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -73,9 +74,9 @@ fun landingPage(
 
     LazyColumn(modifier = Modifier
         .fillMaxSize()
-        .padding(0.dp)
+        .background(Color(0, 0, 0, 125), RoundedCornerShape(10.dp))
         .clip(RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp))
-        .background(Color(0, 0, 0, 125), RoundedCornerShape(10.dp)),
+        .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = CenterHorizontally){
         item{ LandingPageContent(
@@ -180,7 +181,8 @@ fun LandingPageContent(
                     modifier = Modifier
                         .padding(top = 20.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .border(1.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+                        .border(1.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                        .fillMaxWidth(),
                 )
                 // Dropdown menu for selecting a trainer.
                 ExposedDropdownMenu(
@@ -235,7 +237,8 @@ fun LandingPageContent(
                 modifier = Modifier
                     .padding(top = 20.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .border(1.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+                    .border(1.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                    .fillMaxWidth(),
 
                 )
             // State and TextField for inputting the trainer's hometown.
@@ -258,7 +261,8 @@ fun LandingPageContent(
                 modifier = Modifier
                     .padding(top = 20.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .border(1.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
+                    .border(1.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
+                    .fillMaxSize(),
 
                 )
             Box(modifier = Modifier.padding(20.dp)) {

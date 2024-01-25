@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -105,7 +106,7 @@ fun DisplayPokeballList(
             .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
             .padding(20.dp, 4.dp, 20.dp)
             .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
             if (weather == null) {
