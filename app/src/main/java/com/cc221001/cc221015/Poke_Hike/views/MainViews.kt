@@ -154,7 +154,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                                 DisplayPopUp(
                                     onBoardingViewModel= onBoardingViewModel,
                                     title = "Home" ,
-                                    text ="You can find here your current collected coins, a button to the shop and the reminder how the app works! ", pageName="homePage")
+                                    text ="On the Home Page, you can view your currently collected coins, quickly access the shop through a button, and read our reminders about how PokeHike works.", pageName="homePage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Home)
@@ -184,7 +184,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                             pokemonViewModel.getOwnedPokemon()
                             MyPokemonList(pokemonViewModel, "owned")
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Collection" , text ="The collection page shows you your Pokemon. Favorites are the Pokemon you liked by clicking the little heart-shaped button. Owned refers to the Pokemon you obtained from the Pokeballs you bought.", pageName="favPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Collection" , text ="The Collection page shows you your Pokemon. Favorites are the Pokemon you liked by clicking the little heart-shaped button. Owned refers to the Pokemon you obtained from the Pokeballs you bought.", pageName="favPage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Collection)
@@ -235,7 +235,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                                 pokeCoinViewModel
                             )
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Shop" , text ="In here you can spend your collected Pokecoins. Either for a weather based pokeball which contains only specific types or the standard pokeball which cointains all available Pokemon. Numbers above Items in the Shop indicate how many Pokemon are still available to get from that type of Pokeball.", pageName="shopPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Shop" , text ="On the Shop page, you can spend your collected Pokecoins: either for a weather-based Pokeball that contains only specific types or the standard Pokeball that contains all available Pokemon. Numbers above items in the Shop indicate how many Pokemon are still available to get from that type of Pokeball.", pageName="shopPage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Shop)

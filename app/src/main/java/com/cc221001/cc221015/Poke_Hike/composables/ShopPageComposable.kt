@@ -334,16 +334,71 @@ fun PokeballsItem(
                         }
                         Box(
                             modifier = Modifier
-                                .weight(1.2f)
+                                .weight(1.4f)
                                 .fillMaxHeight(),
                             contentAlignment = Alignment.Center
                         ) {
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+
+                                if (pokeball?.type1 != "All") {
+                                    pokemonViewModel.getAvailablePokemon(
+                                        pokeball!!.type1,
+                                        pokeball.type2,
+                                        pokeball.type3
+                                    )
+                                    if (currentAvailablePokemon.availableTypePokemon.isEmpty()) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.pokecoin),
+                                            contentDescription = "Pokecoin Icon",
+                                            colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                                                setToSaturation(0f)
+                                            }),
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .clip(MaterialTheme.shapes.small)
+                                        )
+                                    } else {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.pokecoin),
+                                            contentDescription = "Pokecoin Icon",
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .clip(MaterialTheme.shapes.small)
+                                        )
+                                    }
+                                } else {
+                                    pokemonViewModel.getNotOwnedPokemon()
+
+                                    if (currentAvailablePokemon.availableAllPokemon.isEmpty()) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.pokecoin),
+                                            contentDescription = "Pokecoin Icon",
+                                            colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                                                setToSaturation(0f)
+                                            }),
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .clip(MaterialTheme.shapes.small)
+                                        )
+                                    } else {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.pokecoin),
+                                            contentDescription = "Pokecoin Icon",
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .clip(MaterialTheme.shapes.small)
+                                        )
+                                    }
+                                }
                             Text(
-                               text = "¢${pokeball.price}",
+                               text = "${pokeball.price}",
                                 color = Color.White,
                                 fontSize = 14.sp,
                             )
-                        }
+                        }}
                     }
                 }
             }
