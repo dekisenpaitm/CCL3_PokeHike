@@ -522,7 +522,7 @@ fun PokeballsItem(
                 }, dismissButton = {
                     // Customizing the confirm button
                     Surface(
-                        color = Color(106, 84, 141, 255), // Set the background color of the surface
+                        color = Color(58, 42, 75, 255),
                         modifier = Modifier
                             .width(80.dp)
                             .height(50.dp)
