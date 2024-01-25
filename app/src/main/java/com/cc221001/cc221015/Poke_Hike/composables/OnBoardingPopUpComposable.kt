@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +35,8 @@ fun DisplayPopUp(onBoardingViewModel: OnBoardingViewModel,title:String, text:Str
 
     if (showPopUp == true) {
         AlertDialog(
-            containerColor = Color(16, 0, 25, 200),
+            modifier=Modifier.border(2.dp, Color(255,255,255,75),RoundedCornerShape(20.dp)),
+            containerColor = Color(0, 0, 0, 200),
             onDismissRequest = {
             }, title = {
                 Text(

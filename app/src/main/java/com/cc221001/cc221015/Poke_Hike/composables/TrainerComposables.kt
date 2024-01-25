@@ -77,7 +77,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                 // A LazyColumn for efficiently displaying a scrollable list.
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
+                    verticalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -87,7 +87,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
 
                     item {
                         if (state.value.pokemonTrainers.isNotEmpty()) {
-                            Box() {
+                            Box(modifier=Modifier.padding(bottom=20.dp)) {
                                 // Retrieve the resource ID for the trainer's sprite.
 
                                 val resourceId = LocalContext.current.resources.getIdentifier(
@@ -125,6 +125,11 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                             }
                         }
                     }
+                    item{
+                        Box(modifier=Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                            CustomSplitter(h = 2)
+                        }
+                    }
                     item {
                         CustomContainerTransparent(w = 370, h = 20, p = 0) {
                             Text(text = "NAME:", color = Color.White)
@@ -135,13 +140,15 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                         ) {
                             // Box for the value of the trainer property.
                             Box(
-                                modifier = Modifier.weight(1f).fillMaxWidth(),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 TextField(
                                     value = currentName,
                                     onValueChange = { currentName=it },
-                                    label = { Text(text = "Change Name") },
+                                    //label = { Text(text = "Click to change name") },
                                     colors = TextFieldDefaults.textFieldColors(
                                         backgroundColor = Color(
                                             255,
@@ -175,13 +182,15 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                         ) {
                             // Box for the value of the trainer property.
                             Box(
-                                modifier = Modifier.weight(1f).fillMaxWidth(),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 TextField(
                                     value = currentHometown,
                                     onValueChange = { currentHometown = it},
-                                    label = { Text(text = "Change Hometown") },
+                                    //label = { Text(text = "Click to change hometown") },
                                     colors = TextFieldDefaults.textFieldColors(
                                         backgroundColor = Color(
                                             255,
@@ -204,6 +213,11 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                             }
                         }
                     }
+                    item{
+                        Box(modifier=Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                            CustomSplitter(h = 2)
+                        }
+                    }
                     item {
                         // Button to delete the trainer.
                         Column(
@@ -216,31 +230,12 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                                 height = 50,
                                 true
                             )
-                            Surface(
-                                color = Color(58, 42, 75, 255),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .border(
-                                        2.dp,
-                                        Color(255, 255, 255, 75),
-                                        RoundedCornerShape(10.dp)
-                                    )
-                                    .clickable(onClick = {
-                                        deletePopUp = true
-                                    })
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Text(
-                                        text = "Delete Trainer",
-                                        modifier = Modifier.padding(8.dp),
-                                        color = Color.White
-                                    )
-                                }
-                            }
-
+                            CustomButtonMaxWidth(
+                                text = "DeleteTrainer",
+                                onClick = { deletePopUp = true },
+                                height = 50,
+                                false
+                            )
                         }
                     }
                 }
@@ -309,7 +304,10 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
 @Composable
 fun DisplayTrainerPopUp(title:String, text:String, buttonAcceptText:String, buttonDismissText:String, onAcceptClick: ()->Unit, onDismiss: ()->Unit, onDismissClick: ()->Unit) {
     androidx.compose.material3.AlertDialog(
-        containerColor = Color(16, 0, 25, 200),
+        containerColor = Color(0, 0, 0, 200),
+        modifier=Modifier.clip(RoundedCornerShape(10.dp)).border(2.dp,Color(255,255,255,75),
+            RoundedCornerShape(20.dp)
+        ),
         onDismissRequest = onDismiss,
         title = {
             Text(
@@ -329,7 +327,6 @@ fun DisplayTrainerPopUp(title:String, text:String, buttonAcceptText:String, butt
                     .height(50.dp)
                     .clickable(onClick = onAcceptClick)
                     .clip(RoundedCornerShape(10.dp))
-                    .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                     Text(text = buttonAcceptText, color=Color.White)
