@@ -1,6 +1,8 @@
 package com.cc221001.cc221015.Poke_Hike.composables
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,9 +20,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -39,13 +41,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
 import com.cc221001.cc221015.Poke_Hike.viewModel.MainViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
 import com.cc221001.cc221015.Poke_Hike.viewModel.PokemonViewModel
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("DiscouragedApi")
 @Composable
@@ -61,6 +68,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
     var currentHometown by remember{mutableStateOf(hometown)}
     var currentName by remember{mutableStateOf(name)}
     var isButtonClicked = false
+    val customFontFamily = FontFamily(Font(R.font.aldrich))
 
     mainViewModel.getPokemonTrainer()
 
@@ -132,7 +140,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                     }
                     item {
                         CustomContainerTransparent(w = 370, h = 20, p = 0) {
-                            Text(text = "NAME:", color = Color.White)
+                            Text(text = "Name:", color = Color.White, fontFamily = customFontFamily)
                         }
                         FlowRow(
                             verticalArrangement = Arrangement.Center,
@@ -148,6 +156,8 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                                 TextField(
                                     value = currentName,
                                     onValueChange = { currentName=it },
+                                    textStyle = TextStyle(
+                                        fontFamily = customFontFamily),
                                     //label = { Text(text = "Click to change name") },
                                     colors = TextFieldDefaults.textFieldColors(
                                         backgroundColor = Color(
@@ -174,7 +184,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                     item {
 
                         CustomContainerTransparent(w = 370, h = 20, p = 0) {
-                            Text(text = "HOMETOWN:", color = Color.White)
+                            Text(text = "Hometown:", color = Color.White, fontFamily = customFontFamily)
                         }
                         FlowRow(
                             verticalArrangement = Arrangement.Center,
@@ -190,6 +200,8 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                                 TextField(
                                     value = currentHometown,
                                     onValueChange = { currentHometown = it},
+                                    textStyle = TextStyle(
+                                        fontFamily = customFontFamily),
                                     //label = { Text(text = "Click to change hometown") },
                                     colors = TextFieldDefaults.textFieldColors(
                                         backgroundColor = Color(
@@ -198,7 +210,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                                             255,
                                             75
                                         ),
-                                        textColor = Color.White
+                                        textColor = Color.White,
                                     ),
                                     modifier = Modifier
                                         .padding(top = 4.dp, bottom = 20.dp)
@@ -231,7 +243,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
                                 true
                             )
                             CustomButtonMaxWidth(
-                                text = "DeleteTrainer",
+                                text = "Delete Trainer",
                                 onClick = { deletePopUp = true },
                                 height = 50,
                                 false
@@ -249,8 +261,8 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
         DisplayTrainerPopUp(
             title = "Save Changes?" ,
             text = "Do you really want to save your changes?",
-            buttonAcceptText = "SAVE",
-            buttonDismissText = "CANCEL",
+            buttonAcceptText = "Save",
+            buttonDismissText = "Cancel",
             onAcceptClick={
                 mainViewModel.savePokemonTrainer(PokemonTrainer(id, currentName, currentHometown, sprite))
                 editPopUp=false
@@ -267,8 +279,8 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
         DisplayTrainerPopUp(
             title = "Delete Trainer?" ,
             text = "Do you really want to delete your Trainer? This can't be undone!",
-            buttonAcceptText = "DELETE",
-            buttonDismissText = "CANCEL",
+            buttonAcceptText = "Delete",
+            buttonDismissText = "Cancel",
             onAcceptClick={
                 deletePopUp=false
                 deleteScreenVisible = true
@@ -301,9 +313,11 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
     }
 }
 
+
 @Composable
 fun DisplayTrainerPopUp(title:String, text:String, buttonAcceptText:String, buttonDismissText:String, onAcceptClick: ()->Unit, onDismiss: ()->Unit, onDismissClick: ()->Unit) {
-    androidx.compose.material3.AlertDialog(
+    val customFontFamily = FontFamily(Font(R.font.aldrich))
+    AlertDialog(
         containerColor = Color(0, 0, 0, 200),
         modifier=Modifier.clip(RoundedCornerShape(10.dp)).border(2.dp,Color(255,255,255,75),
             RoundedCornerShape(20.dp)
@@ -312,12 +326,14 @@ fun DisplayTrainerPopUp(title:String, text:String, buttonAcceptText:String, butt
         title = {
             Text(
                 text = title,
-                color = Color.White
+                color = Color.White,
+                        fontFamily = customFontFamily
             )
         }, text = {
             Text(
                 text = text,
-                color = Color.White
+                color = Color.White,
+                fontFamily = customFontFamily
             )
         }, confirmButton = {
             Surface(
@@ -329,7 +345,7 @@ fun DisplayTrainerPopUp(title:String, text:String, buttonAcceptText:String, butt
                     .clip(RoundedCornerShape(10.dp))
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-                    Text(text = buttonAcceptText, color=Color.White)
+                    Text(text = buttonAcceptText, color=Color.White, fontFamily = customFontFamily)
                 }
             }
         },
@@ -344,7 +360,7 @@ fun DisplayTrainerPopUp(title:String, text:String, buttonAcceptText:String, butt
                     .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-                    Text(text = buttonDismissText, color=Color.White)
+                    Text(text = buttonDismissText, color=Color.White, fontFamily = customFontFamily)
                 }
             }
         }

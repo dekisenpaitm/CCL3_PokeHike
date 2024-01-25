@@ -21,13 +21,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.viewModel.OnBoardingViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun DisplayPopUp(onBoardingViewModel: OnBoardingViewModel,title:String, text:String, pageName:String) {
     var showPopUp by remember { mutableStateOf(false) }
+    val customFontFamily = FontFamily(Font(R.font.aldrich))
     LaunchedEffect(key1 = true) {
         delay(500)
         showPopUp = true
@@ -41,12 +46,14 @@ fun DisplayPopUp(onBoardingViewModel: OnBoardingViewModel,title:String, text:Str
             }, title = {
                 Text(
                     text = title,
-                    color = Color.White
+                    color = Color.White,
+                    fontFamily = customFontFamily,
                 )
             }, text = {
                 Text(
                     text = text,
-                    color = Color.White
+                    color = Color.White,
+                    fontFamily = customFontFamily,
                 )
             }, confirmButton = {
                 Surface(
@@ -61,7 +68,7 @@ fun DisplayPopUp(onBoardingViewModel: OnBoardingViewModel,title:String, text:Str
                         .border(2.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp))
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier=Modifier.fillMaxWidth()){
-                        Text(text="OK", color=Color.White)
+                        Text(text="Ok!", color=Color.White, fontFamily = customFontFamily)
                     }
                 }
             }

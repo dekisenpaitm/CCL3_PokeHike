@@ -62,10 +62,12 @@ fun DisplayRemoveLoadingPage(){
             modifier = Modifier.size(200.dp),
         )
         Box(contentAlignment = Alignment.Center, modifier=Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 10.dp)){
-            Text(text = "PokeHike", fontSize = 40.sp, color = Color.White)
+            Text(text = "PokeHike",
+                fontSize = 40.sp, color = Color.White)
         }
         Box(contentAlignment = Alignment.Center, modifier=Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 10.dp)){
-            Text(text = "We're currently deleting your previous account. We hope to see you again!", fontSize = 16.sp, color = Color.White, textAlign = TextAlign.Center)
+            Text(text = "We're currently deleting your previous account. We hope to see you again!",
+                fontSize = 16.sp, color = Color.White, textAlign = TextAlign.Center)
         }
 
     }

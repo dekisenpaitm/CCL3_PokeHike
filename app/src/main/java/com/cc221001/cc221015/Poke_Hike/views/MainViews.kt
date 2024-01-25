@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,6 +47,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.composables.CreateOnBoarding
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayLandingPage
 import com.cc221001.cc221015.Poke_Hike.composables.DisplayLoadingPage
@@ -166,7 +168,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                             mainViewModel.selectScreen(Screen.Weather)
                             DisplayWeather(weatherViewModel)
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Weather" , text ="The weather page contains the current weather and a forecast for the next 5 days. Please make sure that you are connected to the internet!", pageName="weatherPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Weather" , text ="The Weather Page displays the Current Weather based on the location and provides a Forecast for the next 5 days. Please ensure that you are connected to the internet!", pageName="weatherPage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Weather)
@@ -182,7 +184,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                             pokemonViewModel.getOwnedPokemon()
                             MyPokemonList(pokemonViewModel, "owned")
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Collection" , text ="In here you're able to scroll trough your pokemon. Collection are the pokemon you liked by clicking the little heartshaped button. Owned are the pokemon you got out of the Pokeballs you bought. ", pageName="favPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Collection" , text ="The collection page shows you your Pokemon. Favorites are the Pokemon you liked by clicking the little heart-shaped button. Owned refers to the Pokemon you obtained from the Pokeballs you bought.", pageName="favPage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Collection)
@@ -198,7 +200,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                             pokemonViewModel.getPokemon()
                             MyPokemonList(pokemonViewModel, "all")
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Pokedex" , text ="In here you can check out all the Pokemon that are currently available. By clicking the heartshaped button you add the Pokemon to your collection of favourite pokemon.", pageName="listPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Pokedex" , text ="The Pokedex displays all the Pokemon currently available in the app. By clicking the heart-shaped button, you can add the Pokemon to your collection of favorite Pokemon.", pageName="listPage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.List)
@@ -215,7 +217,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                                 pokeCoinViewModel
                             )
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Trainer Page" , text ="In here you can check and update your credentials. It's also possible to delete your account, but be careful since you're removing everything including your collected Pokemon and Coins!", pageName="profilePage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Trainer Page" , text ="On the Trainer Page, you can check and update your credentials. It is also possible to delete your account, but please be cautious as this action will remove everything, including your collected Pokémon and Coins!", pageName="profilePage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Profile)
@@ -233,7 +235,7 @@ fun MainView(mainViewModel: MainViewModel, pokemonViewModel: PokemonViewModel, w
                                 pokeCoinViewModel
                             )
                             if(onBoardingState.value.currentState?.value == false){
-                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Shop" , text ="In here you can spend your collected Pokecoins. Either for a weather based pokeball which contains only specific types or the standard pokeball which cointains all available Pokemon.", pageName="shopPage")
+                                DisplayPopUp(onBoardingViewModel= onBoardingViewModel, title = "Shop" , text ="In here you can spend your collected Pokecoins. Either for a weather based pokeball which contains only specific types or the standard pokeball which cointains all available Pokemon. Numbers above Items in the Shop indicate how many Pokemon are still available to get from that type of Pokeball.", pageName="shopPage")
                             }
                         } else {
                             mainViewModel.selectScreen(Screen.Shop)
@@ -346,59 +348,91 @@ fun MyTopAppBar(navController: NavHostController, selectedScreen: Screen) {
 // Define a Composable function for creating a Bottom Navigation Bar.
 @Composable
 fun BottomNavigationBar(navController: NavHostController, selectedScreen: Screen) {
-    val context = LocalContext.current
-    // BottomNavigation is a Material Design component that provides bottom navigation.
+    val iconSize = 24.dp // Adjust the size as needed
+
     BottomNavigation(
-        elevation=0.dp,
-        backgroundColor = Color(0,0,0,125),
+        elevation = 0.dp,
+        backgroundColor = Color(0, 0, 0, 125),
     ) {
-        // NavigationBarItem for the 'Home' screen.
         NavigationBarItem(
-            selected = (selectedScreen == Screen.Home), // Determine if this item is selected based on the current screen.
-            onClick = { navController.navigate(Screen.Home.route) }, // Define action on click, navigating to the 'Home' route.
-            icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "Home Icon", tint=Color.White) }, // Set the icon for this item.
-            colors = androidx.compose.material3.NavigationBarItemDefaults
-                .colors(
-                    indicatorColor = Color(106, 84, 141, 255)))
+            selected = (selectedScreen == Screen.Home),
+            onClick = { navController.navigate(Screen.Home.route) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Home Icon",
+                    tint = Color.White,
+                    modifier = Modifier.size(iconSize)
+                )
+            },
+            colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                indicatorColor = Color(106, 84, 141, 255)
+            )
+        )
 
-        // NavigationBarItem for the 'Weather' screen.
         NavigationBarItem(
-            // Similar configuration as above for the 'Weather' screen.
             selected = (selectedScreen == Screen.Weather),
-            onClick = {
-                navController.navigate(Screen.Weather.route) },
-            icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Weather Icon", tint=Color.White) }, // Set the icon for this item.
-            colors = androidx.compose.material3.NavigationBarItemDefaults
-                .colors(
-                    indicatorColor = Color(106, 84, 141, 255)))
+            onClick = { navController.navigate(Screen.Weather.route) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.sunicon),
+                    contentDescription = "Weather Icon",
+                    tint = Color.White,
+                    modifier = Modifier.size(iconSize)
+                )
+            },
+            colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                indicatorColor = Color(106, 84, 141, 255)
+            )
+        )
 
-        // NavigationBarItem for the 'Collection' screen.
         NavigationBarItem(
-            // Similar configuration as the first item but for the 'Collection' screen.
             selected = (selectedScreen == Screen.Collection),
             onClick = { navController.navigate(Screen.Collection.route) },
-            icon = { Icon(imageVector = Icons.Default.Favorite, contentDescription = "Pokeball Icon", tint=Color.White) }, // Set the icon for this item.
-            colors = androidx.compose.material3.NavigationBarItemDefaults
-                .colors(
-                    indicatorColor = Color(106, 84, 141, 255)))
-        // NavigationBarItem for the 'List' screen.
-        NavigationBarItem(
-            // Similar configuration as above for the 'Third' screen.
-            selected = (selectedScreen == Screen.List),
-            onClick = { navController.navigate(Screen.List.route) },
-            icon = { Icon(imageVector = Icons.Default.List, contentDescription = "Pokedex Icon", tint=Color.White) }, // Set the icon for this item.
-            colors = androidx.compose.material3.NavigationBarItemDefaults
-                .colors(
-                    indicatorColor = Color(106, 84, 141, 255)))
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.pokeballicon),
+                    contentDescription = "Pokeball Icon",
+                    tint = Color.White,
+                    modifier = Modifier.size(iconSize)
+                )
+            },
+            colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                indicatorColor = Color(106, 84, 141, 255)
+            )
+        )
 
         NavigationBarItem(
-            // Similar configuration as above for the 'Fourth' screen.
+            selected = (selectedScreen == Screen.List),
+            onClick = { navController.navigate(Screen.List.route) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.List,
+                    contentDescription = "Pokedex Icon",
+                    tint = Color.White,
+                    modifier = Modifier.size(iconSize)
+                )
+            },
+            colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                indicatorColor = Color(106, 84, 141, 255)
+            )
+        )
+
+        NavigationBarItem(
             selected = (selectedScreen == Screen.Shop),
             onClick = { navController.navigate(Screen.Shop.route) },
-            icon = { Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "Shop Icon", tint=Color.White) }, // Set the icon for this item.
-            colors = androidx.compose.material3.NavigationBarItemDefaults
-                .colors(
-                    indicatorColor = Color(106, 84, 141, 255)))
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.ShoppingCart,
+                    contentDescription = "Shop Icon",
+                    tint = Color.White,
+                    modifier = Modifier.size(iconSize)
+                )
+            },
+            colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                indicatorColor = Color(106, 84, 141, 255)
+            )
+        )
     }
 }
 

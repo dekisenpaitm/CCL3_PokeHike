@@ -49,11 +49,6 @@ fun ErrorScreen() {
     Text(text = "Looks like you didn't create your user yet, please make sure to create one before using PokeHike!")
 }
 
-// Helper Composable function for displaying text.
-@Composable
-fun TextBox(text: String) {
-    Text(text = text)
-}
 
 @Composable
 fun mainScreen(
@@ -208,7 +203,7 @@ fun CustomContainerCoins(pokeCoinViewModel: PokeCoinViewModel, navController: Na
             ) {
                 Box(
                     modifier = Modifier
-                        .weight(0.33f)
+                        .weight(0.30f)
                         .fillMaxHeight(),
                     contentAlignment = Alignment.Center
                 ) {
@@ -237,7 +232,7 @@ fun CustomContainerCoins(pokeCoinViewModel: PokeCoinViewModel, navController: Na
                             top = 20.dp,
                             bottom = 0.dp
                         ),
-                        fontSize = 32.sp,
+                        fontSize = 28.sp,
                     )
                 }
             }
@@ -286,16 +281,16 @@ fun CustomContainerReminder() {
             Column()
             {
                 BulletText(
-                    text = "You need coins to buy Pokemons. Hike together with your phone to collect coins.\n"
-                            + "One Step is One Coin!\n"
-                            + "Spend coins on Pokeballs in shop to collect all the Pokemons!\n"
-                            + "Do not forget that Weather affects what type of Pokeballs you will see in the shop. \n"
-                            + "Normal Pokeball can give you a pokemon of any type, while special Weather Pokeballs will give you pokemons depending on weather.\n"
-                            + "Shop always provides details on current Weather Pokeball.\n"
-                            + "When viewing Pokedex or Owned Pokemons, you can press heart in order to add Pokemon to your favourites list.\n"
-                            + "When viewing Pokemons in Your Collection or in Pokedex, you can see a tick. Grey tick means that you do not own this Pokemon, white tick means that you do!\n"
-                            + "Numbers above Items in Shop indicate how many Pokemons are still available to get from that Pokeball\n"
-                            + "Pokemons recieved are unique, you cannot get more than one of the same Pokemon."
+                    text = "You need coins to buy Pokemon. Hike together with your phone to collect coins.\n"
+                            + "One Step equals One Coin!\n"
+                            + "Spend coins on Pokeballs in shop to collect all the Pokemon!\n"
+                            + "Don't forget that Weather affects the types of Pokeballs you will see in the shop. \n"
+                            + "A normal Pokeball can give you a pokemon of any type, while special Weather Pokeballs will give you Pokemon depending on weather.\n"
+                            + "The Shop always provides details on the current Weather Pokeball.\n"
+                            + "When viewing the Pokedex or Owned Pokemon, you can press the heart to add Pokemon to your favourites list.\n"
+                            + "When viewing Pokemons in your Collection or in Pokedex, you can see a tick. A grey tick means that you do not own this Pokemon, a white tick means that you do own it.\n"
+                            + "Numbers above Items in the Shop indicate how many Pokemon are still available to get from that type of Pokeball.\n"
+                            + "Pokemon recieved are unique; you cannot get more than one of the same Pokemon."
                 )
             }
         }

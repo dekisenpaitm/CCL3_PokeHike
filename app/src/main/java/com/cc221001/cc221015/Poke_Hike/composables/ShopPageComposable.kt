@@ -56,6 +56,8 @@ import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
@@ -65,6 +67,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CenterInside
+import com.cc221001.cc221015.Poke_Hike.R
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.service.dto.CurrentWeather
@@ -205,8 +208,7 @@ fun PokeballsItem(
     var pokemonBought by remember { mutableStateOf(false) }
     val currentCoins by pokeCoinViewModel.pokeCoinViewState.collectAsState()
     val currentAvailablePokemon by pokemonViewModel.pokemonViewState.collectAsState()
-    // Spacer to add some space before the item starts.
-    //println(currentAvailablePokemon.availableTypePokemon)
+    val customFontFamily = FontFamily(Font(R.font.aldrich))
     Spacer(
         modifier = Modifier
             .height(6.dp)
@@ -409,11 +411,12 @@ fun PokeballsItem(
                     // Dismiss the dialog when clicking outside of it
                     showDialog = false
                 }, title = {
-                    Text(text = "Buy ${pokeball?.name}?", color = Color.White)
+                    Text(text = "Buy ${pokeball?.name}?", color = Color.White, fontFamily = customFontFamily)
                 }, text = {
                     Text(
                         text = "Are you sure you want to buy ${pokeball?.name}?",
-                        color = Color.White
+                        color = Color.White,
+                        fontFamily = customFontFamily
                     )
                 }, confirmButton = {
                     Surface(
@@ -456,7 +459,8 @@ fun PokeballsItem(
                             Text(
                                 text = "Yes",
                                 color = Color.White,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                fontFamily = customFontFamily
                             )
                         }
                     }
@@ -488,7 +492,8 @@ fun PokeballsItem(
                             Text(
                                 text = "No",
                                 color = Color.White,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                fontFamily = customFontFamily
                             )
                         }
                     }
@@ -500,9 +505,9 @@ fun PokeballsItem(
                     // Dismiss the dialog when clicking outside of it
                     showDialog = false
                 }, title = {
-                    Text(text = "Oops!", color = Color.White)
+                    Text(text = "Oops!", color = Color.White, fontFamily = customFontFamily)
                 }, text = {
-                    Text(text = "Looks like you're out of coins!", color = Color.White)
+                    Text(text = "Looks like you're out of coins!", color = Color.White, fontFamily = customFontFamily)
                 }, confirmButton = {
                     Surface(
                         color = Color(106, 84, 141, 255), // Set the background color of the surface
@@ -530,7 +535,8 @@ fun PokeballsItem(
                             Text(
                                 text = "Yes",
                                 color = Color.White,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                fontFamily = customFontFamily
                             )
                         }
                     }
@@ -559,7 +565,7 @@ fun DisplayPokemonMessage(
     pokemonViewModel: PokemonViewModel, pokemonBought: Boolean,  onClose: () -> Unit
 ) {
     val randomPokemon by pokemonViewModel.pokemonViewState.collectAsState()
-
+    val customFontFamily = FontFamily(Font(R.font.aldrich))
     if (randomPokemon.pokemon?.name != "" && pokemonBought) {
         AlertDialog(
             containerColor = Color(16, 0, 25, 200),
@@ -567,6 +573,7 @@ fun DisplayPokemonMessage(
             title = {
                 Text(
                     text = "Congratulations!",
+                    fontFamily = customFontFamily,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -599,6 +606,7 @@ fun DisplayPokemonMessage(
                             text = "You got ${randomPokemon.pokemon?.name?.replaceFirstChar { it.uppercaseChar() }}!",
                             color = Color.White,
                             textAlign = TextAlign.Center,
+                            fontFamily = customFontFamily
                         )
                     }
                 }
@@ -619,6 +627,7 @@ fun DisplayPokemonMessage(
                             text = "OK",
                             textAlign = TextAlign.Center,
                             color = Color.White,
+                            fontFamily = customFontFamily,
                             modifier = Modifier
                                 .padding(
                                     vertical = 8.dp,

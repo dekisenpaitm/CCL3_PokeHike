@@ -202,11 +202,11 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                     .border(1.dp, Color(255, 255, 255, 75), RoundedCornerShape(10.dp)),
 
                 )
-            // State and TextField for inputting the trainer's gender.
-            var gender by remember { mutableStateOf("") }
+            // State and TextField for inputting the trainer's hometown.
+            var hometown by remember { mutableStateOf("") }
             TextField(
-                value = gender,
-                onValueChange = { gender = it },
+                value = hometown,
+                onValueChange = { hometown = it },
                 label = { Text(text = "Hometown", color = Color.White) },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color(
@@ -228,7 +228,7 @@ fun LandingPageContent(mainViewModel: MainViewModel, pokemonViewModel: PokemonVi
                     CreatePokeballEntries(pokeballViewModel)
                     CreateTrainerStash(coinViewModel)
                     stepCounterViewModel.createStepCounter((StepCounter(0,0)));
-                    mainViewModel.save(PokemonTrainer(null, name, gender, trainerName))
+                    mainViewModel.save(PokemonTrainer(null, name, hometown, trainerName))
                     mainViewModel.getPokemonTrainer();
                     pokemonViewModel.loadPokemons();
                 }, amount = 300, amount2 = 50, true)
