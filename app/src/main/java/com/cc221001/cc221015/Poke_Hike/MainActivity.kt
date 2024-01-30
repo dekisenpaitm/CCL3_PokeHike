@@ -2,7 +2,6 @@ package com.cc221001.cc221015.Poke_Hike
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
@@ -13,13 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.core.content.ContextCompat
-import com.cc221001.cc221015.Poke_Hike.data.OnBoardingStateHandler
-import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
-import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
-import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
-import com.cc221001.cc221015.Poke_Hike.data.StepCounterBaseHandler
-import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
+import com.cc221001.cc221015.Poke_Hike.data.PokeHikeDatabaseHandler
 import com.cc221001.cc221015.Poke_Hike.handler.PermissionHandler
 import com.cc221001.cc221015.Poke_Hike.service.StepCounterService
 import com.cc221001.cc221015.Poke_Hike.ui.theme.MyApplicationTheme
@@ -55,27 +48,13 @@ class MainActivity : ComponentActivity() {
 
 
     // Database handler for Pokemon trainers && ViewModel for the main screen.
-    private val db = TrainerBaseHandler(this)
+    private val db = PokeHikeDatabaseHandler(this)
     private val mainViewModel = MainViewModel(db)
-
-    private val obdb = OnBoardingStateHandler(this)
-    private val onBoardingViewModel = OnBoardingViewModel(obdb)
-
-    // UI logic based on connectivity status
-    // Database handler for Pokemon entities && ViewModel for the Pokemon-related view.
-    private val pdb = PokemonBaseHandler(this)
-    private val pokemonViewModel = PokemonViewModel(pdb)
-
-    // Database handler for Pokeball entities && ViewModel for the Pokeball-related view.
-    private val pbdb = PokeballBaseHandler(this)
-    private val pokeballViewModel = PokeballViewModel(pbdb)
-
-    //Database handler for PokeCoin entities && ViewModel for the PokeCoin-related view
-    private val pcdb = PokeCoinBaseHandler(this)
-    private val pokeCoinViewModel = PokeCoinViewModel(pcdb)
-
-    private val scdb = StepCounterBaseHandler(this)
-    private val stepCounterViewModel = StepCounterViewModel(scdb, pcdb)
+    private val onBoardingViewModel = OnBoardingViewModel(db)
+    private val pokemonViewModel = PokemonViewModel(db)
+    private val pokeballViewModel = PokeballViewModel(db)
+    private val pokeCoinViewModel = PokeCoinViewModel(db)
+    private val stepCounterViewModel = StepCounterViewModel(db)
 
     // ViewModel for the Weather-related view.
     private val weatherViewModel: WeatherViewModel by viewModels()

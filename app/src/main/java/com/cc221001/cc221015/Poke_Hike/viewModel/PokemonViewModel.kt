@@ -2,12 +2,11 @@ package com.cc221001.cc221015.Poke_Hike.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cc221001.cc221015.Poke_Hike.data.PokeHikeDatabaseHandler
 import com.cc221001.cc221015.Poke_Hike.service.PokemonRepository
-import com.cc221001.cc221015.Poke_Hike.data.PokemonBaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.Pokemon
 import com.cc221001.cc221015.Poke_Hike.stateModel.PokemonViewState
 import com.cc221001.cc221015.Poke_Hike.views.Screen
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,13 +14,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 // ViewModel responsible for managing Pokemon-related data and interactions.
-class PokemonViewModel(private val db: PokemonBaseHandler) : ViewModel() {
+class PokemonViewModel(private val db: PokeHikeDatabaseHandler) : ViewModel() {
 	private val _pokemonViewState = MutableStateFlow(PokemonViewState())
 	val pokemonViewState: StateFlow<PokemonViewState> = _pokemonViewState.asStateFlow()
 

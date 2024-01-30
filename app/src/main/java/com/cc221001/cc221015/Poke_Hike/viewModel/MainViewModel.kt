@@ -1,8 +1,8 @@
 package com.cc221001.cc221015.Poke_Hike.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.cc221001.cc221015.Poke_Hike.data.PokeHikeDatabaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.PokemonTrainer
-import com.cc221001.cc221015.Poke_Hike.data.TrainerBaseHandler
 import com.cc221001.cc221015.Poke_Hike.stateModel.MainViewState
 import com.cc221001.cc221015.Poke_Hike.views.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 // ViewModel responsible for managing the main screen's data and logic.
-class MainViewModel(private val db: TrainerBaseHandler) : ViewModel() {
+class MainViewModel(private val db: PokeHikeDatabaseHandler) : ViewModel() {
     private val _mainViewState = MutableStateFlow(MainViewState())
     val mainViewState: StateFlow<MainViewState> = _mainViewState.asStateFlow()
 

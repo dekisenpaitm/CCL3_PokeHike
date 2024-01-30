@@ -12,13 +12,10 @@ import android.hardware.SensorManager
 import android.os.IBinder
 import android.util.Log
 import com.cc221001.cc221015.Poke_Hike.R
-import com.cc221001.cc221015.Poke_Hike.data.PokeCoinBaseHandler
-import com.cc221001.cc221015.Poke_Hike.data.StepCounterBaseHandler
-import com.cc221001.cc221015.Poke_Hike.viewModel.PokeCoinViewModel
+import com.cc221001.cc221015.Poke_Hike.data.PokeHikeDatabaseHandler
 
 class StepCounterService : Service(), SensorEventListener {
-    private lateinit var stepCounterBaseHandler: StepCounterBaseHandler
-    private lateinit var pokeCoinBaseHandler:PokeCoinBaseHandler
+    private lateinit var pokeHikeDatabaseHandler: PokeHikeDatabaseHandler
     private lateinit var sensorManager: SensorManager
     private var stepSensor: Sensor? = null
 
@@ -29,8 +26,7 @@ class StepCounterService : Service(), SensorEventListener {
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL)
         startForeground(1, createNotification())
-        stepCounterBaseHandler = StepCounterBaseHandler(this)
-        pokeCoinBaseHandler = PokeCoinBaseHandler(this)
+        pokeHikeDatabaseHandler = PokeHikeDatabaseHandler(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -44,22 +40,22 @@ class StepCounterService : Service(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        if(stepCounterBaseHandler.isDatabaseInitialized() && stepCounterBaseHandler.retrieveSteps(0)?.id != null) {
+        if(pokeHikeDatabaseHandler.isDatabaseInitialized("StepCounter") && pokeHikeDatabaseHandler.retrieveSteps(0)?.id != null) {
             if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
                 val newStepCount = event.values[0].toInt()
                 var previousStepCount =
-                    stepCounterBaseHandler.retrieveSteps(0)?.amount
+                    pokeHikeDatabaseHandler.retrieveSteps(0)?.amount
                 if (previousStepCount == 0) {
                     previousStepCount = event.values[0].toInt()
                 }
                 val difference = newStepCount - previousStepCount!!
                 //CoinStashRepository.plusCoinStash(difference)
-                pokeCoinBaseHandler.updatePokeCoin(
-                    pokeCoinBaseHandler.getPokeCoinById(1),
-                    pokeCoinBaseHandler.getPokeCoinById(1).amount + difference
+                pokeHikeDatabaseHandler.updatePokeCoin(
+                    pokeHikeDatabaseHandler.getPokeCoinById(1),
+                    pokeHikeDatabaseHandler.getPokeCoinById(1).amount + difference
                 )
                 StepCounterRepository.updateStepCount(newStepCount)
-                stepCounterBaseHandler.updateCurrentSteps(0, newStepCount)
+                pokeHikeDatabaseHandler.updateCurrentSteps(0, newStepCount)
                 //println(stepCounterBaseHandler.retrieveSteps(0))
             }
         }

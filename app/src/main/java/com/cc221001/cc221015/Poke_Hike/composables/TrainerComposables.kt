@@ -272,6 +272,7 @@ fun DisplayTrainerProfile(mainViewModel: MainViewModel, pokemonViewModel: Pokemo
             onAcceptClick={
                 if(currentName.isNotEmpty()&&currentHometown.isNotEmpty()){
                 mainViewModel.savePokemonTrainer(PokemonTrainer(id, currentName, currentHometown, sprite))
+                    Toast.makeText(context, "Changes have been saved!", Toast.LENGTH_SHORT).show()
                 editPopUp=false}
                 else {
                     Toast.makeText(context, "Name and Hometown can't be empty!", Toast.LENGTH_SHORT).show()

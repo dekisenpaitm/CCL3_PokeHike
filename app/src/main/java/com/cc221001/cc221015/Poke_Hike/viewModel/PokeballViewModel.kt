@@ -1,7 +1,7 @@
 package com.cc221001.cc221015.Poke_Hike.viewModel
 
 import androidx.lifecycle.ViewModel
-import com.cc221001.cc221015.Poke_Hike.data.PokeballBaseHandler
+import com.cc221001.cc221015.Poke_Hike.data.PokeHikeDatabaseHandler
 import com.cc221001.cc221015.Poke_Hike.domain.Pokeball
 import com.cc221001.cc221015.Poke_Hike.stateModel.PokeballViewState
 import com.cc221001.cc221015.Poke_Hike.views.Screen
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class PokeballViewModel(private val db: PokeballBaseHandler) : ViewModel() {
+class PokeballViewModel(private val db: PokeHikeDatabaseHandler) : ViewModel() {
     private val _pokeballViewState = MutableStateFlow(PokeballViewState())
     val pokemonViewState: StateFlow<PokeballViewState> = _pokeballViewState.asStateFlow()
 
